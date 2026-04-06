@@ -9,306 +9,220 @@
 <meta name="theme-color" content="#0f0f0f">
 <title>Currency Converter</title>
 <style>
-  :root {
-    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #222222;
-    --border: rgba(255,255,255,0.08); --text: #f0ede8; --muted: #888;
-    --subtle: #444; --accent: #e8c96a; --green: #6abf8e; --red: #e86a6a;
-    --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Text', BlinkMacSystemFont, sans-serif; min-height: 100vh; overscroll-behavior: none; }
-
-  .topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(15,15,15,0.92);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    padding: calc(var(--safe-top) + 14px) 18px 14px;
-    border-bottom: 0.5px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .topbar h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
-  .topbar .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .refresh-btn {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 13px; font-weight: 500; padding: 8px 14px;
-    border-radius: 20px; border: 0.5px solid var(--border);
-    background: var(--surface2); color: var(--text);
-    cursor: pointer; transition: opacity 0.15s;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-  .refresh-btn:active { opacity: 0.6; }
-  .refresh-btn:disabled { opacity: 0.35; }
-  .spin { display: inline-block; }
-  .spin.active { animation: spin 0.9s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .status-bar {
-    padding: 9px 18px; font-size: 12px;
-    border-bottom: 0.5px solid var(--border);
-    display: flex; align-items: center; gap: 7px;
-  }
-  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--subtle); }
-  .dot.live { background: var(--green); }
-  .dot.error { background: var(--red); }
-  .dot.loading { background: var(--accent); }
-  .status-text { color: var(--muted); }
-
-  .content { padding: 14px 14px calc(var(--safe-bottom) + 30px); display: flex; flex-direction: column; gap: 12px; }
-
-  .card { background: var(--surface); border-radius: 16px; border: 0.5px solid var(--border); overflow: hidden; }
-  .card-header { padding: 13px 16px 10px; border-bottom: 0.5px solid var(--border); }
-  .card-title { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
-  .card-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  .rate-strip {
-    display: flex; gap: 0; flex-wrap: wrap;
-    background: var(--surface2); border-bottom: 0.5px solid var(--border);
-  }
-  .rate-pill {
-    font-size: 11px; color: var(--muted);
-    padding: 7px 16px;
-    border-right: 0.5px solid var(--border);
-  }
-  .rate-pill:last-child { border-right: none; }
-  .rate-pill b { color: var(--accent); font-weight: 500; }
-
-  .card-body { padding: 14px 16px; }
-  .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .ccy-badge {
-    font-size: 12px; font-weight: 500; color: var(--muted);
-    background: var(--surface2); border-radius: 8px;
-    padding: 5px 10px; flex-shrink: 0;
-  }
-  .amount-input {
-    flex: 1; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;
-    background: transparent; border: none; color: var(--text); min-width: 0;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-  .amount-input:focus { outline: none; }
-
-  .results { display: flex; flex-direction: column; gap: 8px; }
-  .result-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 11px 14px; background: var(--surface2); border-radius: 10px;
-  }
-  .result-ccy { font-size: 12px; font-weight: 500; color: var(--muted); }
-  .result-val { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
-  .result-val.dim { color: var(--subtle); font-size: 16px; font-weight: 400; }
-
-  .quick-row { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
-  .qbtn {
-    font-size: 12px; padding: 5px 12px; border-radius: 20px;
-    border: 0.5px solid var(--border); background: transparent;
-    color: var(--muted); cursor: pointer; transition: all 0.12s;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-  .qbtn:active { background: var(--surface2); color: var(--text); }
-
-  .error-card {
-    background: rgba(232,106,106,0.1); border: 0.5px solid rgba(232,106,106,0.25);
-    border-radius: 12px; padding: 12px 16px; font-size: 13px; color: var(--red);
-    display: none; line-height: 1.5;
-  }
-  .last-known { font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center; }
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;--border:rgba(255,255,255,0.08);--text:#f0ede8;--muted:#888;--subtle:#444;--accent:#e8c96a;--green:#6abf8e;--red:#e86a6a;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Text',BlinkMacSystemFont,sans-serif;min-height:100vh;overscroll-behavior:none}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--safe-top) + 14px) 18px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.topbar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px}
+.topbar .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.refresh-btn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:8px 14px;border-radius:20px;border:0.5px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;transition:opacity 0.15s}
+.refresh-btn:active{opacity:0.6}
+.refresh-btn:disabled{opacity:0.35}
+.spin{display:inline-block}
+.spin.active{animation:spin 0.9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status-bar{padding:9px 18px;font-size:12px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:7px}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:var(--subtle)}
+.dot.live{background:var(--green)}
+.dot.error{background:var(--red)}
+.dot.loading{background:var(--accent);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.status-text{color:var(--muted)}
+.source-note{padding:7px 18px;font-size:11px;color:var(--subtle);border-bottom:0.5px solid var(--border)}
+.source-note a{color:var(--subtle);text-decoration:underline}
+.content{padding:14px 14px calc(var(--safe-bottom) + 30px);display:flex;flex-direction:column;gap:12px}
+.err-card{background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.25);border-radius:12px;padding:12px 16px;font-size:13px;color:var(--red);line-height:1.5;display:none}
+.card{background:var(--surface);border-radius:16px;border:0.5px solid var(--border);overflow:hidden}
+.card-header{padding:13px 16px 10px;border-bottom:0.5px solid var(--border)}
+.card-title{font-size:15px;font-weight:600;letter-spacing:-0.2px}
+.card-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.rate-strip{display:flex;background:var(--surface2);border-bottom:0.5px solid var(--border)}
+.rate-pill{font-size:11px;color:var(--muted);padding:7px 16px;border-right:0.5px solid var(--border);white-space:nowrap}
+.rate-pill:last-child{border-right:none}
+.rate-pill b{color:var(--accent);font-weight:500}
+.card-body{padding:14px 16px}
+.input-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ccy-badge{font-size:12px;font-weight:500;color:var(--muted);background:var(--surface2);border-radius:8px;padding:5px 10px;flex-shrink:0}
+.amount-input{flex:1;font-size:28px;font-weight:600;letter-spacing:-0.5px;background:transparent;border:none;color:var(--text);min-width:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+.amount-input:focus{outline:none}
+.results{display:flex;flex-direction:column;gap:8px}
+.result-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface2);border-radius:10px}
+.result-ccy{font-size:12px;font-weight:500;color:var(--muted)}
+.result-val{font-size:24px;font-weight:600;color:var(--text);letter-spacing:-0.5px}
+.result-val.dim{color:var(--subtle);font-size:16px;font-weight:400}
+.quick-row{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.qbtn{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+.qbtn:active{background:var(--surface2);color:var(--text)}
 </style>
 </head>
 <body>
-
 <div class="topbar">
   <div>
-    <div class="topbar h1">Currency</div>
+    <h1>Currency</h1>
     <div class="sub" id="sub-title">Tap refresh for live rates</div>
   </div>
   <button class="refresh-btn" id="refresh-btn" onclick="fetchRates()">
     <span class="spin" id="spin">&#8635;</span> Refresh
   </button>
 </div>
-
 <div class="status-bar">
   <div class="dot" id="status-dot"></div>
   <span class="status-text" id="status-text">Not yet fetched</span>
 </div>
-
-<div class="content">
-  <div class="error-card" id="err-card"></div>
-  <div id="cards-container"></div>
-  <div class="last-known" id="last-known"></div>
+<div class="source-note">
+  Rates from <a href="https://frankfurter.dev" target="_blank">frankfurter.dev</a> &middot; Central bank data &middot; Updates daily ~16:00 CET
 </div>
-
+<div class="content">
+  <div class="err-card" id="err-card"></div>
+  <div id="cards-container"></div>
+</div>
 <script>
-const CONVERTERS = [
-  {
-    id: 'eur',
-    from: 'EUR', to1: 'CAD', to2: 'USD',
-    title: 'Euro \u2192 CAD & USD',
-    sub: 'For your girlfriend in Spain',
-    quick: [50, 100, 200, 500],
-    sym: '\u20AC'
-  },
-  {
-    id: 'jpy',
-    from: 'JPY', to1: 'CAD', to2: 'USD',
-    title: 'Yen \u2192 CAD & USD',
-    sub: 'For spending in Japan',
-    quick: [1000, 5000, 10000, 50000],
-    sym: '\u00A5'
-  },
-  {
-    id: 'usd',
-    from: 'USD', to1: 'CAD', to2: null,
-    title: 'USD \u2192 CAD',
-    sub: 'For your US layover',
-    quick: [20, 50, 100, 200],
-    sym: '$'
-  }
+var CONVERTERS=[
+  {id:'eur',from:'EUR',to1:'CAD',to2:'USD',title:'Euro \u2192 CAD & USD',sub:'For your girlfriend in Spain',quick:[50,100,200,500],sym:'\u20AC'},
+  {id:'jpy',from:'JPY',to1:'CAD',to2:'USD',title:'Yen \u2192 CAD & USD',sub:'For spending in Japan',quick:[1000,5000,10000,50000],sym:'\u00A5'},
+  {id:'usd',from:'USD',to1:'CAD',to2:null,title:'USD \u2192 CAD',sub:'For your US layover',quick:[20,50,100,200],sym:'$'}
 ];
+var FALLBACK={EUR_CAD:1.6064,EUR_USD:1.1706,JPY_CAD:0.00876,JPY_USD:0.006263,USD_CAD:1.3915};
+var rates=Object.assign({},FALLBACK);
 
-const FALLBACK = { EUR_CAD: 1.6064, EUR_USD: 1.1706, JPY_CAD: 0.008760, JPY_USD: 0.006263, USD_CAD: 1.3915 };
-let rates = { ...FALLBACK };
-let lastFetchTime = null;
-
-function fmtNum(val, ccy) {
-  if (ccy === 'JPY') return Math.round(val).toLocaleString();
-  return val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+function fmt(val,ccy){
+  if(ccy==='JPY')return Math.round(val).toLocaleString();
+  return val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
 }
 
-function buildCards() {
-  const container = document.getElementById('cards-container');
-  container.innerHTML = '';
-  CONVERTERS.forEach(c => {
-    const rk1 = c.from + '_' + c.to1;
-    const rk2 = c.to2 ? c.from + '_' + c.to2 : null;
-
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `
-      <div class="card-header">
-        <div class="card-title">${c.title}</div>
-        <div class="card-sub">${c.sub}</div>
-      </div>
-      <div class="rate-strip" id="rstrip-${c.id}">
-        <div class="rate-pill">1 ${c.from} = <b id="r1d-${c.id}">—</b> ${c.to1}</div>
-        ${c.to2 ? `<div class="rate-pill">1 ${c.from} = <b id="r2d-${c.id}">—</b> ${c.to2}</div>` : ''}
-      </div>
-      <div class="card-body">
-        <div class="input-row">
-          <span class="ccy-badge">${c.from}</span>
-          <input class="amount-input" id="amt-${c.id}" type="number" value="100" min="0" inputmode="decimal" />
-        </div>
-        <div class="results">
-          <div class="result-row">
-            <span class="result-ccy">${c.to1}</span>
-            <span class="result-val dim" id="out1-${c.id}">—</span>
-          </div>
-          ${c.to2 ? `<div class="result-row"><span class="result-ccy">${c.to2}</span><span class="result-val dim" id="out2-${c.id}">—</span></div>` : ''}
-        </div>
-        <div class="quick-row">
-          ${c.quick.map(q => `<button class="qbtn" data-id="${c.id}" data-val="${q}">${c.sym}${q.toLocaleString()}</button>`).join('')}
-        </div>
-      </div>`;
-
-    container.appendChild(card);
-
-    card.querySelector('#amt-' + c.id).addEventListener('input', () => recalc(c));
-    card.querySelectorAll('.qbtn').forEach(b => b.addEventListener('click', () => {
-      document.getElementById('amt-' + c.id).value = b.dataset.val;
-      recalc(c);
-    }));
-
-    recalc(c);
+function buildCards(){
+  var container=document.getElementById('cards-container');
+  container.innerHTML='';
+  CONVERTERS.forEach(function(cv){
+    var d=document.createElement('div');
+    d.className='card';
+    d.innerHTML=
+      '<div class="card-header">'+
+        '<div class="card-title">'+cv.title+'</div>'+
+        '<div class="card-sub">'+cv.sub+'</div>'+
+      '</div>'+
+      '<div class="rate-strip">'+
+        '<div class="rate-pill">1 '+cv.from+' = <b id="r1-'+cv.id+'">&#8212;</b> '+cv.to1+'</div>'+
+        (cv.to2?'<div class="rate-pill">1 '+cv.from+' = <b id="r2-'+cv.id+'">&#8212;</b> '+cv.to2+'</div>':'')+
+      '</div>'+
+      '<div class="card-body">'+
+        '<div class="input-row">'+
+          '<span class="ccy-badge">'+cv.from+'</span>'+
+          '<input class="amount-input" id="amt-'+cv.id+'" type="number" value="100" min="0" inputmode="decimal"/>'+
+        '</div>'+
+        '<div class="results">'+
+          '<div class="result-row"><span class="result-ccy">'+cv.to1+'</span><span class="result-val dim" id="o1-'+cv.id+'">&#8212;</span></div>'+
+          (cv.to2?'<div class="result-row"><span class="result-ccy">'+cv.to2+'</span><span class="result-val dim" id="o2-'+cv.id+'">&#8212;</span></div>':'')+
+        '</div>'+
+        '<div class="quick-row">'+
+          cv.quick.map(function(q){return '<button class="qbtn" data-id="'+cv.id+'" data-val="'+q+'">'+cv.sym+q.toLocaleString()+'</button>';}).join('')+
+        '</div>'+
+      '</div>';
+    container.appendChild(d);
+    d.querySelector('#amt-'+cv.id).addEventListener('input',function(){recalc(cv);});
+    d.querySelectorAll('.qbtn').forEach(function(b){
+      b.addEventListener('click',function(){
+        document.getElementById('amt-'+cv.id).value=b.dataset.val;
+        recalc(cv);
+      });
+    });
+    recalc(cv);
   });
 }
 
-function recalc(c) {
-  const amt = parseFloat(document.getElementById('amt-' + c.id).value) || 0;
-  const rk1 = c.from + '_' + c.to1;
-  const rk2 = c.to2 ? c.from + '_' + c.to2 : null;
-  const r1 = rates[rk1];
-  const r2 = rk2 ? rates[rk2] : null;
-
-  const o1 = document.getElementById('out1-' + c.id);
-  o1.textContent = r1 ? fmtNum(amt * r1, c.to1) : '—';
-  o1.className = 'result-val' + (r1 ? '' : ' dim');
-
-  if (c.to2) {
-    const o2 = document.getElementById('out2-' + c.id);
-    o2.textContent = r2 ? fmtNum(amt * r2, c.to2) : '—';
-    o2.className = 'result-val' + (r2 ? '' : ' dim');
+function recalc(cv){
+  var amt=parseFloat(document.getElementById('amt-'+cv.id).value)||0;
+  var r1=rates[cv.from+'_'+cv.to1];
+  var r2=cv.to2?rates[cv.from+'_'+cv.to2]:null;
+  var o1=document.getElementById('o1-'+cv.id);
+  o1.textContent=r1?fmt(amt*r1,cv.to1):'\u2014';
+  o1.className='result-val'+(r1?'':' dim');
+  if(cv.to2){
+    var o2=document.getElementById('o2-'+cv.id);
+    o2.textContent=r2?fmt(amt*r2,cv.to2):'\u2014';
+    o2.className='result-val'+(r2?'':' dim');
   }
-
-  const r1el = document.getElementById('r1d-' + c.id);
-  if (r1el) r1el.textContent = r1 ? r1.toFixed(4) : '—';
-  const r2el = document.getElementById('r2d-' + c.id);
-  if (r2el && r2) r2el.textContent = r2.toFixed(4);
+  var e1=document.getElementById('r1-'+cv.id);
+  if(e1)e1.textContent=r1?r1.toFixed(4):'\u2014';
+  var e2=document.getElementById('r2-'+cv.id);
+  if(e2&&r2)e2.textContent=r2.toFixed(4);
 }
 
-function recalcAll() { CONVERTERS.forEach(c => recalc(c)); }
+function recalcAll(){CONVERTERS.forEach(function(cv){recalc(cv);});}
 
-function setStatus(type, msg) {
-  const dot = document.getElementById('status-dot');
-  dot.className = 'dot ' + type;
-  document.getElementById('status-text').textContent = msg;
+function setStatus(type,msg){
+  document.getElementById('status-dot').className='dot '+type;
+  document.getElementById('status-text').textContent=msg;
 }
 
-async function fetchRates() {
-  const btn = document.getElementById('refresh-btn');
-  const spin = document.getElementById('spin');
-  const err = document.getElementById('err-card');
+// v2 API returns an array: [{date, base, quote, rate}, ...]
+// One object per currency pair requested
+function parseV2(arr, base, quote){
+  var found=arr.find(function(x){return x.base===base&&x.quote===quote;});
+  return found?found.rate:null;
+}
 
-  btn.disabled = true;
+function fetchRates(){
+  var btn=document.getElementById('refresh-btn');
+  var spin=document.getElementById('spin');
+  var err=document.getElementById('err-card');
+  btn.disabled=true;
   spin.classList.add('active');
-  err.style.display = 'none';
-  setStatus('loading', 'Fetching live rates\u2026');
+  err.style.display='none';
+  setStatus('loading','Fetching live rates\u2026');
+  document.getElementById('sub-title').textContent='Fetching\u2026';
 
-  const prompt = `Search the web for today's live mid-market exchange rates and return ONLY a raw JSON object with no explanation, no markdown, no backticks — just the JSON itself:
-{"EUR_CAD": <number>, "EUR_USD": <number>, "JPY_CAD": <number>, "JPY_USD": <number>, "USD_CAD": <number>}
-Use the most current rates available today.`;
+  // Single call with USD base gets us USD->CAD and USD->JPY
+  // EUR base gets us EUR->CAD and EUR->USD
+  // Then we derive JPY->CAD and JPY->USD from USD rates
+  Promise.all([
+    fetch('https://api.frankfurter.dev/v2/rates?base=EUR&quotes=CAD,USD'),
+    fetch('https://api.frankfurter.dev/v2/rates?base=USD&quotes=CAD,JPY')
+  ])
+  .then(function(responses){
+    if(!responses[0].ok||!responses[1].ok){
+      throw new Error('HTTP '+responses[0].status+' / '+responses[1].status);
+    }
+    return Promise.all([responses[0].json(),responses[1].json()]);
+  })
+  .then(function(data){
+    var eurArr=data[0]; // array of {date, base:'EUR', quote:'CAD'|'USD', rate}
+    var usdArr=data[1]; // array of {date, base:'USD', quote:'CAD'|'JPY', rate}
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    var eurCad=parseV2(eurArr,'EUR','CAD');
+    var eurUsd=parseV2(eurArr,'EUR','USD');
+    var usdCad=parseV2(usdArr,'USD','CAD');
+    var usdJpy=parseV2(usdArr,'USD','JPY');
 
-    if (!res.ok) throw new Error('API error ' + res.status);
-
-    const data = await res.json();
-    const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-    const match = textBlocks.match(/\{[^{}]*\}/);
-    if (!match) throw new Error('No JSON in response');
-
-    const parsed = JSON.parse(match[0]);
-    const keys = ['EUR_CAD', 'EUR_USD', 'JPY_CAD', 'JPY_USD', 'USD_CAD'];
-    for (const k of keys) {
-      if (typeof parsed[k] !== 'number' || parsed[k] <= 0) throw new Error('Bad value for ' + k);
-      rates[k] = parsed[k];
+    if(!eurCad||!eurUsd||!usdCad||!usdJpy){
+      throw new Error('Missing expected rates in response');
     }
 
-    lastFetchTime = new Date();
-    const timeStr = lastFetchTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setStatus('live', 'Live rates \u00b7 updated ' + timeStr);
-    document.getElementById('sub-title').textContent = 'Live \u00b7 ' + timeStr;
-    document.getElementById('last-known').textContent = '';
-    recalcAll();
+    rates.EUR_CAD=eurCad;
+    rates.EUR_USD=eurUsd;
+    rates.USD_CAD=usdCad;
+    // Derive: 1 JPY = (1/usdJpy) USD, and (1/usdJpy)*usdCad CAD
+    rates.JPY_USD=1/usdJpy;
+    rates.JPY_CAD=(1/usdJpy)*usdCad;
 
-  } catch (e) {
-    rates = { ...FALLBACK };
-    err.textContent = 'Could not fetch live rates. Showing fallback rates from Apr 6, 2026. Check your connection and try again.';
-    err.style.display = 'block';
-    setStatus('error', 'Using fallback rates');
-    document.getElementById('sub-title').textContent = 'Fallback rates \u00b7 Apr 6, 2026';
-    document.getElementById('last-known').textContent = 'Tip: connect to Wi-Fi and tap Refresh for live rates';
+    var rateDate=eurArr[0]?eurArr[0].date:'today';
+    var t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    setStatus('live','Live \u00b7 '+rateDate+' \u00b7 updated '+t);
+    document.getElementById('sub-title').textContent='Live rates \u00b7 '+t;
     recalcAll();
-  } finally {
-    btn.disabled = false;
+  })
+  .catch(function(e){
+    rates=Object.assign({},FALLBACK);
+    err.textContent='Could not fetch live rates: '+e.message+'. Showing fallback rates from Apr 6, 2026.';
+    err.style.display='block';
+    setStatus('error','Fallback rates \u00b7 Apr 6, 2026');
+    document.getElementById('sub-title').textContent='Fallback rates';
+    recalcAll();
+  })
+  .finally(function(){
+    btn.disabled=false;
     spin.classList.remove('active');
-  }
+  });
 }
 
 buildCards();
