@@ -24,6 +24,8 @@
     --book: #e86a6a;
     --accent: #e8c96a;
     --baseball: #6abf8e;
+    --gear: #e8a84a;
+    --shop: #a06ad4;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -112,6 +114,8 @@
   .sheet-save:disabled { opacity: 0.35; }
   .del-btn { flex-shrink: 0; padding: 4px 6px; background: transparent; border: none; color: var(--subtle); font-size: 16px; cursor: pointer; line-height: 1; border-radius: 6px; margin-left: 2px; transition: color 0.15s; }
   .del-btn:hover { color: var(--book); }
+  .gear-tag { font-size: 10px; padding: 2px 7px; border-radius: 8px; background: rgba(232,168,74,0.15); color: var(--gear); font-weight: 600; white-space: nowrap; }
+  .shop-tag { font-size: 10px; padding: 2px 7px; border-radius: 8px; background: rgba(160,106,212,0.15); color: var(--shop); font-weight: 600; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -122,9 +126,8 @@
 </div>
 
 <div class="baseball-banner">
-  <div class="bb-title">Available games — Koshien sold out, go Orix</div>
-  <div class="bb-game"><strong>Apr 28 Tue 18:00</strong> · Orix Buffaloes vs SoftBank Hawks · Kyocera Dome, Osaka — evening option on arrival night</div>
-  <div class="bb-game"><strong>Apr 29 Wed 14:00</strong> · Orix Buffaloes vs SoftBank Hawks · Kyocera Dome, Osaka — recommended day game, easy to get tickets</div>
+  <div class="bb-title">Baseball — Yakult Swallows vs DeNA Baystars · May 2</div>
+  <div class="bb-game"><strong>May 2 Sat 18:00</strong> · Yakult Swallows vs DeNA Baystars · Jingu Stadium, Tokyo — 20 min from Ginza by metro to Gaiemmae</div>
 </div>
 
 <div class="legend">
@@ -133,6 +136,8 @@
   <div class="legend-item"><div class="ldot" style="background:var(--exp)"></div>Experiences</div>
   <div class="legend-item"><div class="ldot" style="background:var(--book)"></div>Book ahead</div>
   <div class="legend-item"><div class="ldot" style="background:var(--baseball)"></div>Baseball</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--gear)"></div>Baseball gear</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--shop)"></div>Shopping</div>
 </div>
 
 <div class="filter-row" id="filters">
@@ -191,7 +196,7 @@ const DAYS = [
   {
     id: '28', cls: 'd28', label: 'Apr 28', title: 'Arrival · Osaka settle-in',
     sub: 'Land Haneda PM · Shinkansen to Osaka · first night',
-    tip: '<strong>Day tip:</strong> Haneda to Shin-Osaka is ~2.5hrs on the Nozomi shinkansen. Get an ICOCA card at the airport for all Kansai transit. Drop bags at hotel then head straight to Dotonbori — it glows at night.',
+    tip: '<strong>Day tip:</strong> Haneda to Shin-Osaka is ~2.5hrs on the Nozomi shinkansen. Get an ICOCA card at the airport for all Kansai transit. Drop bags at hotel (your Osaka base for the whole week) then head straight to Dotonbori — it glows at night.',
     food: [
       { name: 'Dotonbori street food crawl', tip: 'Takoyaki at Kukuru or Wanaka, grilled scallops on sticks, tamagoyaki. Walk the whole strip.', book: false },
       { name: 'Ichiran Ramen (Dotonbori)', tip: 'Solo ramen booth experience. Open 24hrs. Perfect jet-lag meal at any hour.', book: false },
@@ -205,8 +210,12 @@ const DAYS = [
       { name: 'Dotonbori canal walk', tip: 'The Glico man sign, neon reflections on the water. Best at night. Walk both banks.', book: false },
       { name: 'Shinsaibashi shopping street', tip: 'Covered arcade running north from Dotonbori. Good for a late browse.', book: false },
     ],
-    exp: [
-      { name: 'Orix Buffaloes game (18:00) — optional', tip: 'If you want the game tonight, Kyocera Dome is easy to reach from any Osaka hotel. Good for arrival night since it starts at 6pm and gives you time to check in first.', book: true, baseball: true },
+    exp: [],
+    gear: [],
+    shop: [
+      { name: 'Shinsaibashi-suji shopping arcade', tip: '600m covered arcade from Dotonbori heading north. Mix of Japanese brands, Don Quijote, drugstores, and local boutiques. Great first-night browse since it stays open late.', book: false },
+      { name: 'Don Quijote (Namba)', tip: 'Open until 5am. Essential. Snacks, cosmetics, electronics, cheap clothing, and completely chaotic in the best way. Stock up on gifts and Japanese convenience items.', book: false },
+      { name: 'Matsumoto Kiyoshi drugstore', tip: 'Japan\'s biggest drugstore chain. Incredible for skincare, Japanese cosmetics, and health products at prices way lower than at home. Usually near major stations.', book: false },
     ]
   },
   {
@@ -228,12 +237,20 @@ const DAYS = [
       { name: 'Todaiji Temple (Nara)', tip: 'World\'s largest bronze Buddha. Enormous wooden hall. ¥600 entry. Right inside the deer park.', book: false },
       { name: 'Kasuga Taisha shrine (Nara)', tip: 'Ancient shrine in forest with hundreds of stone lanterns. Beautiful 15-min walk from Todaiji.', book: false },
     ],
-    exp: []
+    exp: [],
+    gear: [],
+    shop: [
+      { name: 'Aritsugu knives (Nishiki Market)', tip: '450-year-old knife shop inside Nishiki Market. Get a knife engraved with your name. Kitchen knives from ¥5,000. One of the best souvenirs you can bring home from Japan.', book: false },
+      { name: 'Teramachi + Shinkyogoku arcades', tip: 'Two parallel covered shopping streets packed with traditional crafts, ceramics, fans, incense, and quirky souvenirs. Great for wandering between temples.', book: false },
+      { name: 'Sou Sou (Kyoto)', tip: 'Modern Japanese clothing brand known for patterned split-toe shoes and kimono-inspired pieces. Very distinctive aesthetic. Near Shijo-dori.', book: false },
+      { name: 'Morita Washi / Kamiji Kakimoto', tip: 'Traditional handmade washi paper shops in downtown Kyoto. Beautiful papers, bookmarks, stationery. Excellent lightweight gifts.', book: false },
+      { name: 'Higashimuki arcade (Nara)', tip: 'Nara\'s covered shopping street right next to Kintetsu-Nara station. Good for deer-themed souvenirs, local sweets, and crafts on your way back to the train.', book: false },
+    ]
   },
   {
     id: '30', cls: 'd30', label: 'Apr 30', title: 'Full Osaka day',
     sub: 'All day Osaka · eat everything · explore the city',
-    tip: '<strong>Day tip:</strong> Your free Osaka day with nowhere to be. Use it to eat everything, explore neighborhoods you missed, and wander without a plan. Shinsekai in the morning, Kuromon at lunch, Amerika Mura in the afternoon, Dotonbori and Hozenji at night.',
+    tip: '<strong>Day tip:</strong> Your free Osaka day with nowhere to be. Eat everything, explore neighborhoods you missed, and wander without a plan. Shinsekai in the morning, Kuromon at lunch, Amerika Mura in the afternoon, Dotonbori and Hozenji at night.',
     food: [
       { name: 'Kuromon Ichiba Market', tip: 'Osaka\'s main food market — 150+ stalls. Fresh uni on rice, wagyu skewers, fugu sashimi. Go at lunch time. Best before 1pm.', book: false },
       { name: 'Okonomiyaki Mizuno', tip: 'Michelin-recommended. Their yamaimo-yaki (mountain yam pancake) is the bestseller. Queue outside or book ahead.', book: true },
@@ -242,7 +259,7 @@ const DAYS = [
       { name: 'Hariju shabu-shabu (since 1923)', tip: 'One of Osaka\'s oldest restaurants. Ladies in kimonos serve sukiyaki and shabu-shabu on tatami. Book ahead.', book: true },
       { name: 'Nagahori izakaya (Michelin-starred)', tip: 'First izakaya in the world to earn a Michelin star (2010). No-frills dishes using vegetables the chef selects himself. Book ahead.', book: true },
       { name: 'Sushi Roku (Nishi-Tenma)', tip: 'Intimate omakase counter — wraps nori around marinated tuna nigiri. English-friendly. Book ahead.', book: true },
-      { name: 'Shin-Umeda Shokudogai (food alley)', tip: 'Under the JR tracks — retro maze of tiny izakayas, kushikatsu, soba, and standing sushi bars. Perfect late-night wander.', book: false },
+      { name: 'Shin-Umeda Shokudogai (night)', tip: 'Under the JR tracks — retro maze of tiny izakayas, kushikatsu, soba, and standing sushi bars. Perfect late-night wander.', book: false },
     ],
     sights: [
       { name: 'Osaka Castle + moat walk', tip: 'The exterior and moat are beautiful. Skip the interior museum and just walk the gardens. Best in the morning.', book: false },
@@ -250,8 +267,22 @@ const DAYS = [
       { name: 'Amerika Mura', tip: 'Osaka\'s streetwear and youth culture district. Triangle Park is the center. Good for thrift shopping in the afternoon.', book: false },
       { name: 'Dotonbori + Hozenji at night', tip: 'Second night on Dotonbori hits differently when you know what to look for. Walk Hozenji Yokocho alley for the lantern-lit izakaya atmosphere.', book: false },
     ],
-    exp: [
-      { name: 'Orix Buffaloes vs SoftBank Hawks (14:00)', tip: 'Kyocera Dome — indoor, air-conditioned, relaxed atmosphere. Easier to get tickets than Koshien. Get the takoyaki inside, buy an Orix jersey (Shunpei Yamashita #11 is the face of the franchise). Book tickets via ticketsinjapan.com or chiketto.org.', book: true, baseball: true },
+    exp: [],
+    gear: [
+      { name: 'Alpen Osaka (Namba)', tip: 'Best place to buy your glove. Full wall of SSK, Mizuno Pro, Rawlings, and Zett. Staff will steam and shape it on the spot. Budget ¥15,000–30,000 for a branded glove. Take the afternoon to pick carefully.', book: false },
+      { name: 'Super Sports Xebio (Shinsaibashi)', tip: 'Alternative to Alpen. Similar selection, slightly smaller. Also does steaming service. Good for comparing brands side by side.', book: false },
+      { name: 'SSK glove', tip: 'Japanese brand used by most NPB pros. Very clean designs, excellent leather. Best balance of quality and recognizability. ¥15,000–30,000.', book: false },
+      { name: 'Mizuno Pro glove', tip: 'The prestige pick. Gorgeous craftsmanship, what Japanese pros actually use. Look for the "Mizuno Pro" line specifically, not regular Mizuno. ¥20,000–50,000+.', book: false },
+      { name: 'Rawlings Japan-exclusive colorways', tip: 'Japan-only navy, black, and caramel colorways you cannot get in North America. Ask staff for the Japan-exclusive rack. ¥15,000–25,000.', book: false },
+      { name: 'Zett glove', tip: 'Underrated Japanese brand, popular with serious amateur players. Slightly more affordable than SSK/Mizuno Pro but still excellent quality. ¥12,000–20,000.', book: false },
+      { name: 'Get it steamed same day', tip: 'After buying, ask staff to steam and shape it (they all offer this). Then carry it around Osaka for the next couple days — natural use will break it in before the game on May 2.', book: false },
+    ],
+    shop: [
+      { name: 'Amerika Mura thrift shops', tip: 'Triangle Park area has 20+ vintage and thrift shops in a few blocks. Mix of curated vintage and affordable secondhand. Good for streetwear, 90s pieces, and denim.', book: false },
+      { name: 'Tenjinbashi-suji Shopping Street', tip: 'Japan\'s longest shopping street at 2.6km. Very local feel — not touristy at all. Hardware shops, old sweets stores, small izakayas. Worth the walk if you want to see how Osaka actually shops.', book: false },
+      { name: 'Grand Front Osaka (Umeda)', tip: 'Sophisticated mall above Osaka Station. Great for Japanese lifestyle brands, Muji, and a curated selection of designers. The upper floors have a beautiful terrace.', book: false },
+      { name: 'Hankyu Umeda Main Store', tip: 'Iconic 15-floor department store. The basement food hall (depachika) is extraordinary — pick up premium bento, wagashi, and packaged Japanese sweets as gifts. B1 is the move.', book: false },
+      { name: 'Namba Parks shopping mall', tip: 'Open-air mall with rooftop garden park. Good mix of Japanese fashion brands and restaurants. Less overwhelming than Umeda. The rooftop is a great chill spot.', book: false },
     ]
   },
   {
@@ -263,48 +294,69 @@ const DAYS = [
       { name: 'Kobe beef lunch set', tip: 'Any certified teppanyaki spot — lunch sets run ¥8,000–15,000 vs ¥25,000+ at dinner. Same beef, same chef.', book: false },
       { name: 'Nankinmachi (Kobe Chinatown)', tip: 'Japan\'s second-largest Chinatown. Excellent bao, dumplings, char siu on sticks for a quick snack while walking.', book: false },
       { name: 'Morihachi confectionery', tip: 'Famous Kobe sweets shop since 1903. Pick up wagashi and baumkuchen as gifts.', book: false },
-      { name: 'Stadium food at Koshien', tip: 'Get the takoyaki inside the stadium. There\'s also beer girls who walk the aisles — flag one down immediately.', book: false },
     ],
     sights: [
       { name: 'Kitano Ijinkan (foreign residences)', tip: 'Meiji-era Western-style mansions built by foreign merchants. Great for photos. The hill walk is scenic.', book: false },
-      { name: 'Kobe Harborland', tip: 'Waterfront area with port views. Pleasant morning stroll before heading to lunch.', book: false },
+      { name: 'Kobe Harborland', tip: 'Waterfront area with port views. Pleasant afternoon stroll.', book: false },
       { name: 'Kobe Nunobiki Herb Garden', tip: 'Take the ropeway up for panoramic views over Kobe and the bay.', book: false },
     ],
-    exp: []
+    exp: [],
+    gear: [],
+    shop: [
+      { name: 'Kitano-cho antiques + boutiques', tip: 'The streets around the foreign residences have small antique shops and international boutiques reflecting Kobe\'s cosmopolitan history. Good for ceramics and vintage Western goods.', book: false },
+      { name: 'Kobe Harborland (Mosaic mall)', tip: 'Right on the waterfront. Uniqlo, Japanese brands, good souvenir shops. Relaxed atmosphere — worth browsing after your beef lunch.', book: false },
+      { name: 'Sannomiya shopping district', tip: 'Kobe\'s main shopping strip. Covered arcades with Japanese fashion brands, bookshops, and local boutiques. More refined feel than Osaka\'s Namba.', book: false },
+      { name: 'Kobe leather goods', tip: 'Kobe has a long tradition of leather craftsmanship. Look for small leather workshops in the Kitano area selling wallets, bags, and belts. Quality is excellent and prices are fair.', book: false },
+    ]
   },
   {
     id: '2', cls: 'd2', label: 'May 2', title: 'Shinkansen to Tokyo · Baystars game',
-    sub: 'Full Osaka morning → 14:30 shinkansen → 18:00 Baystars game → Ginza',
-    tip: '<strong>Day tip:</strong> Game is at 18:00 — you have the whole morning free in Osaka. Depart Shin-Osaka around 14:30 on the Nozomi (Shinagawa ~16:50), then Keikyu or Tokyu Toyoko line to Yokohama Stadium, arriving by ~17:30. Grab stadium food before first pitch. Game ends ~21:00, then head into Ginza to check in. Stay in Ginza tonight — the Sunday pedestrian street runs noon–5pm tomorrow, perfect before Haneda.',
+    sub: 'Full Osaka morning · 14:30 shinkansen · 18:00 game · Ginza',
+    tip: '<strong>Day tip:</strong> Game is at 18:00 — you have the whole morning free in Osaka. Depart Shin-Osaka around 14:30 on the Nozomi (Shinagawa ~16:50), then Tokyo Metro Ginza line to Gaiemmae (~20 min), Jingu Stadium is a 5-min walk. Game ends ~21:00, head to Ginza to check in. Stay in Ginza tonight — the Sunday pedestrian street runs noon–5pm tomorrow.',
     food: [
       { name: 'Full Osaka morning — one last meal', tip: 'You have the whole morning free. Use it for anything you missed — Kuromon Market, a standing soba, or just walk Dotonbori one more time in the daylight.', book: false },
       { name: 'Shinkansen ekiben (bento)', tip: 'Buy a bento at Shin-Osaka before boarding. The battera (Osaka-style pressed sushi) or wagyu bento are the local picks. Eat on the train.', book: false },
-      { name: 'Yokohama Stadium food', tip: 'Baystars games are known for great stadium food — craft beer, garlic shrimp, sashimi bowls. Arrive early and eat before finding your seat.', book: false },
-      { name: 'Ginza dinner', tip: 'After the game, head to Ginza for dinner. Great first night in Tokyo to splurge — Kyubey for sushi, or Cloud Club Matcha for a late matcha dessert to finish.', book: false },
+      { name: 'Jingu Stadium food', tip: 'Jingu has great stadium food — yakitori, karaage, draft beer. Arrive early and grab food before finding your seat. The craft beer stands are excellent.', book: false },
+      { name: 'Ginza dinner', tip: 'After the game, head to Ginza for dinner. Great first Tokyo night to splurge — Kyubey for sushi, or Cloud Club Matcha for a late matcha dessert to finish.', book: false },
     ],
     sights: [
-      { name: 'Yokohama Stadium', tip: 'Open-air stadium in the heart of Yokohama. Lively atmosphere — Baystars fans are enthusiastic and the fireworks on a win are spectacular. Buy a navy Baystars jersey here.', book: false },
-      { name: 'Ginza evening stroll', tip: 'Check into your hotel then walk the Chuo-dori strip. Window shop the flagships — Ginza Six, Itoya, Uniqlo. The district is beautiful lit up at night.', book: false },
+      { name: 'Jingu Stadium', tip: 'Beautiful open-air stadium in Jingu Gaien park. Surrounded by trees, very atmospheric. Arrive at Gaiemmae station (Tokyo Metro Ginza line), 5-min walk.', book: false },
+      { name: 'Ginza evening stroll', tip: 'Check into hotel then walk the Chuo-dori strip. Window shop the flagships — Ginza Six, Itoya, Uniqlo. The district is beautiful lit up at night.', book: false },
     ],
     exp: [
-      { name: 'DeNA Baystars vs Yakult Swallows (~14:00)', tip: 'Yokohama Stadium — 30 min from Shinagawa by Keikyu line to Kannai Station, or 25 min from Shibuya by Tokyu Toyoko line to Kannai. Open-air stadium with fireworks on a win. Buy a navy Baystars jersey at the merch stand. Book tickets at baystars.co.jp.', book: true, baseball: true },
+      { name: 'Yakult Swallows vs DeNA Baystars (18:00)', tip: 'Jingu Stadium — 20 min from Ginza on the Tokyo Metro Ginza line to Gaiemmae station. Open-air stadium, great atmosphere. Book tickets at yakult-swallows.co.jp.', book: true, baseball: true },
+    ],
+    gear: [
+      { name: 'Swallows jersey at Jingu Stadium store', tip: 'Gates open ~16:30, 90 min before first pitch. The stadium store is right inside the entrance — grab your jersey before finding your seat. Official Swallows home jersey (white/navy) is ¥8,000–12,000.', book: false },
+      { name: 'Best seats for catching a foul ball', tip: 'Yellow sections along the first and third base lines (Gates 4&5 and 11&12). Right-handed batters pull foul balls toward first base constantly. Arrive early, track the ball from the pitcher release.', book: false },
+      { name: 'Bring your glove from Osaka', tip: 'You\'ve had it since Apr 30 — two days of carry time should have softened it up nicely. Wear it during batting practice before the game for the best shot at a ball.', book: false },
+    ],
+    shop: [
+      { name: 'Ginza Six (evening browse)', tip: 'Open until 8:30pm — a great first Tokyo luxury shopping experience even if you\'re just browsing after a long day.', book: false },
+      { name: 'Don Quijote Ginza (late night)', tip: 'Open until 5am. Great for last-minute cheap Tokyo souvenir runs and snacks for the hotel room. Right in Ginza.', book: false },
     ]
   },
   {
     id: '3', cls: 'd3', label: 'May 3', title: 'Ginza Sunday street · Haneda pickup',
     sub: 'Chuo-dori pedestrian street noon–5pm · Haneda 13:55',
-    tip: '<strong>Day tip:</strong> You\'re already in Ginza — perfect. The Chuo-dori pedestrian zone runs Sunday noon–5pm, right before your Haneda pickup. Walk the middle of the street, browse the open-air market stalls, grab a last coffee. Haneda is 30 min from Ginza on the Keikyu line. Head out by 1:10pm to arrive before 1:55pm.',
+    tip: '<strong>Day tip:</strong> You\'re already in Ginza — perfect. The Chuo-dori pedestrian zone runs Sunday noon–5pm, right before your Haneda pickup. Walk the middle of Japan\'s most expensive street, browse open-air market stalls, grab a last coffee. Haneda is 30 min from Ginza on the Keikyu line. Head out by 1:10pm to arrive before 1:55pm.',
     food: [
-      { name: 'Ginza morning coffee', tip: 'Cafe de l\'Ambre on Chuo-dori is one of Tokyo\'s oldest coffee shops — been going since 1948. Perfect final morning ritual.', book: false },
-      { name: 'Chuo-dori street market food', tip: 'The pedestrian zone often has food vendors and pop-ups during the Sunday closure. Grab something and eat in the middle of the road — you can\'t do this anywhere else in Ginza.', book: false },
+      { name: 'Ginza morning coffee', tip: 'Cafe de l\'Ambre on Chuo-dori — one of Tokyo\'s oldest coffee shops, open since 1948. Perfect final morning ritual.', book: false },
+      { name: 'Chuo-dori street market food', tip: 'The pedestrian zone often has food vendors and pop-ups during the Sunday closure. Grab something and eat in the middle of the road.', book: false },
       { name: 'Konbini airport run', tip: 'Stock up on Japanese snacks and drinks at the Ginza 7-Eleven before heading to Haneda. Onigiri, melon pan, chu-hi for the ride.', book: false },
     ],
     sights: [
-      { name: 'Ginza Chuo-dori pedestrian zone (noon–5pm)', tip: 'Every Sunday, 5 blocks of Chuo-dori close to traffic. Walk the middle of Japan\'s most expensive street, browse stalls, and take photos. Totally free and totally surreal.', book: false },
+      { name: 'Ginza Chuo-dori pedestrian zone (noon–5pm)', tip: 'Every Sunday, 5 blocks of Chuo-dori close to traffic. Walk the middle of Japan\'s most expensive street, browse stalls, take photos. Totally free and totally surreal.', book: false },
       { name: 'Itoya stationery (last shop)', tip: 'If you haven\'t been yet, the 12-floor stationery flagship is right on Chuo-dori. Great for last-minute gifts.', book: false },
     ],
     exp: [
       { name: 'Pickup girlfriend at Haneda (13:55)', tip: 'Ginza to Haneda on the Keikyu Airport Express is ~30 min from Ginza-Itchome station. Depart Ginza by 1:10pm. Terminal 3 for international arrivals.', book: false },
+    ],
+    gear: [],
+    shop: [
+      { name: 'Ginza Chuo-dori pedestrian zone', tip: 'Every Sunday noon–5pm. All the flagship stores are open and you can browse them on foot with no cars. Ginza Six, Itoya, Uniqlo, Hermes, all of them.', book: false },
+      { name: 'Itoya stationery flagship', tip: '12-floor stationery landmark on Chuo-dori. Perfect for last-minute gifts — beautiful Japanese notebooks, pens, and washi tape. Lightweight and packable.', book: false },
+      { name: 'Ginza Loft', tip: 'Design-forward department store. Good for unique Japanese goods, cosmetics, and lifestyle items. Open until 9pm.', book: false },
     ]
   }
 ];
@@ -333,7 +385,7 @@ const dayCities = { '28': 'Osaka Japan', '29': 'Kyoto Japan', '30': 'Osaka Japan
 function updateProgress() {
   let total = 0, done = 0;
   DAYS.forEach(day => {
-    ['food','sights','exp'].forEach(type => {
+    ['food','sights','exp','gear','shop'].forEach(type => {
       const arr = day[type];
       if (!arr) return;
       arr.forEach((item, i) => { total++; if (checked[getItemId(day.id, type, i)]) done++; });
@@ -371,6 +423,8 @@ function renderAll() {
         ${renderSection(day, 'food', 'Food & drink', 'var(--food)')}
         ${renderSection(day, 'sights', 'Sightseeing', 'var(--sight)')}
         ${renderSection(day, 'exp', 'Experiences', 'var(--exp)')}
+        ${renderSection(day, 'gear', 'Baseball gear', 'var(--gear)')}
+        ${renderSection(day, 'shop', 'Shopping', 'var(--shop)')}
         ${customForDay.length ? renderCustomSection(customForDay, false) : ''}
         <div class="section"><div class="day-tip" style="margin: 12px 0;">${day.tip}</div></div>
       </div>`;
@@ -433,7 +487,7 @@ function renderSection(day, type, label, color) {
     html += `<div class="item ${done}" onclick="toggleItem('${id}', this)">
       <div class="check-wrap"><div class="checkbox"><span class="checkmark">&#10003;</span></div></div>
       <div class="item-text">
-        <div class="item-name">${item.name}${item.book ? '<span class="book-tag">book ahead</span>' : ''}${item.baseball ? '<span class="baseball-tag">baseball</span>' : ''}</div>
+        <div class="item-name">${item.name}${item.book ? '<span class="book-tag">book ahead</span>' : ''}${item.baseball ? '<span class="baseball-tag">baseball</span>' : ''}${type === 'gear' ? '<span class="gear-tag">gear</span>' : ''}${type === 'shop' ? '<span class="shop-tag">shop</span>' : ''}</div>
         <div class="item-tip">${item.tip}</div>
         ${mapBtn(item.name, city)}
       </div>
