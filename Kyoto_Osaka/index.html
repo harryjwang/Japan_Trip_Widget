@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kansai Trip">
+<meta name="theme-color" content="#1a1a1a">
+<title>Kansai Trip · Apr 28 – May 3</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0ede8;
+    --muted: #888;
+    --subtle: #555;
+    --food: #e8856a;
+    --shop: #6abf8e;
+    --sight: #6aaee8;
+    --exp: #c06ac0;
+    --book: #e86a6a;
+    --accent: #e8c96a;
+    --baseball: #6abf8e;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { background: var(--bg); }
+  body { font-family: -apple-system, 'SF Pro Text', BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overscroll-behavior: none; }
+  .topbar { position: sticky; top: 0; z-index: 100; background: rgba(15,15,15,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: calc(var(--safe-top) + 14px) 18px 14px; border-bottom: 0.5px solid var(--border); }
+  .topbar h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+  .topbar .sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .baseball-banner { background: rgba(106,191,142,0.1); border-bottom: 0.5px solid rgba(106,191,142,0.2); padding: 10px 18px; }
+  .baseball-banner .bb-title { font-size: 11px; font-weight: 600; color: var(--baseball); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .bb-game { font-size: 12px; color: var(--muted); padding: 3px 0; border-bottom: 0.5px solid rgba(106,191,142,0.1); line-height: 1.4; }
+  .bb-game:last-child { border-bottom: none; }
+  .bb-game strong { color: var(--baseball); font-weight: 500; }
+  .filter-row { display: flex; gap: 6px; padding: 10px 18px; overflow-x: auto; scrollbar-width: none; border-bottom: 0.5px solid var(--border); background: var(--bg); }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-btn { flex-shrink: 0; font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .content { padding: 12px 14px calc(var(--safe-bottom) + 80px); }
+  .day-card { background: var(--surface); border-radius: 16px; margin-bottom: 10px; overflow: hidden; border: 0.5px solid var(--border); }
+  .day-header { padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .day-header:hover { background: rgba(255,255,255,0.03); }
+  .day-num { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .d28 { background: #1a2a3a; color: #6aaee8; }
+  .d29 { background: #1a2e1a; color: #6abf8e; }
+  .d30 { background: #2e1a2e; color: #c06ac0; }
+  .d1 { background: #2e2010; color: #e8c96a; }
+  .d2 { background: #2a1a1a; color: #e8856a; }
+  .d3 { background: #1a2a2a; color: #6acfcf; }
+  .day-header-text { flex: 1; min-width: 0; }
+  .day-title { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+  .day-sub { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chevron { color: var(--subtle); font-size: 12px; transition: transform 0.2s; flex-shrink: 0; }
+  .chevron.open { transform: rotate(180deg); }
+  .day-body { border-top: 0.5px solid var(--border); }
+  .section { padding: 0 16px; }
+  .section-head { display: flex; align-items: center; gap: 6px; padding: 11px 0 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border-bottom: 0.5px solid var(--border); }
+  .sdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
+  .item:last-child { border-bottom: none; }
+  .item.done { opacity: 0.38; }
+  .item.done .item-name { text-decoration: line-through; }
+  .check-wrap { padding-top: 2px; flex-shrink: 0; }
+  .checkbox { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--subtle); display: flex; align-items: center; justify-content: center; transition: all 0.15s; background: transparent; }
+  .item.done .checkbox { background: var(--subtle); border-color: var(--subtle); }
+  .checkmark { display: none; color: var(--bg); font-size: 12px; font-weight: 700; }
+  .item.done .checkmark { display: block; }
+  .item-text { flex: 1; min-width: 0; }
+  .item-name { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; line-height: 1.3; }
+  .book-tag { font-size: 10px; padding: 2px 7px; border-radius: 8px; background: rgba(232,106,106,0.15); color: var(--book); font-weight: 600; white-space: nowrap; }
+  .baseball-tag { font-size: 10px; padding: 2px 7px; border-radius: 8px; background: rgba(106,191,142,0.15); color: var(--baseball); font-weight: 600; white-space: nowrap; }
+  .custom-tag { font-size: 10px; padding: 2px 7px; border-radius: 8px; background: rgba(232,201,106,0.15); color: var(--accent); font-weight: 600; white-space: nowrap; }
+  .item-tip { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+  .map-btn { display: inline-flex; align-items: center; gap: 3px; margin-top: 5px; font-size: 11px; font-weight: 500; color: var(--sight); background: rgba(106,174,232,0.1); border: 0.5px solid rgba(106,174,232,0.25); border-radius: 6px; padding: 3px 8px; text-decoration: none; cursor: pointer; white-space: nowrap; }
+  .map-btn:active { opacity: 0.7; }
+  .day-tip { margin: 0 16px 14px; padding: 10px 12px; background: var(--surface2); border-radius: 10px; font-size: 12px; color: var(--muted); line-height: 1.5; border-left: 2px solid var(--accent); }
+  .day-tip strong { color: var(--accent); font-weight: 600; }
+  .legend { padding: 10px 18px; display: flex; gap: 14px; flex-wrap: wrap; border-bottom: 0.5px solid var(--border); background: var(--bg); }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+  .ldot { width: 7px; height: 7px; border-radius: 50%; }
+  .progress-bar { height: 2px; background: var(--surface2); margin: 0 18px 14px; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--food)); border-radius: 2px; transition: width 0.3s; }
+  .progress-label { font-size: 11px; color: var(--muted); padding: 0 18px; margin-bottom: 12px; }
+  .clear-btn { position: fixed; bottom: calc(var(--safe-bottom) + 20px); right: 18px; background: var(--surface2); border: 0.5px solid var(--border); color: var(--muted); font-size: 12px; padding: 8px 14px; border-radius: 20px; cursor: pointer; z-index: 50; }
+  .add-btn { position: fixed; bottom: calc(var(--safe-bottom) + 20px); left: 18px; background: var(--accent); border: none; color: #1a1600; font-size: 13px; font-weight: 600; padding: 9px 16px; border-radius: 20px; cursor: pointer; z-index: 50; display: flex; align-items: center; gap: 6px; }
+  .sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; backdrop-filter: blur(4px); }
+  .sheet-overlay.open { display: flex; align-items: flex-end; }
+  .sheet { background: var(--surface); border-radius: 20px 20px 0 0; border-top: 0.5px solid var(--border); padding: 0 0 calc(var(--safe-bottom) + 20px); width: 100%; max-height: 90vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32,0.72,0,1); }
+  .sheet-overlay.open .sheet { transform: translateY(0); }
+  .sheet-handle { width: 36px; height: 4px; background: var(--subtle); border-radius: 2px; margin: 12px auto 4px; }
+  .sheet-title { font-size: 16px; font-weight: 600; padding: 10px 18px 16px; border-bottom: 0.5px solid var(--border); }
+  .sheet-body { padding: 16px 18px; }
+  .field-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .field-input { width: 100%; background: var(--surface2); border: 0.5px solid var(--border); border-radius: 10px; color: var(--text); font-size: 15px; padding: 10px 12px; margin-bottom: 14px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; outline: none; }
+  .field-input:focus { border-color: var(--accent); }
+  .field-input::placeholder { color: var(--subtle); }
+  .seg-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .seg-btn { flex: 1; min-width: 70px; padding: 8px 6px; border-radius: 10px; border: 0.5px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.15s; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .seg-btn.sel-food { background: rgba(232,133,106,0.18); color: var(--food); border-color: var(--food); }
+  .seg-btn.sel-sights { background: rgba(106,174,232,0.18); color: var(--sight); border-color: var(--sight); }
+  .seg-btn.sel-exp { background: rgba(192,106,192,0.18); color: var(--exp); border-color: var(--exp); }
+  .day-seg-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .day-seg-btn { padding: 7px 12px; border-radius: 10px; border: 0.5px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.15s; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .day-seg-btn.sel { background: var(--surface2); color: var(--text); border-color: var(--subtle); }
+  .sheet-save { width: 100%; padding: 13px; border-radius: 12px; background: var(--accent); border: none; color: #1a1600; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .sheet-save:disabled { opacity: 0.35; }
+  .del-btn { flex-shrink: 0; padding: 4px 6px; background: transparent; border: none; color: var(--subtle); font-size: 16px; cursor: pointer; line-height: 1; border-radius: 6px; margin-left: 2px; transition: color 0.15s; }
+  .del-btn:hover { color: var(--book); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>🇯🇵 Kansai Trip</h1>
+  <div class="sub">Apr 28 – May 3 · Osaka · Kyoto · Nara · Kobe</div>
+</div>
+
+<div class="baseball-banner">
+  <div class="bb-title">Available games — Koshien sold out, go Orix</div>
+  <div class="bb-game"><strong>Apr 28 Tue 18:00</strong> · Orix Buffaloes vs SoftBank Hawks · Kyocera Dome, Osaka — evening option on arrival night</div>
+  <div class="bb-game"><strong>Apr 29 Wed 14:00</strong> · Orix Buffaloes vs SoftBank Hawks · Kyocera Dome, Osaka — recommended day game, easy to get tickets</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="ldot" style="background:var(--food)"></div>Food</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--sight)"></div>Sights</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--exp)"></div>Experiences</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--book)"></div>Book ahead</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--baseball)"></div>Baseball</div>
+</div>
+
+<div class="filter-row" id="filters">
+  <button class="filter-btn active" data-filter="all">All days</button>
+  <button class="filter-btn" data-filter="28">Apr 28</button>
+  <button class="filter-btn" data-filter="29">Apr 29</button>
+  <button class="filter-btn" data-filter="30">Apr 30</button>
+  <button class="filter-btn" data-filter="1">May 1</button>
+  <button class="filter-btn" data-filter="2">May 2</button>
+  <button class="filter-btn" data-filter="3">May 3</button>
+  <button class="filter-btn" data-filter="book">📌 Must book</button>
+  <button class="filter-btn" data-filter="mine">⭐ My items</button>
+</div>
+
+<div style="padding: 12px 18px 4px;">
+  <div class="progress-label" id="prog-label">0 of 0 checked off</div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="content" id="content"></div>
+
+<button class="clear-btn" id="clear-btn">Reset all</button>
+<button class="add-btn" id="add-btn">＋ Add item</button>
+
+<div class="sheet-overlay" id="sheet-overlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Add your own item</div>
+    <div class="sheet-body">
+      <div class="field-label">Name</div>
+      <input class="field-input" id="custom-name" placeholder="e.g. Sake bar near Dotonbori" maxlength="80">
+      <div class="field-label">Note (optional)</div>
+      <input class="field-input" id="custom-tip" placeholder="e.g. Opens 6pm, cash only" maxlength="160">
+      <div class="field-label">Category</div>
+      <div class="seg-row" id="cat-row">
+        <button class="seg-btn" data-cat="food">Food</button>
+        <button class="seg-btn" data-cat="sights">Sights</button>
+        <button class="seg-btn" data-cat="exp">Experience</button>
+      </div>
+      <div class="field-label">Day</div>
+      <div class="day-seg-row" id="day-row">
+        <button class="day-seg-btn" data-day="28">Apr 28</button>
+        <button class="day-seg-btn" data-day="29">Apr 29</button>
+        <button class="day-seg-btn" data-day="30">Apr 30</button>
+        <button class="day-seg-btn" data-day="1">May 1</button>
+        <button class="day-seg-btn" data-day="2">May 2</button>
+        <button class="day-seg-btn" data-day="3">May 3</button>
+      </div>
+      <button class="sheet-save" id="sheet-save" disabled>Add to itinerary</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS = [
+  {
+    id: '28', cls: 'd28', label: 'Apr 28', title: 'Arrival · Osaka settle-in',
+    sub: 'Land Haneda PM · Shinkansen to Osaka · first night',
+    tip: '<strong>Day tip:</strong> Haneda to Shin-Osaka is ~2.5hrs on the Nozomi shinkansen. Get an ICOCA card at the airport for all Kansai transit. Drop bags at hotel then head straight to Dotonbori — it glows at night.',
+    food: [
+      { name: 'Dotonbori street food crawl', tip: 'Takoyaki at Kukuru or Wanaka, grilled scallops on sticks, tamagoyaki. Walk the whole strip.', book: false },
+      { name: 'Ichiran Ramen (Dotonbori)', tip: 'Solo ramen booth experience. Open 24hrs. Perfect jet-lag meal at any hour.', book: false },
+      { name: 'Kani Doraku', tip: 'The giant mechanical crab restaurant. Touristy but the crab is genuinely excellent. Walk-in fine on weeknights.', book: false },
+      { name: 'Hozenji Yokocho alley', tip: 'Tiny lantern-lit alley behind Dotonbori with izakayas that have been there for decades. Duck in anywhere.', book: false },
+      { name: 'Kushikatsu Daruma', tip: 'Deep fried skewers of everything. Rule: never double dip in the communal sauce. A Osaka law.', book: false },
+      { name: 'Takoriki takoyaki', tip: 'Takes Osaka\'s iconic octopus dumplings to another level — uses top-grade kombu dashi and fresh Ise octopus. Tiny and often has a queue. Worth every second.', book: false },
+      { name: 'Shin-Umeda Shokudogai (food alley)', tip: 'Under the JR tracks — a retro maze of tiny izakayas, kushikatsu, soba, and standing sushi bars. Go hungry and just wander in.', book: false },
+    ],
+    sights: [
+      { name: 'Dotonbori canal walk', tip: 'The Glico man sign, neon reflections on the water. Best at night. Walk both banks.', book: false },
+      { name: 'Shinsaibashi shopping street', tip: 'Covered arcade running north from Dotonbori. Good for a late browse.', book: false },
+    ],
+    exp: [
+      { name: 'Orix Buffaloes game (18:00) — optional', tip: 'If you want the game tonight, Kyocera Dome is easy to reach from any Osaka hotel. Good for arrival night since it starts at 6pm and gives you time to check in first.', book: true, baseball: true },
+    ]
+  },
+  {
+    id: '29', cls: 'd29', label: 'Apr 29', title: 'Kyoto + Nara combined',
+    sub: 'Fushimi Inari morning · Kyoto · Nara deer afternoon',
+    tip: '<strong>Day tip:</strong> Start in Kyoto — Osaka to Kyoto is 15 min on the shinkansen. Hit Fushimi Inari at 8am before crowds, then Nishiki Market and Gion by late morning. After lunch, take the Kintetsu line from Kyoto to Nara (~45 min) for the deer park. Back to Osaka by 7pm.',
+    food: [
+      { name: 'Nishiki Market', tip: 'Kyoto\'s kitchen — 400m covered market. Pickled vegetables, dashi tamago, fresh mochi. Go before noon.', book: false },
+      { name: 'Ippodo Tea (matcha)', tip: 'One of the oldest tea merchants in Japan. Quick ceremonial matcha stop. Near Nishiki Market.', book: false },
+      { name: 'Honke Daiichiasahi ramen', tip: 'Kyoto-style soy ramen — cleaner and lighter than Tokyo. Open since 1947. Good quick lunch before heading to Nara.', book: false },
+      { name: 'Nakatanidou mochi (Nara)', tip: 'The famous mochi shop where they pound it at speed in front of you. Buy one fresh and eat immediately.', book: false },
+      { name: 'Shika Senbei deer crackers (Nara)', tip: 'Rice crackers to feed the deer — they bow before taking them. Buy from street vendors at the park entrance.', book: false },
+      { name: 'Kakinoha-zushi (Nara)', tip: 'Nara\'s specialty — sushi wrapped in persimmon leaf. Pick some up from a market stall to eat at the park.', book: false },
+    ],
+    sights: [
+      { name: 'Fushimi Inari Taisha (Kyoto)', tip: 'Go at 8am before crowds. Thousands of torii gates up the mountain. The lower section takes ~30 min if you\'re short on time.', book: false },
+      { name: 'Nishiki Market + Gion stroll (Kyoto)', tip: 'Walk Hanamikoji-dori in Gion after the market. If you see a geiko or maiko, don\'t block their path.', book: false },
+      { name: 'Nara deer park', tip: 'Over 1,000 free-roaming deer. They bow for crackers. Afternoon is fine — go straight from Kyoto on the Kintetsu line (~45 min).', book: false },
+      { name: 'Todaiji Temple (Nara)', tip: 'World\'s largest bronze Buddha. Enormous wooden hall. ¥600 entry. Right inside the deer park.', book: false },
+      { name: 'Kasuga Taisha shrine (Nara)', tip: 'Ancient shrine in forest with hundreds of stone lanterns. Beautiful 15-min walk from Todaiji.', book: false },
+    ],
+    exp: []
+  },
+  {
+    id: '30', cls: 'd30', label: 'Apr 30', title: 'Full Osaka day',
+    sub: 'All day Osaka · eat everything · explore the city',
+    tip: '<strong>Day tip:</strong> Your free Osaka day with nowhere to be. Use it to eat everything, explore neighborhoods you missed, and wander without a plan. Shinsekai in the morning, Kuromon at lunch, Amerika Mura in the afternoon, Dotonbori and Hozenji at night.',
+    food: [
+      { name: 'Kuromon Ichiba Market', tip: 'Osaka\'s main food market — 150+ stalls. Fresh uni on rice, wagyu skewers, fugu sashimi. Go at lunch time. Best before 1pm.', book: false },
+      { name: 'Okonomiyaki Mizuno', tip: 'Michelin-recommended. Their yamaimo-yaki (mountain yam pancake) is the bestseller. Queue outside or book ahead.', book: true },
+      { name: 'Yaekatsu kushikatsu (Shinsekai)', tip: 'A local favorite with fewer tourists than Daruma. Older clientele, more atmosphere, same incredible skewers. Cash only.', book: false },
+      { name: 'Tsurugyu yakiniku', tip: 'Reportedly serves genuine Kobe beef at non-Kobe prices. Tabletop grill. Book ahead for dinner.', book: true },
+      { name: 'Hariju shabu-shabu (since 1923)', tip: 'One of Osaka\'s oldest restaurants. Ladies in kimonos serve sukiyaki and shabu-shabu on tatami. Book ahead.', book: true },
+      { name: 'Nagahori izakaya (Michelin-starred)', tip: 'First izakaya in the world to earn a Michelin star (2010). No-frills dishes using vegetables the chef selects himself. Book ahead.', book: true },
+      { name: 'Sushi Roku (Nishi-Tenma)', tip: 'Intimate omakase counter — wraps nori around marinated tuna nigiri. English-friendly. Book ahead.', book: true },
+      { name: 'Shin-Umeda Shokudogai (food alley)', tip: 'Under the JR tracks — retro maze of tiny izakayas, kushikatsu, soba, and standing sushi bars. Perfect late-night wander.', book: false },
+    ],
+    sights: [
+      { name: 'Osaka Castle + moat walk', tip: 'The exterior and moat are beautiful. Skip the interior museum and just walk the gardens. Best in the morning.', book: false },
+      { name: 'Shinsekai district', tip: 'Retro 1920s neighborhood with Tsutenkaku tower. Great for wandering at dusk before dinner.', book: false },
+      { name: 'Amerika Mura', tip: 'Osaka\'s streetwear and youth culture district. Triangle Park is the center. Good for thrift shopping in the afternoon.', book: false },
+      { name: 'Dotonbori + Hozenji at night', tip: 'Second night on Dotonbori hits differently when you know what to look for. Walk Hozenji Yokocho alley for the lantern-lit izakaya atmosphere.', book: false },
+    ],
+    exp: [
+      { name: 'Orix Buffaloes vs SoftBank Hawks (14:00)', tip: 'Kyocera Dome — indoor, air-conditioned, relaxed atmosphere. Easier to get tickets than Koshien. Get the takoyaki inside, buy an Orix jersey (Shunpei Yamashita #11 is the face of the franchise). Book tickets via ticketsinjapan.com or chiketto.org.', book: true, baseball: true },
+    ]
+  },
+  {
+    id: '1', cls: 'd1', label: 'May 1', title: 'Kobe day trip',
+    sub: 'Kobe beef lunch · harbor · back to Osaka evening',
+    tip: '<strong>Day tip:</strong> Kobe is 30 min from Osaka on the Hankyu or JR. With no evening game, you can do Kobe properly — morning sightseeing, Kobe beef lunch, afternoon Harborland walk, and a relaxed dinner back in Osaka.',
+    food: [
+      { name: 'Mouriya teppanyaki (Kobe)', tip: 'Certified Kobe beef since 1904. The classic choice. Order the sirloin set. Lunch is significantly cheaper than dinner. Book ahead.', book: true },
+      { name: 'Kobe beef lunch set', tip: 'Any certified teppanyaki spot — lunch sets run ¥8,000–15,000 vs ¥25,000+ at dinner. Same beef, same chef.', book: false },
+      { name: 'Nankinmachi (Kobe Chinatown)', tip: 'Japan\'s second-largest Chinatown. Excellent bao, dumplings, char siu on sticks for a quick snack while walking.', book: false },
+      { name: 'Morihachi confectionery', tip: 'Famous Kobe sweets shop since 1903. Pick up wagashi and baumkuchen as gifts.', book: false },
+      { name: 'Stadium food at Koshien', tip: 'Get the takoyaki inside the stadium. There\'s also beer girls who walk the aisles — flag one down immediately.', book: false },
+    ],
+    sights: [
+      { name: 'Kitano Ijinkan (foreign residences)', tip: 'Meiji-era Western-style mansions built by foreign merchants. Great for photos. The hill walk is scenic.', book: false },
+      { name: 'Kobe Harborland', tip: 'Waterfront area with port views. Pleasant morning stroll before heading to lunch.', book: false },
+      { name: 'Kobe Nunobiki Herb Garden', tip: 'Take the ropeway up for panoramic views over Kobe and the bay.', book: false },
+    ],
+    exp: []
+  },
+  {
+    id: '2', cls: 'd2', label: 'May 2', title: 'Shinkansen to Tokyo · Baystars game',
+    sub: 'Full Osaka morning → 14:30 shinkansen → 18:00 Baystars game → Ginza',
+    tip: '<strong>Day tip:</strong> Game is at 18:00 — you have the whole morning free in Osaka. Depart Shin-Osaka around 14:30 on the Nozomi (Shinagawa ~16:50), then Keikyu or Tokyu Toyoko line to Yokohama Stadium, arriving by ~17:30. Grab stadium food before first pitch. Game ends ~21:00, then head into Ginza to check in. Stay in Ginza tonight — the Sunday pedestrian street runs noon–5pm tomorrow, perfect before Haneda.',
+    food: [
+      { name: 'Full Osaka morning — one last meal', tip: 'You have the whole morning free. Use it for anything you missed — Kuromon Market, a standing soba, or just walk Dotonbori one more time in the daylight.', book: false },
+      { name: 'Shinkansen ekiben (bento)', tip: 'Buy a bento at Shin-Osaka before boarding. The battera (Osaka-style pressed sushi) or wagyu bento are the local picks. Eat on the train.', book: false },
+      { name: 'Yokohama Stadium food', tip: 'Baystars games are known for great stadium food — craft beer, garlic shrimp, sashimi bowls. Arrive early and eat before finding your seat.', book: false },
+      { name: 'Ginza dinner', tip: 'After the game, head to Ginza for dinner. Great first night in Tokyo to splurge — Kyubey for sushi, or Cloud Club Matcha for a late matcha dessert to finish.', book: false },
+    ],
+    sights: [
+      { name: 'Yokohama Stadium', tip: 'Open-air stadium in the heart of Yokohama. Lively atmosphere — Baystars fans are enthusiastic and the fireworks on a win are spectacular. Buy a navy Baystars jersey here.', book: false },
+      { name: 'Ginza evening stroll', tip: 'Check into your hotel then walk the Chuo-dori strip. Window shop the flagships — Ginza Six, Itoya, Uniqlo. The district is beautiful lit up at night.', book: false },
+    ],
+    exp: [
+      { name: 'DeNA Baystars vs Yakult Swallows (~14:00)', tip: 'Yokohama Stadium — 30 min from Shinagawa by Keikyu line to Kannai Station, or 25 min from Shibuya by Tokyu Toyoko line to Kannai. Open-air stadium with fireworks on a win. Buy a navy Baystars jersey at the merch stand. Book tickets at baystars.co.jp.', book: true, baseball: true },
+    ]
+  },
+  {
+    id: '3', cls: 'd3', label: 'May 3', title: 'Ginza Sunday street · Haneda pickup',
+    sub: 'Chuo-dori pedestrian street noon–5pm · Haneda 13:55',
+    tip: '<strong>Day tip:</strong> You\'re already in Ginza — perfect. The Chuo-dori pedestrian zone runs Sunday noon–5pm, right before your Haneda pickup. Walk the middle of the street, browse the open-air market stalls, grab a last coffee. Haneda is 30 min from Ginza on the Keikyu line. Head out by 1:10pm to arrive before 1:55pm.',
+    food: [
+      { name: 'Ginza morning coffee', tip: 'Cafe de l\'Ambre on Chuo-dori is one of Tokyo\'s oldest coffee shops — been going since 1948. Perfect final morning ritual.', book: false },
+      { name: 'Chuo-dori street market food', tip: 'The pedestrian zone often has food vendors and pop-ups during the Sunday closure. Grab something and eat in the middle of the road — you can\'t do this anywhere else in Ginza.', book: false },
+      { name: 'Konbini airport run', tip: 'Stock up on Japanese snacks and drinks at the Ginza 7-Eleven before heading to Haneda. Onigiri, melon pan, chu-hi for the ride.', book: false },
+    ],
+    sights: [
+      { name: 'Ginza Chuo-dori pedestrian zone (noon–5pm)', tip: 'Every Sunday, 5 blocks of Chuo-dori close to traffic. Walk the middle of Japan\'s most expensive street, browse stalls, and take photos. Totally free and totally surreal.', book: false },
+      { name: 'Itoya stationery (last shop)', tip: 'If you haven\'t been yet, the 12-floor stationery flagship is right on Chuo-dori. Great for last-minute gifts.', book: false },
+    ],
+    exp: [
+      { name: 'Pickup girlfriend at Haneda (13:55)', tip: 'Ginza to Haneda on the Keikyu Airport Express is ~30 min from Ginza-Itchome station. Depart Ginza by 1:10pm. Terminal 3 for international arrivals.', book: false },
+    ]
+  }
+];
+
+const STORAGE_KEY = 'kansai-trip-checked-v1';
+const CUSTOM_KEY = 'kansai-trip-custom-v1';
+let checked = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+let customItems = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]');
+let currentFilter = 'all';
+
+function saveChecked() { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); }
+function saveCustom() { localStorage.setItem(CUSTOM_KEY, JSON.stringify(customItems)); }
+function getItemId(dayId, type, idx) { return `k${dayId}-${type}-${idx}`; }
+function getCustomId(uid) { return 'kcustom-' + uid; }
+
+function mapsUrl(name, city) {
+  return 'https://maps.apple.com/?q=' + encodeURIComponent(name + ' ' + (city || 'Japan'));
+}
+
+function mapBtn(name, city) {
+  return `<a class="map-btn" href="${mapsUrl(name, city)}" onclick="event.stopPropagation()">&#9906; Maps</a>`;
+}
+
+const dayCities = { '28': 'Osaka Japan', '29': 'Kyoto Japan', '30': 'Osaka Japan', '1': 'Kobe Japan', '2': 'Osaka Japan', '3': 'Osaka Japan' };
+
+function updateProgress() {
+  let total = 0, done = 0;
+  DAYS.forEach(day => {
+    ['food','sights','exp'].forEach(type => {
+      const arr = day[type];
+      if (!arr) return;
+      arr.forEach((item, i) => { total++; if (checked[getItemId(day.id, type, i)]) done++; });
+    });
+  });
+  customItems.forEach(ci => { total++; if (checked[getCustomId(ci.uid)]) done++; });
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `${done} of ${total} items checked off`;
+}
+
+function renderAll() {
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  DAYS.forEach(day => {
+    if (currentFilter !== 'all' && currentFilter !== 'book' && currentFilter !== 'mine' && currentFilter !== day.id) return;
+    if (currentFilter === 'mine') return;
+    if (currentFilter === 'book') {
+      const hasBook = [...(day.food||[]),...(day.sights||[]),...(day.exp||[])].some(i => i.book);
+      if (!hasBook) return;
+    }
+    const customForDay = customItems.filter(ci => ci.day === day.id);
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.innerHTML = `
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-num ${day.cls}">${day.id}</div>
+        <div class="day-header-text">
+          <div class="day-title">${day.title}</div>
+          <div class="day-sub">${day.sub}</div>
+        </div>
+        <div class="chevron">&#9662;</div>
+      </div>
+      <div class="day-body" style="display:none;">
+        ${renderSection(day, 'food', 'Food & drink', 'var(--food)')}
+        ${renderSection(day, 'sights', 'Sightseeing', 'var(--sight)')}
+        ${renderSection(day, 'exp', 'Experiences', 'var(--exp)')}
+        ${customForDay.length ? renderCustomSection(customForDay, false) : ''}
+        <div class="section"><div class="day-tip" style="margin: 12px 0;">${day.tip}</div></div>
+      </div>`;
+    content.appendChild(card);
+  });
+
+  if (currentFilter === 'mine') {
+    if (customItems.length > 0) {
+      const card = document.createElement('div');
+      card.className = 'day-card';
+      card.innerHTML = `
+        <div class="day-header" onclick="toggleDay(this)">
+          <div class="day-num" style="background:#1e2a1e;color:var(--accent);font-size:16px;">&#9733;</div>
+          <div class="day-header-text">
+            <div class="day-title">My added items</div>
+            <div class="day-sub">All custom items across all days</div>
+          </div>
+          <div class="chevron">&#9662;</div>
+        </div>
+        <div class="day-body" style="display:none;">
+          ${renderCustomSection(customItems, true)}
+        </div>`;
+      content.appendChild(card);
+      content.querySelector('.day-header').click();
+    } else {
+      content.innerHTML = '<div style="text-align:center;padding:40px 18px;color:var(--muted);font-size:14px;">No custom items yet.<br>Tap <strong style="color:var(--accent)">＋ Add item</strong> to get started.</div>';
+    }
+  }
+  updateProgress();
+}
+
+function renderSection(day, type, label, color) {
+  const arr = day[type];
+  if (!arr || arr.length === 0) return '';
+  const city = dayCities[day.id] || 'Japan';
+  if (currentFilter === 'book') {
+    const filtered = arr.filter(i => i.book);
+    if (filtered.length === 0) return '';
+    let html = `<div class="section"><div class="section-head"><div class="sdot" style="background:${color}"></div>${label}</div>`;
+    filtered.forEach(item => {
+      const origIdx = arr.indexOf(item);
+      const id = getItemId(day.id, type, origIdx);
+      const done = checked[id] ? 'done' : '';
+      html += `<div class="item ${done}" onclick="toggleItem('${id}', this)">
+        <div class="check-wrap"><div class="checkbox"><span class="checkmark">&#10003;</span></div></div>
+        <div class="item-text">
+          <div class="item-name">${item.name}<span class="book-tag">book ahead</span>${item.baseball ? '<span class="baseball-tag">baseball</span>' : ''}</div>
+          <div class="item-tip">${item.tip}</div>
+          ${mapBtn(item.name, city)}
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+    return html;
+  }
+  let html = `<div class="section"><div class="section-head"><div class="sdot" style="background:${color}"></div>${label}</div>`;
+  arr.forEach((item, i) => {
+    const id = getItemId(day.id, type, i);
+    const done = checked[id] ? 'done' : '';
+    html += `<div class="item ${done}" onclick="toggleItem('${id}', this)">
+      <div class="check-wrap"><div class="checkbox"><span class="checkmark">&#10003;</span></div></div>
+      <div class="item-text">
+        <div class="item-name">${item.name}${item.book ? '<span class="book-tag">book ahead</span>' : ''}${item.baseball ? '<span class="baseball-tag">baseball</span>' : ''}</div>
+        <div class="item-tip">${item.tip}</div>
+        ${mapBtn(item.name, city)}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderCustomSection(items, showDay) {
+  if (!items.length) return '';
+  const catColors = { food: 'var(--food)', sights: 'var(--sight)', exp: 'var(--exp)' };
+  const dayLabels = { '28': 'Apr 28', '29': 'Apr 29', '30': 'Apr 30', '1': 'May 1', '2': 'May 2', '3': 'May 3' };
+  let html = `<div class="section"><div class="section-head"><div class="sdot" style="background:var(--accent)"></div>My additions</div>`;
+  items.forEach(ci => {
+    const id = getCustomId(ci.uid);
+    const done = checked[id] ? 'done' : '';
+    const catDot = catColors[ci.cat] || 'var(--muted)';
+    const city = dayCities[ci.day] || 'Japan';
+    html += `<div class="item ${done}" id="ci-${ci.uid}">
+      <div class="check-wrap" onclick="toggleCustom('${ci.uid}')"><div class="checkbox"><span class="checkmark">&#10003;</span></div></div>
+      <div class="item-text" onclick="toggleCustom('${ci.uid}')">
+        <div class="item-name">
+          <span class="sdot" style="background:${catDot};width:7px;height:7px;display:inline-block;border-radius:50%;"></span>
+          ${ci.name}
+          <span class="custom-tag">mine</span>
+          ${showDay ? `<span style="font-size:10px;color:var(--muted);font-weight:400">${dayLabels[ci.day] || ci.day}</span>` : ''}
+        </div>
+        ${ci.tip ? `<div class="item-tip">${ci.tip}</div>` : ''}
+        <a class="map-btn" href="${mapsUrl(ci.name, city)}" onclick="event.stopPropagation()">&#9906; Maps</a>
+      </div>
+      <button class="del-btn" onclick="deleteCustom('${ci.uid}')">&#215;</button>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function toggleDay(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  chevron.classList.toggle('open', !isOpen);
+}
+
+function toggleItem(id, el) {
+  checked[id] = !checked[id];
+  saveChecked();
+  el.classList.toggle('done', checked[id]);
+  updateProgress();
+}
+
+function toggleCustom(uid) {
+  const id = getCustomId(uid);
+  checked[id] = !checked[id];
+  saveChecked();
+  const el = document.getElementById('ci-' + uid);
+  if (el) el.classList.toggle('done', checked[id]);
+  updateProgress();
+}
+
+function deleteCustom(uid) {
+  customItems = customItems.filter(ci => ci.uid !== uid);
+  saveCustom();
+  delete checked[getCustomId(uid)];
+  saveChecked();
+  renderAll();
+}
+
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.filter;
+  renderAll();
+});
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+  if (confirm('Reset all checkmarks?')) { checked = {}; saveChecked(); renderAll(); }
+});
+
+const overlay = document.getElementById('sheet-overlay');
+let selCat = null, selDay = null;
+
+document.getElementById('add-btn').addEventListener('click', () => {
+  document.getElementById('custom-name').value = '';
+  document.getElementById('custom-tip').value = '';
+  selCat = null; selDay = null;
+  document.querySelectorAll('.seg-btn').forEach(b => b.className = 'seg-btn');
+  document.querySelectorAll('.day-seg-btn').forEach(b => b.classList.remove('sel'));
+  document.getElementById('sheet-save').disabled = true;
+  overlay.classList.add('open');
+  setTimeout(() => document.getElementById('custom-name').focus(), 350);
+});
+
+overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+document.getElementById('cat-row').addEventListener('click', e => {
+  const btn = e.target.closest('.seg-btn');
+  if (!btn) return;
+  selCat = btn.dataset.cat;
+  document.querySelectorAll('.seg-btn').forEach(b => { b.className = 'seg-btn'; });
+  btn.classList.add('sel-' + selCat);
+  checkSave();
+});
+
+document.getElementById('day-row').addEventListener('click', e => {
+  const btn = e.target.closest('.day-seg-btn');
+  if (!btn) return;
+  selDay = btn.dataset.day;
+  document.querySelectorAll('.day-seg-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  checkSave();
+});
+
+document.getElementById('custom-name').addEventListener('input', checkSave);
+
+function checkSave() {
+  const name = document.getElementById('custom-name').value.trim();
+  document.getElementById('sheet-save').disabled = !(name && selCat !== null && selDay !== null);
+}
+
+document.getElementById('sheet-save').addEventListener('click', () => {
+  const name = document.getElementById('custom-name').value.trim();
+  const tip = document.getElementById('custom-tip').value.trim();
+  if (!name || !selCat || !selDay) return;
+  const uid = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  customItems.push({ uid, name, tip, cat: selCat, day: selDay });
+  saveCustom();
+  overlay.classList.remove('open');
+  renderAll();
+});
+
+renderAll();
+document.querySelector('.day-header').click();
+</script>
+</body>
+</html>
