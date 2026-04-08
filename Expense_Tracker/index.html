@@ -199,7 +199,7 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
   </div>
   <button class="export-btn" onclick="exportCSV()">&#8595; Download CSV</button>
   <button class="export-btn" onclick="exportText()">&#8595; Download Summary</button>
-  <button class="export-btn" onclick="syncToWidget()">&#9729; Sync to Widget</button>
+  <button class="export-btn" onclick="syncToWidget()">&#9729; Save to iCloud / Scriptable</button>
   <button class="btn-secondary" onclick="confirmClear()">Clear all data</button>
 </div>
 
@@ -464,8 +464,6 @@ function showToast(msg) {
 
 // ── iCloud Widget Sync ───────────────────────────────
 function syncToWidget() {
-  // Builds a JSON snapshot and triggers download as expenses.json
-  // User saves this file to iCloud Drive / Scriptable / expenses.json
   var totCad = expenses.reduce(function(s,e){return s+e.amtCad;},0);
   var totUsd = cadToUsd(totCad);
   var totJpy = expenses.reduce(function(s,e){return s+e.amtJpy;},0);
@@ -480,6 +478,26 @@ function syncToWidget() {
     expenses: expenses
   };
   var json = JSON.stringify(snapshot, null, 2);
+  var blob = new Blob([json], {type: 'application/json'});
+  var file = new File([blob], 'expenses.json', {type: 'application/json'});
+
+  // Use Web Share API if available (iOS 15+) - shows Files picker
+  // so user can save directly to iCloud Drive / Scriptable /
+  if (navigator.share && navigator.canShare && navigator.canShare({files: [file]})) {
+    navigator.share({
+      files: [file],
+      title: 'expenses.json'
+    }).then(function() {
+      showToast('Saved! Choose iCloud Drive / Scriptable /');
+    }).catch(function(e) {
+      if (e.name !== 'AbortError') fallbackDownload(json);
+    });
+  } else {
+    fallbackDownload(json);
+  }
+}
+
+function fallbackDownload(json) {
   var a = document.createElement('a');
   a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
   a.download = 'expenses.json';
