@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Trip Tracker">
+<meta name="theme-color" content="#0f0f0f">
+<title>Japan Trip Tracker</title>
+<style>
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;--border:rgba(255,255,255,0.08);--text:#f0ede8;--muted:#888;--subtle:#444;--accent:#e8c96a;--green:#6abf8e;--red:#e86a6a;--blue:#6aaee8;--pink:#e8856a;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Text',BlinkMacSystemFont,sans-serif;min-height:100vh;overscroll-behavior:none}
+
+/* topbar */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--safe-top) + 14px) 18px 0;border-bottom:0.5px solid var(--border)}
+.topbar-title{font-size:17px;font-weight:600;letter-spacing:-0.3px;padding-bottom:12px}
+.tabs{display:flex;gap:0}
+.tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
+
+/* rate bar */
+.rate-bar{padding:8px 18px;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rate-pills{display:flex;gap:10px;flex-wrap:wrap}
+.rpill b{color:var(--accent);font-weight:500}
+.rate-status{display:flex;align-items:center;gap:5px}
+.rdot{width:5px;height:5px;border-radius:50%;background:var(--subtle);flex-shrink:0}
+.rdot.live{background:var(--green)}
+.rdot.error{background:var(--red)}
+.rdot.loading{background:var(--accent);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.refresh-mini{font-size:11px;background:transparent;border:none;color:var(--muted);cursor:pointer;padding:2px 6px;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+
+/* content */
+.tab-content{display:none;padding:14px 14px calc(var(--safe-bottom) + 80px)}
+.tab-content.active{display:block}
+
+/* summary cards */
+.summary-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.sum-card{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:10px 12px}
+.sum-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px}
+.sum-val{font-size:17px;font-weight:600;letter-spacing:-0.3px}
+.val-cad{color:#e8856a}
+.val-usd{color:#6aaee8}
+.val-jpy{color:#6abf8e}
+
+/* form */
+.form-section{background:var(--surface);border-radius:14px;border:0.5px solid var(--border);padding:14px;margin-bottom:14px}
+.form-section h3{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
+.field{margin-bottom:10px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.field input,.field select{width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif;-webkit-appearance:none}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent)}
+.field select option{background:#222;color:var(--text)}
+.field input::placeholder{color:var(--subtle)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field .hint{font-size:10px;color:var(--subtle);margin-top:4px}
+
+/* buttons */
+.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#1a1600;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+.btn-primary:active{opacity:0.8}
+.btn-secondary{width:100%;padding:11px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px}
+.btn-secondary:active{background:var(--surface2)}
+
+/* expense list */
+.list-header{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin:16px 0 10px}
+.expense-item{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.exp-left{flex:1;min-width:0}
+.exp-cat{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+.exp-desc{font-size:14px;font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp-meta{font-size:11px;color:var(--subtle);margin-top:3px}
+.exp-right{text-align:right;flex-shrink:0}
+.exp-cad{font-size:14px;font-weight:600;color:#e8856a}
+.exp-usd{font-size:11px;color:#6aaee8;margin-top:2px}
+.exp-jpy{font-size:11px;color:#6abf8e}
+.del-btn{font-size:10px;padding:3px 8px;background:rgba(232,106,106,0.1);color:var(--red);border:0.5px solid rgba(232,106,106,0.2);border-radius:6px;cursor:pointer;margin-top:5px;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+
+/* by city */
+.city-section{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:12px 14px;margin-bottom:8px}
+.city-name{font-size:13px;font-weight:600;margin-bottom:6px}
+.city-bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.city-bar-fill{height:100%;border-radius:2px;background:var(--accent)}
+.city-totals{font-size:12px;color:var(--muted)}
+.city-totals b{color:var(--text)}
+
+/* empty state */
+.empty{text-align:center;padding:30px 20px;color:var(--muted);background:var(--surface);border-radius:14px;border:0.5px solid var(--border)}
+.empty-icon{font-size:28px;margin-bottom:8px}
+
+/* export */
+.export-btn{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.export-btn:active{background:var(--surface2)}
+
+/* toast */
+.toast{position:fixed;bottom:calc(var(--safe-bottom) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">Japan Trip Tracker</div>
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-btn-expenses" onclick="switchTab('expenses',this)">Expenses</button>
+    <button class="tab-btn" id="tab-btn-breakdown" onclick="switchTab('breakdown',this)">By City</button>
+    <button class="tab-btn" id="tab-btn-export" onclick="switchTab('export',this)">Export</button>
+  </div>
+</div>
+
+<div class="rate-bar">
+  <div class="rate-pills">
+    <span class="rpill">1 JPY = <b id="rb-jpy-cad">—</b> CAD</span>
+    <span class="rpill">1 USD = <b id="rb-usd-cad">—</b> CAD</span>
+    <span class="rpill">1 EUR = <b id="rb-eur-cad">—</b> CAD</span>
+  </div>
+  <div class="rate-status">
+    <div class="rdot" id="rdot"></div>
+    <button class="refresh-mini" onclick="fetchRates()">&#8635;</button>
+  </div>
+</div>
+
+<!-- EXPENSES TAB -->
+<div class="tab-content active" id="tab-expenses">
+  <div class="summary-row">
+    <div class="sum-card"><div class="sum-label">CAD</div><div class="sum-val val-cad" id="tot-cad">$0</div></div>
+    <div class="sum-card"><div class="sum-label">USD</div><div class="sum-val val-usd" id="tot-usd">$0</div></div>
+    <div class="sum-card"><div class="sum-label">JPY</div><div class="sum-val val-jpy" id="tot-jpy">¥0</div></div>
+  </div>
+
+  <div class="form-section">
+    <h3>Add Expense</h3>
+    <div class="two-col">
+      <div class="field">
+        <label>City</label>
+        <select id="f-city">
+          <option value="">Select</option>
+          <option value="Tokyo">Tokyo</option>
+          <option value="Osaka">Osaka</option>
+          <option value="Kyoto">Kyoto</option>
+          <option value="Kobe">Kobe</option>
+          <option value="Nara">Nara</option>
+          <option value="Yokohama">Yokohama</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select id="f-cat">
+          <option value="">Select</option>
+          <option value="Food">Food & Drink</option>
+          <option value="Transport">Transport</option>
+          <option value="Accommodation">Accommodation</option>
+          <option value="Activity">Activity</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Baseball">Baseball</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <input type="text" id="f-desc" placeholder="e.g. Ramen at Ichiran, Shinkansen ticket">
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label>Amount JPY</label>
+        <input type="number" id="f-jpy" placeholder="0" min="0" inputmode="numeric">
+        <div class="hint" id="jpy-hint">= — CAD</div>
+      </div>
+      <div class="field">
+        <label>Or CAD</label>
+        <input type="number" id="f-cad" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
+        <div class="hint" id="cad-hint">= — JPY</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="f-date">
+    </div>
+    <button class="btn-primary" onclick="addExpense()">Add Expense</button>
+  </div>
+
+  <div class="list-header">Recent Expenses</div>
+  <div id="expense-list"></div>
+</div>
+
+<!-- BY CITY TAB -->
+<div class="tab-content" id="tab-breakdown">
+  <div id="city-breakdown"></div>
+</div>
+
+<!-- EXPORT TAB -->
+<div class="tab-content" id="tab-export">
+  <div class="form-section">
+    <h3>Trip Summary</h3>
+    <div id="export-summary" style="font-size:13px;color:var(--muted);line-height:1.8"></div>
+  </div>
+  <button class="export-btn" onclick="exportCSV()">&#8595; Download CSV</button>
+  <button class="export-btn" onclick="exportText()">&#8595; Download Summary</button>
+  <button class="export-btn" onclick="syncToWidget()">&#9729; Sync to Widget</button>
+  <button class="btn-secondary" onclick="confirmClear()">Clear all data</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Rates ─────────────────────────────────────────────
+var rates = { JPY_CAD: 0.00876, USD_CAD: 1.3915, EUR_CAD: 1.6064 };
+
+function setRateDot(type) {
+  document.getElementById('rdot').className = 'rdot ' + type;
+}
+
+function updateRateBar() {
+  document.getElementById('rb-jpy-cad').textContent = rates.JPY_CAD.toFixed(5);
+  document.getElementById('rb-usd-cad').textContent = rates.USD_CAD.toFixed(4);
+  document.getElementById('rb-eur-cad').textContent = rates.EUR_CAD.toFixed(4);
+  updateHints();
+}
+
+function fetchRates() {
+  setRateDot('loading');
+  Promise.all([
+    fetch('https://api.frankfurter.dev/v2/rates?base=USD&quotes=CAD,JPY'),
+    fetch('https://api.frankfurter.dev/v2/rates?base=EUR&quotes=CAD')
+  ])
+  .then(function(rs) {
+    if (!rs[0].ok || !rs[1].ok) throw new Error('HTTP ' + rs[0].status);
+    return Promise.all([rs[0].json(), rs[1].json()]);
+  })
+  .then(function(data) {
+    var usdArr = data[0];
+    var eurArr = data[1];
+    var usdCad = usdArr.find(function(x){return x.base==='USD'&&x.quote==='CAD';});
+    var usdJpy = usdArr.find(function(x){return x.base==='USD'&&x.quote==='JPY';});
+    var eurCad = eurArr.find(function(x){return x.base==='EUR'&&x.quote==='CAD';});
+    if (!usdCad||!usdJpy||!eurCad) throw new Error('Missing rates');
+    rates.USD_CAD = usdCad.rate;
+    rates.JPY_CAD = (1/usdJpy.rate)*usdCad.rate;
+    rates.EUR_CAD = eurCad.rate;
+    setRateDot('live');
+    updateRateBar();
+    renderExpenses();
+    showToast('Rates updated live');
+  })
+  .catch(function() {
+    setRateDot('error');
+    updateRateBar();
+  });
+}
+
+// ── Expenses ──────────────────────────────────────────
+var expenses = JSON.parse(localStorage.getItem('jpTrip_expenses') || '[]');
+
+function saveExpenses() {
+  localStorage.setItem('jpTrip_expenses', JSON.stringify(expenses));
+}
+
+function jpyToCad(jpy) { return jpy * rates.JPY_CAD; }
+function cadToJpy(cad) { return cad / rates.JPY_CAD; }
+function cadToUsd(cad) { return cad / rates.USD_CAD; }
+
+function updateHints() {
+  var jpy = parseFloat(document.getElementById('f-jpy').value) || 0;
+  var cad = parseFloat(document.getElementById('f-cad').value) || 0;
+  document.getElementById('jpy-hint').textContent = jpy ? '= CA$' + jpyToCad(jpy).toFixed(2) : '= — CAD';
+  document.getElementById('cad-hint').textContent = cad ? '= ¥' + Math.round(cadToJpy(cad)).toLocaleString() : '= — JPY';
+}
+
+document.getElementById('f-jpy').addEventListener('input', updateHints);
+document.getElementById('f-cad').addEventListener('input', updateHints);
+
+function addExpense() {
+  var city = document.getElementById('f-city').value;
+  var cat  = document.getElementById('f-cat').value;
+  var desc = document.getElementById('f-desc').value.trim();
+  var jpy  = parseFloat(document.getElementById('f-jpy').value) || 0;
+  var cad  = parseFloat(document.getElementById('f-cad').value) || 0;
+  var date = document.getElementById('f-date').value;
+
+  if (!city || !cat || !desc || (!jpy && !cad) || !date) {
+    showToast('Please fill in all fields'); return;
+  }
+
+  var amtCad = cad || jpyToCad(jpy);
+  var amtJpy = jpy || cadToJpy(cad);
+  var amtUsd = cadToUsd(amtCad);
+
+  expenses.push({
+    id: Date.now(), city, cat, desc,
+    amtCad: Math.round(amtCad * 100) / 100,
+    amtJpy: Math.round(amtJpy),
+    amtUsd: Math.round(amtUsd * 100) / 100,
+    date
+  });
+
+  saveExpenses();
+  document.getElementById('f-city').value = '';
+  document.getElementById('f-cat').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-jpy').value = '';
+  document.getElementById('f-cad').value = '';
+  updateHints();
+  renderExpenses();
+  showToast('Expense added');
+}
+
+function deleteExpense(id) {
+  expenses = expenses.filter(function(e){return e.id !== id;});
+  saveExpenses();
+  renderExpenses();
+  showToast('Deleted');
+}
+
+function renderExpenses() {
+  var totCad = expenses.reduce(function(s,e){return s+e.amtCad;},0);
+  var totUsd = cadToUsd(totCad);
+  var totJpy = expenses.reduce(function(s,e){return s+e.amtJpy;},0);
+
+  document.getElementById('tot-cad').textContent = '$' + totCad.toFixed(2);
+  document.getElementById('tot-usd').textContent = '$' + totUsd.toFixed(2);
+  document.getElementById('tot-jpy').textContent = '¥' + Math.round(totJpy).toLocaleString();
+
+  var list = document.getElementById('expense-list');
+  if (expenses.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">&#128184;</div><div>No expenses yet.<br>Add your first one above.</div></div>';
+    renderBreakdown([]);
+    renderExportSummary(totCad, totUsd, totJpy);
+    return;
+  }
+
+  var sorted = expenses.slice().sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+  list.innerHTML = sorted.map(function(e){
+    var d = new Date(e.date+'T12:00:00');
+    var ds = d.toLocaleDateString([],{month:'short',day:'numeric'});
+    return '<div class="expense-item">'+
+      '<div class="exp-left">'+
+        '<div class="exp-cat">'+e.cat+'</div>'+
+        '<div class="exp-desc">'+e.desc+'</div>'+
+        '<div class="exp-meta">'+e.city+' &middot; '+ds+'</div>'+
+        '<button class="del-btn" onclick="deleteExpense('+e.id+')">Delete</button>'+
+      '</div>'+
+      '<div class="exp-right">'+
+        '<div class="exp-cad">CA$'+e.amtCad.toFixed(2)+'</div>'+
+        '<div class="exp-usd">US$'+e.amtUsd.toFixed(2)+'</div>'+
+        '<div class="exp-jpy">&#165;'+e.amtJpy.toLocaleString()+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+
+  renderBreakdown(sorted);
+  renderExportSummary(totCad, totUsd, totJpy);
+}
+
+function renderBreakdown(sorted) {
+  var cities = ['Tokyo','Osaka','Kyoto','Kobe','Nara','Yokohama','Other'];
+  var totCad = expenses.reduce(function(s,e){return s+e.amtCad;},0);
+  var bd = document.getElementById('city-breakdown');
+  var html = '';
+  var hasSomething = false;
+
+  cities.forEach(function(city){
+    var items = expenses.filter(function(e){return e.city===city;});
+    if (!items.length) return;
+    hasSomething = true;
+    var cad = items.reduce(function(s,e){return s+e.amtCad;},0);
+    var usd = cadToUsd(cad);
+    var jpy = items.reduce(function(s,e){return s+e.amtJpy;},0);
+    var pct = totCad > 0 ? (cad/totCad*100) : 0;
+    html += '<div class="city-section">'+
+      '<div class="city-name">'+city+' <span style="color:var(--muted);font-weight:400;font-size:12px;">('+items.length+' expense'+(items.length>1?'s':'')+')</span></div>'+
+      '<div class="city-bar"><div class="city-bar-fill" style="width:'+pct.toFixed(1)+'%"></div></div>'+
+      '<div class="city-totals"><b>CA$'+cad.toFixed(2)+'</b> &middot; US$'+usd.toFixed(2)+' &middot; &#165;'+Math.round(jpy).toLocaleString()+' &middot; '+pct.toFixed(0)+'% of total</div>'+
+    '</div>';
+  });
+
+  if (!hasSomething) {
+    html = '<div class="empty"><div class="empty-icon">&#128506;</div><div>Add expenses to see<br>your breakdown by city.</div></div>';
+  }
+  bd.innerHTML = html;
+}
+
+function renderExportSummary(totCad, totUsd, totJpy) {
+  var cities = ['Tokyo','Osaka','Kyoto','Kobe','Nara','Yokohama','Other'];
+  var rows = cities.map(function(city){
+    var items = expenses.filter(function(e){return e.city===city;});
+    if (!items.length) return '';
+    var cad = items.reduce(function(s,e){return s+e.amtCad;},0);
+    return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border)"><span>'+city+'</span><span style="color:var(--text)">CA$'+cad.toFixed(2)+'</span></div>';
+  }).filter(Boolean).join('');
+
+  document.getElementById('export-summary').innerHTML =
+    '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border)"><span>Total CAD</span><span style="color:#e8856a;font-weight:600">CA$'+totCad.toFixed(2)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border)"><span>Total USD</span><span style="color:#6aaee8;font-weight:600">US$'+totUsd.toFixed(2)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border)"><span>Total JPY</span><span style="color:#6abf8e;font-weight:600">&#165;'+Math.round(totJpy).toLocaleString()+'</span></div>'+
+    (rows ? '<div style="margin-top:10px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">By city</div>'+rows : '');
+}
+
+// ── Export ────────────────────────────────────────────
+function exportCSV() {
+  if (!expenses.length) { showToast('No expenses to export'); return; }
+  var rows = ['Date,City,Category,Description,CAD,USD,JPY'];
+  expenses.slice().sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(e){
+    rows.push([e.date,e.city,e.cat,'"'+e.desc+'"',e.amtCad.toFixed(2),e.amtUsd.toFixed(2),e.amtJpy].join(','));
+  });
+  download('japan-trip-expenses.csv', rows.join('\n'), 'text/csv');
+  showToast('CSV downloaded');
+}
+
+function exportText() {
+  if (!expenses.length) { showToast('No expenses to export'); return; }
+  var totCad = expenses.reduce(function(s,e){return s+e.amtCad;},0);
+  var totUsd = cadToUsd(totCad);
+  var totJpy = expenses.reduce(function(s,e){return s+e.amtJpy;},0);
+  var lines = [
+    'Japan Trip Expenses — Apr 28 – May 8, 2026',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    'Total: CA$'+totCad.toFixed(2)+' / US$'+totUsd.toFixed(2)+' / ¥'+Math.round(totJpy).toLocaleString(),
+    '',
+    'ALL EXPENSES',
+    '─────────────────────────────'
+  ];
+  expenses.slice().sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(e){
+    lines.push(e.date+' | '+e.city+' | '+e.cat+' | '+e.desc+' | CA$'+e.amtCad.toFixed(2)+' / ¥'+e.amtJpy.toLocaleString());
+  });
+  download('japan-trip-summary.txt', lines.join('\n'), 'text/plain');
+  showToast('Summary downloaded');
+}
+
+function download(filename, content, type) {
+  var a = document.createElement('a');
+  a.href = 'data:'+type+';charset=utf-8,'+encodeURIComponent(content);
+  a.download = filename;
+  a.click();
+}
+
+function confirmClear() {
+  if (confirm('Delete all expenses? This cannot be undone.')) {
+    expenses = [];
+    saveExpenses();
+    renderExpenses();
+    showToast('All data cleared');
+  }
+}
+
+// ── UI helpers ────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){t.classList.remove('show');}, 2000);
+}
+
+// ── iCloud Widget Sync ───────────────────────────────
+function syncToWidget() {
+  // Builds a JSON snapshot and triggers download as expenses.json
+  // User saves this file to iCloud Drive / Scriptable / expenses.json
+  var totCad = expenses.reduce(function(s,e){return s+e.amtCad;},0);
+  var totUsd = cadToUsd(totCad);
+  var totJpy = expenses.reduce(function(s,e){return s+e.amtJpy;},0);
+  var snapshot = {
+    lastUpdated: new Date().toISOString(),
+    rates: rates,
+    totals: {
+      cad: Math.round(totCad*100)/100,
+      usd: Math.round(totUsd*100)/100,
+      jpy: Math.round(totJpy)
+    },
+    expenses: expenses
+  };
+  var json = JSON.stringify(snapshot, null, 2);
+  var a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+  a.download = 'expenses.json';
+  a.click();
+  showToast('Saved! Move expenses.json to iCloud Drive / Scriptable /');
+}
+
+// ── Init ──────────────────────────────────────────────
+var today = new Date().toISOString().split('T')[0];
+document.getElementById('f-date').value = today;
+updateRateBar();
+renderExpenses();
+fetchRates();
+</script>
+</body>
+</html>
