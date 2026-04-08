@@ -704,17 +704,6 @@ function escapeHtml(str){
 }
 
 document.addEventListener('DOMContentLoaded', function(){
-  var isDesktop = !('ontouchstart' in window) && !/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if(isDesktop){
-    var cl=document.querySelector('label[for="photo-camera"]');
-    var ecl=document.querySelector('label[for="edit-photo-camera"]');
-    var br=document.getElementById('photo-btn-row');
-    var ebr=document.querySelector('#edit-modal .toolbar');
-    if(cl) cl.style.display='none';
-    if(ecl) ecl.style.display='none';
-    if(br) br.style.gridTemplateColumns='1fr';
-    if(ebr) ebr.style.gridTemplateColumns='1fr';
-  }
   dtTimer=setInterval(tickClock, 1000);
   useLiveTime();
   renderFeed();
