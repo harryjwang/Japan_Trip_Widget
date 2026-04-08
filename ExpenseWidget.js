@@ -1,14 +1,6 @@
-// Expense Widget - Medium (4x2) home screen widget
-// Reads from iCloud Drive / Scriptable / expenses.json
-//
-// SETUP:
-// 1. Install Scriptable (free, App Store)
-// 2. Paste this script, name it "Expenses", tap Done
-// 3. In Trip Tracker web app (Export tab) tap
-//    "Sync to Widget" -> save expenses.json to
-//    iCloud Drive / Scriptable / expenses.json
-// 4. Long-press home screen -> + -> Scriptable
-//    -> choose MEDIUM size -> Script: Expenses
+// Expense Widget - Medium (4x2)
+// Hosted on GitHub, loaded via eval()
+// No async/await at top level - compatible with eval()
 
 var FILE_NAME = "expenses.json";
 var fm = FileManager.iCloud();
@@ -33,35 +25,33 @@ var CAT_COLORS = {
   "Other":         new Color("#888888")
 };
 
-async function loadData() {
-  try {
-    if (!fm.fileExists(filePath)) return null;
-    await fm.downloadFileFromiCloud(filePath);
-    return JSON.parse(fm.readString(filePath));
-  } catch(e) {
-    return null;
-  }
-}
-
-function fmtCad(n) {
-  return "$" + n.toFixed(0);
-}
-
-function fmtJpy(n) {
-  return "\u00A5" + Math.round(n).toLocaleString();
-}
+function fmtCad(n) { return "$" + n.toFixed(0); }
+function fmtJpy(n) { return "\u00A5" + Math.round(n).toLocaleString(); }
 
 function buildBar(pct, len) {
-  len = len || 20;
-  var filled = Math.round(pct * len);
-  var empty = len - filled;
-  var bar = "";
-  for (var i = 0; i < filled; i++) bar += "|";
-  for (var j = 0; j < empty; j++) bar += ".";
-  return bar;
+  var out = "";
+  var filled = Math.round(pct * (len || 22));
+  var empty = (len || 22) - filled;
+  for (var i = 0; i < filled; i++) out += "|";
+  for (var j = 0; j < empty; j++) out += ".";
+  return out;
 }
 
-async function buildWidget(data) {
+function addPill(parent, label, value, color) {
+  var pill = parent.addStack();
+  pill.layoutVertically();
+  pill.backgroundColor = SURFACE;
+  pill.cornerRadius = 7;
+  pill.setPadding(5, 8, 5, 8);
+  var lbl = pill.addText(label);
+  lbl.font = Font.systemFont(9);
+  lbl.textColor = MUTED;
+  var val = pill.addText(value);
+  val.font = Font.boldSystemFont(13);
+  val.textColor = color;
+}
+
+function buildWidget(data) {
   var w = new ListWidget();
   w.backgroundColor = BG;
   w.setPadding(12, 14, 10, 14);
@@ -81,28 +71,30 @@ async function buildWidget(data) {
   }
 
   var expenses = data.expenses;
-  var totCad = expenses.reduce(function(s, e) { return s + e.amtCad; }, 0);
-  var totUsd = expenses.reduce(function(s, e) { return s + e.amtUsd; }, 0);
-  var totJpy = expenses.reduce(function(s, e) { return s + e.amtJpy; }, 0);
+  var totCad = 0; var totUsd = 0; var totJpy = 0;
+  for (var i = 0; i < expenses.length; i++) {
+    totCad += expenses[i].amtCad;
+    totUsd += expenses[i].amtUsd;
+    totJpy += expenses[i].amtJpy;
+  }
 
   var cats = {};
-  expenses.forEach(function(e) {
-    if (!cats[e.cat]) cats[e.cat] = 0;
-    cats[e.cat] += e.amtCad;
-  });
-  var sorted = Object.entries(cats).sort(function(a, b) { return b[1] - a[1]; });
+  for (var i = 0; i < expenses.length; i++) {
+    var cat = expenses[i].cat;
+    if (!cats[cat]) cats[cat] = 0;
+    cats[cat] += expenses[i].amtCad;
+  }
+  var sorted = Object.keys(cats).map(function(k) { return [k, cats[k]]; });
+  sorted.sort(function(a, b) { return b[1] - a[1]; });
 
-  // Header row
+  // Header
   var row1 = w.addStack();
   row1.layoutHorizontally();
   row1.centerAlignContent();
-
   var titleTxt = row1.addText("Trip Expenses");
   titleTxt.font = Font.boldSystemFont(13);
   titleTxt.textColor = TEXT;
-
   row1.addSpacer();
-
   var synced = data.lastUpdated
     ? new Date(data.lastUpdated).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})
     : "";
@@ -112,30 +104,14 @@ async function buildWidget(data) {
 
   w.addSpacer(6);
 
-  // Totals row
+  // Totals
   var totRow = w.addStack();
   totRow.layoutHorizontally();
   totRow.spacing = 6;
-
-  function addPill(parent, label, value, color) {
-    var pill = parent.addStack();
-    pill.layoutVertically();
-    pill.backgroundColor = SURFACE;
-    pill.cornerRadius = 7;
-    pill.setPadding(5, 8, 5, 8);
-    var lbl = pill.addText(label);
-    lbl.font = Font.systemFont(9);
-    lbl.textColor = MUTED;
-    var val = pill.addText(value);
-    val.font = Font.boldSystemFont(13);
-    val.textColor = color;
-  }
-
   addPill(totRow, "CAD", fmtCad(totCad), PINK);
   addPill(totRow, "USD", fmtCad(totUsd), BLUE);
   addPill(totRow, "JPY", fmtJpy(totJpy), GREEN);
   totRow.addSpacer();
-
   var countTxt = totRow.addText(expenses.length + " exp");
   countTxt.font = Font.systemFont(10);
   countTxt.textColor = DIM;
@@ -144,46 +120,38 @@ async function buildWidget(data) {
 
   // Top 3 categories
   var topCats = sorted.slice(0, 3);
-
-  topCats.forEach(function(entry) {
-    var cat = entry[0];
-    var cad = entry[1];
-    var pct = totCad > 0 ? cad / totCad : 0;
-    var color = CAT_COLORS[cat] || new Color("#888888");
+  for (var k = 0; k < topCats.length; k++) {
+    var catName = topCats[k][0];
+    var catCad  = topCats[k][1];
+    var pct     = totCad > 0 ? catCad / totCad : 0;
+    var color   = CAT_COLORS[catName] || new Color("#888888");
 
     var row = w.addStack();
     row.layoutHorizontally();
     row.centerAlignContent();
     row.spacing = 5;
-
-    var nameTxt = row.addText(cat);
+    var nameTxt = row.addText(catName);
     nameTxt.font = Font.mediumSystemFont(11);
     nameTxt.textColor = TEXT;
-
     row.addSpacer();
-
     var pctTxt = row.addText((pct * 100).toFixed(0) + "%");
     pctTxt.font = Font.systemFont(10);
     pctTxt.textColor = MUTED;
-
-    var amtTxt = row.addText("  $" + cad.toFixed(0));
+    var amtTxt = row.addText("  $" + catCad.toFixed(0));
     amtTxt.font = Font.boldSystemFont(11);
     amtTxt.textColor = color;
 
     w.addSpacer(2);
 
     var barRow = w.addStack();
-    barRow.layoutHorizontally();
-
     var barTxt = barRow.addText(buildBar(pct, 22));
     barTxt.font = Font.systemFont(7);
     barTxt.textColor = color;
 
     w.addSpacer(4);
-  });
+  }
 
   w.addSpacer();
-
   var footer = w.addText("Tap to open Trip Tracker");
   footer.font = Font.systemFont(9);
   footer.textColor = DIM;
@@ -191,13 +159,23 @@ async function buildWidget(data) {
   return w;
 }
 
-var data = await loadData();
-var widget = await buildWidget(data);
+// Load and run - no top-level async, use Promise chain
+var data = null;
+try {
+  if (fm.fileExists(filePath)) {
+    fm.downloadFileFromiCloud(filePath);
+    data = JSON.parse(fm.readString(filePath));
+  }
+} catch(e) {
+  data = null;
+}
+
+var widget = buildWidget(data);
 
 if (config.runsInWidget) {
   Script.setWidget(widget);
 } else {
-  await widget.presentMedium();
+  widget.presentMedium();
 }
 
 Script.complete();
