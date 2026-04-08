@@ -5,130 +5,134 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Trip Tracker">
+<meta name="apple-mobile-web-app-title" content="Expenses Tracker">
 <meta name="theme-color" content="#0f0f0f">
-<title>Japan Trip Tracker</title>
+<title>Expenses Tracker</title>
 <style>
 :root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;--border:rgba(255,255,255,0.08);--text:#f0ede8;--muted:#888;--subtle:#444;--accent:#e8c96a;--green:#6abf8e;--red:#e86a6a;--blue:#6aaee8;--pink:#e8856a;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Text',BlinkMacSystemFont,sans-serif;min-height:100vh;overscroll-behavior:none}
-
-/* topbar */
-.topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--safe-top) + 14px) 18px 0;border-bottom:0.5px solid var(--border)}
-.topbar-title{font-size:17px;font-weight:600;letter-spacing:-0.3px;padding-bottom:12px}
-.tabs{display:flex;gap:0}
-.tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+button,input,textarea,select{font:inherit}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--safe-top)+14px) 18px 0;border-bottom:0.5px solid var(--border)}
+.topbar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;padding-bottom:12px}
+.tabs{display:flex}
+.tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s}
 .tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
-
-/* rate bar */
-.rate-bar{padding:8px 18px;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rate-bar{padding:8px 18px;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .rate-pills{display:flex;gap:10px;flex-wrap:wrap}
 .rpill b{color:var(--accent);font-weight:500}
-.rate-status{display:flex;align-items:center;gap:5px}
-.rdot{width:5px;height:5px;border-radius:50%;background:var(--subtle);flex-shrink:0}
+.rdot{width:5px;height:5px;border-radius:50%;background:var(--subtle);flex-shrink:0;display:inline-block;margin-right:4px}
 .rdot.live{background:var(--green)}
 .rdot.error{background:var(--red)}
 .rdot.loading{background:var(--accent);animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.refresh-mini{font-size:11px;background:transparent;border:none;color:var(--muted);cursor:pointer;padding:2px 6px;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-
-/* content */
-.tab-content{display:none;padding:14px 14px calc(var(--safe-bottom) + 80px)}
+.refresh-mini{font-size:12px;background:transparent;border:none;color:var(--muted);cursor:pointer;padding:2px 6px}
+.tab-content{display:none;padding:14px 14px calc(var(--safe-bottom)+80px)}
 .tab-content.active{display:block}
-
-/* summary cards */
-.summary-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.summary-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
 .sum-card{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:10px 12px}
 .sum-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px}
 .sum-val{font-size:17px;font-weight:600;letter-spacing:-0.3px}
-.val-cad{color:#e8856a}
-.val-usd{color:#6aaee8}
-.val-jpy{color:#6abf8e}
-
-/* form */
+.val-cad{color:var(--pink)}
+.val-usd{color:var(--blue)}
+.val-jpy{color:var(--green)}
 .form-section{background:var(--surface);border-radius:14px;border:0.5px solid var(--border);padding:14px;margin-bottom:14px}
-.form-section h3{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
+.form-section h3{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
 .field{margin-bottom:10px}
 .field:last-child{margin-bottom:0}
 .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500}
-.field input,.field select{width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif;-webkit-appearance:none}
+.field input,.field select{width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);-webkit-appearance:none}
 .field input:focus,.field select:focus{outline:none;border-color:var(--accent)}
-.field select option{background:#222;color:var(--text)}
 .field input::placeholder{color:var(--subtle)}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field select option{background:#222;color:var(--text)}
 .field .hint{font-size:10px;color:var(--subtle);margin-top:4px}
-
-/* buttons */
-.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#1a1600;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#1a1600;cursor:pointer}
 .btn-primary:active{opacity:0.8}
-.btn-secondary{width:100%;padding:11px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px}
+.btn-secondary{width:100%;padding:11px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;margin-top:8px}
 .btn-secondary:active{background:var(--surface2)}
-
-/* expense list */
-.list-header{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin:16px 0 10px}
+.btn-danger{width:100%;padding:11px;background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.2);border-radius:12px;font-size:14px;font-weight:500;color:var(--red);cursor:pointer;margin-top:8px}
+.list-header{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin:16px 0 10px}
 .expense-item{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .exp-left{flex:1;min-width:0}
 .exp-cat{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
 .exp-desc{font-size:14px;font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .exp-meta{font-size:11px;color:var(--subtle);margin-top:3px}
 .exp-right{text-align:right;flex-shrink:0}
-.exp-cad{font-size:14px;font-weight:600;color:#e8856a}
-.exp-usd{font-size:11px;color:#6aaee8;margin-top:2px}
-.exp-jpy{font-size:11px;color:#6abf8e}
-.del-btn{font-size:10px;padding:3px 8px;background:rgba(232,106,106,0.1);color:var(--red);border:0.5px solid rgba(232,106,106,0.2);border-radius:6px;cursor:pointer;margin-top:5px;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-
-/* by city */
+.exp-cad{font-size:14px;font-weight:600;color:var(--pink)}
+.exp-usd{font-size:11px;color:var(--blue);margin-top:2px}
+.exp-jpy{font-size:11px;color:var(--green)}
+.del-btn{font-size:10px;padding:3px 8px;background:rgba(232,106,106,0.1);color:var(--red);border:0.5px solid rgba(232,106,106,0.2);border-radius:6px;cursor:pointer;margin-top:5px}
 .city-section{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:12px 14px;margin-bottom:8px}
 .city-name{font-size:13px;font-weight:600;margin-bottom:6px}
 .city-bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:6px}
 .city-bar-fill{height:100%;border-radius:2px;background:var(--accent)}
 .city-totals{font-size:12px;color:var(--muted)}
 .city-totals b{color:var(--text)}
-
-/* empty state */
-.empty{text-align:center;padding:30px 20px;color:var(--muted);background:var(--surface);border-radius:14px;border:0.5px solid var(--border)}
-.empty-icon{font-size:28px;margin-bottom:8px}
-
-/* export */
-.export-btn{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.export-btn{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
 .export-btn:active{background:var(--surface2)}
-
-/* toast */
-.toast{position:fixed;bottom:calc(var(--safe-bottom) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999}
+.empty{text-align:center;padding:30px 20px;color:var(--muted);background:var(--surface);border-radius:14px;border:0.5px solid var(--border)}
+.toast{position:fixed;bottom:calc(var(--safe-bottom)+90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal-bg{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.7);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-box{background:var(--surface);margin:40px 14px calc(var(--safe-bottom)+20px);border-radius:20px;padding:20px;border:0.5px solid var(--border)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
+.tf-card{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.15s}
+.tf-card.active-tf{border-color:var(--accent)}
+.tf-card-row{display:flex;align-items:center;justify-content:space-between}
+.tf-name{font-size:14px;font-weight:600}
+.tf-dates{font-size:11px;color:var(--muted);margin-top:3px}
+.tf-stats{font-size:12px;color:var(--accent);font-weight:500;text-align:right}
+.tf-badge{font-size:10px;padding:2px 8px;background:rgba(232,201,106,0.15);color:var(--accent);border-radius:10px;margin-left:8px}
+.tf-actions{display:flex;gap:8px;margin-top:10px}
+.tf-action-btn{font-size:11px;padding:5px 10px;background:var(--surface2);color:var(--muted);border:0.5px solid var(--border);border-radius:7px;cursor:pointer}
+.tf-action-btn.primary{color:var(--accent);border-color:rgba(232,201,106,0.3)}
+.tf-action-btn.danger{color:var(--red);border-color:rgba(232,106,106,0.2)}
+.widget-preview{background:var(--surface2);border-radius:12px;padding:12px;margin-bottom:12px;border:0.5px solid var(--border)}
+.wp-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.wp-tf{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.wp-dates{font-size:11px;color:var(--muted);margin-bottom:8px}
+.active-filter-bar{background:rgba(232,201,106,0.08);border:0.5px solid rgba(232,201,106,0.2);border-radius:10px;padding:8px 12px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.afb-label{font-size:12px;color:var(--accent)}
+.afb-clear{font-size:11px;color:var(--muted);background:transparent;border:none;cursor:pointer;padding:2px 6px}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-title">Japan Trip Tracker</div>
+  <h1>Expenses Tracker</h1>
   <div class="tabs">
     <button class="tab-btn active" id="tab-btn-expenses" onclick="switchTab('expenses',this)">Expenses</button>
     <button class="tab-btn" id="tab-btn-breakdown" onclick="switchTab('breakdown',this)">By City</button>
+    <button class="tab-btn" id="tab-btn-timeframes" onclick="switchTab('timeframes',this)">Timeframes</button>
     <button class="tab-btn" id="tab-btn-export" onclick="switchTab('export',this)">Export</button>
   </div>
 </div>
 
 <div class="rate-bar">
   <div class="rate-pills">
-    <span class="rpill">1 JPY = <b id="rb-jpy-cad">—</b> CAD</span>
-    <span class="rpill">1 USD = <b id="rb-usd-cad">—</b> CAD</span>
-    <span class="rpill">1 EUR = <b id="rb-eur-cad">—</b> CAD</span>
+    <span class="rpill">1 JPY = <b id="rb-jpy-cad">--</b> CAD</span>
+    <span class="rpill">1 USD = <b id="rb-usd-cad">--</b> CAD</span>
   </div>
-  <div class="rate-status">
-    <div class="rdot" id="rdot"></div>
+  <div style="display:flex;align-items:center;gap:4px">
+    <span class="rdot" id="rdot"></span>
     <button class="refresh-mini" onclick="fetchRates()">&#8635;</button>
   </div>
 </div>
 
 <!-- EXPENSES TAB -->
 <div class="tab-content active" id="tab-expenses">
+  <div id="active-filter-bar" class="active-filter-bar" style="display:none">
+    <span class="afb-label" id="afb-label"></span>
+    <button class="afb-clear" onclick="clearTimeframeFilter()">Show all</button>
+  </div>
   <div class="summary-row">
     <div class="sum-card"><div class="sum-label">CAD</div><div class="sum-val val-cad" id="tot-cad">$0</div></div>
     <div class="sum-card"><div class="sum-label">USD</div><div class="sum-val val-usd" id="tot-usd">$0</div></div>
-    <div class="sum-card"><div class="sum-label">JPY</div><div class="sum-val val-jpy" id="tot-jpy">¥0</div></div>
+    <div class="sum-card"><div class="sum-label">JPY</div><div class="sum-val val-jpy" id="tot-jpy">&#165;0</div></div>
   </div>
-
   <div class="form-section">
     <h3>Add Expense</h3>
     <div class="two-col">
@@ -136,12 +140,22 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
         <label>City</label>
         <select id="f-city">
           <option value="">Select</option>
+          <optgroup label="Japan">
           <option value="Tokyo">Tokyo</option>
           <option value="Osaka">Osaka</option>
           <option value="Kyoto">Kyoto</option>
           <option value="Kobe">Kobe</option>
           <option value="Nara">Nara</option>
           <option value="Yokohama">Yokohama</option>
+          </optgroup>
+          <optgroup label="Canada">
+          <option value="Toronto">Toronto</option>
+          <option value="Markham">Markham</option>
+          <option value="Richmond Hill">Richmond Hill</option>
+          <option value="Vaughan">Vaughan</option>
+          <option value="Mississauga">Mississauga</option>
+          <option value="Waterloo">Waterloo</option>
+          </optgroup>
           <option value="Other">Other</option>
         </select>
       </div>
@@ -167,12 +181,12 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
       <div class="field">
         <label>Amount JPY</label>
         <input type="number" id="f-jpy" placeholder="0" min="0" inputmode="numeric">
-        <div class="hint" id="jpy-hint">= — CAD</div>
+        <div class="hint" id="jpy-hint">= -- CAD</div>
       </div>
       <div class="field">
         <label>Or CAD</label>
         <input type="number" id="f-cad" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
-        <div class="hint" id="cad-hint">= — JPY</div>
+        <div class="hint" id="cad-hint">= -- JPY</div>
       </div>
     </div>
     <div class="field">
@@ -181,34 +195,102 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
     </div>
     <button class="btn-primary" onclick="addExpense()">Add Expense</button>
   </div>
-
   <div class="list-header">Recent Expenses</div>
   <div id="expense-list"></div>
 </div>
 
 <!-- BY CITY TAB -->
 <div class="tab-content" id="tab-breakdown">
+  <div id="active-filter-bar2" class="active-filter-bar" style="display:none">
+    <span class="afb-label" id="afb-label2"></span>
+    <button class="afb-clear" onclick="clearTimeframeFilter()">Show all</button>
+  </div>
   <div id="city-breakdown"></div>
+</div>
+
+<!-- TIMEFRAMES TAB -->
+<div class="tab-content" id="tab-timeframes">
+  <div id="tf-list"></div>
+  <button class="btn-primary" style="margin-top:8px" onclick="openTfModal()">+ New Timeframe</button>
 </div>
 
 <!-- EXPORT TAB -->
 <div class="tab-content" id="tab-export">
   <div class="form-section">
-    <h3>Trip Summary</h3>
-    <div id="export-summary" style="font-size:13px;color:var(--muted);line-height:1.8"></div>
+    <h3>Widget Sync</h3>
+    <div class="widget-preview">
+      <div class="wp-label">Widget will show</div>
+      <div class="wp-tf" id="wp-tf-name">All expenses</div>
+      <div class="wp-dates" id="wp-tf-dates">All time</div>
+    </div>
+    <div class="field">
+      <label>Timeframe to sync</label>
+      <select id="sync-tf-select" onchange="updateWidgetPreview()">
+        <option value="">All expenses</option>
+      </select>
+    </div>
+    <button class="export-btn" onclick="syncToWidget()">&#9729; Save to iCloud / Scriptable</button>
   </div>
   <button class="export-btn" onclick="exportCSV()">&#8595; Download CSV</button>
   <button class="export-btn" onclick="exportText()">&#8595; Download Summary</button>
-  <button class="export-btn" onclick="syncToWidget()">&#9729; Save to iCloud / Scriptable</button>
-  <button class="btn-secondary" onclick="confirmClear()">Clear all data</button>
+  <button class="btn-danger" onclick="confirmClear()">Clear all data</button>
+</div>
+
+<!-- TIMEFRAME MODAL -->
+<div class="modal-bg" id="tf-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="tf-modal-title">New Timeframe</span>
+      <button class="modal-close" onclick="closeTfModal()">&#215;</button>
+    </div>
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="tf-name-input" placeholder="e.g. Kansai Week, Tokyo Week">
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label>Start date</label>
+        <input type="date" id="tf-start-input">
+      </div>
+      <div class="field">
+        <label>End date</label>
+        <input type="date" id="tf-end-input">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="saveTf()">Save Timeframe</button>
+    <button class="btn-secondary" onclick="closeTfModal()">Cancel</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Rates ─────────────────────────────────────────────
-var rates = { JPY_CAD: 0.00876, USD_CAD: 1.3915, EUR_CAD: 1.6064 };
+var STORAGE_KEY = 'jpTrip_expenses';
+var TF_KEY = 'jpTrip_timeframes';
+var FALLBACK = {JPY_CAD:0.00876, USD_CAD:1.3915};
+var rates = Object.assign({}, FALLBACK);
+var expenses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+var timeframes = JSON.parse(localStorage.getItem(TF_KEY) || 'null');
+var activeTimeframeId = null;
+var editingTfId = null;
 
+// Pre-fill Japan trip timeframes if first load
+if(!timeframes) {
+  timeframes = [
+    { id: 'japan-2026', name: 'Japan Trip 2026', start: '2026-04-28', end: '2026-05-08' }
+  ];
+  saveTimeframes();
+}
+
+function saveTimeframes() {
+  localStorage.setItem(TF_KEY, JSON.stringify(timeframes));
+}
+
+function saveExpenses() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
+}
+
+// -- Rates ----------------------------------------------
 function setRateDot(type) {
   document.getElementById('rdot').className = 'rdot ' + type;
 }
@@ -216,7 +298,6 @@ function setRateDot(type) {
 function updateRateBar() {
   document.getElementById('rb-jpy-cad').textContent = rates.JPY_CAD.toFixed(5);
   document.getElementById('rb-usd-cad').textContent = rates.USD_CAD.toFixed(4);
-  document.getElementById('rb-eur-cad').textContent = rates.EUR_CAD.toFixed(4);
   updateHints();
 }
 
@@ -224,54 +305,92 @@ function fetchRates() {
   setRateDot('loading');
   Promise.all([
     fetch('https://api.frankfurter.dev/v2/rates?base=USD&quotes=CAD,JPY'),
-    fetch('https://api.frankfurter.dev/v2/rates?base=EUR&quotes=CAD')
   ])
   .then(function(rs) {
-    if (!rs[0].ok || !rs[1].ok) throw new Error('HTTP ' + rs[0].status);
-    return Promise.all([rs[0].json(), rs[1].json()]);
+    if(!rs[0].ok) throw new Error('HTTP ' + rs[0].status);
+    return rs[0].json();
   })
-  .then(function(data) {
-    var usdArr = data[0];
-    var eurArr = data[1];
-    var usdCad = usdArr.find(function(x){return x.base==='USD'&&x.quote==='CAD';});
-    var usdJpy = usdArr.find(function(x){return x.base==='USD'&&x.quote==='JPY';});
-    var eurCad = eurArr.find(function(x){return x.base==='EUR'&&x.quote==='CAD';});
-    if (!usdCad||!usdJpy||!eurCad) throw new Error('Missing rates');
+  .then(function(usdArr) {
+    var usdCad = usdArr.find(function(x) { return x.base==='USD'&&x.quote==='CAD'; });
+    var usdJpy = usdArr.find(function(x) { return x.base==='USD'&&x.quote==='JPY'; });
+    if(!usdCad||!usdJpy) throw new Error('Missing rates');
     rates.USD_CAD = usdCad.rate;
     rates.JPY_CAD = (1/usdJpy.rate)*usdCad.rate;
-    rates.EUR_CAD = eurCad.rate;
     setRateDot('live');
     updateRateBar();
-    renderExpenses();
-    showToast('Rates updated live');
   })
   .catch(function() {
+    rates = Object.assign({}, FALLBACK);
     setRateDot('error');
     updateRateBar();
   });
 }
 
-// ── Expenses ──────────────────────────────────────────
-var expenses = JSON.parse(localStorage.getItem('jpTrip_expenses') || '[]');
-
-function saveExpenses() {
-  localStorage.setItem('jpTrip_expenses', JSON.stringify(expenses));
+// -- Filtering ------------------------------------------
+function getActiveTimeframe() {
+  if(!activeTimeframeId) return null;
+  return timeframes.find(function(t) { return t.id === activeTimeframeId; }) || null;
 }
 
-function jpyToCad(jpy) { return jpy * rates.JPY_CAD; }
-function cadToJpy(cad) { return cad / rates.JPY_CAD; }
-function cadToUsd(cad) { return cad / rates.USD_CAD; }
+function getFilteredExpenses() {
+  var tf = getActiveTimeframe();
+  if(!tf) return expenses;
+  return expenses.filter(function(e) {
+    return e.date >= tf.start && e.date <= tf.end;
+  });
+}
+
+function setTimeframeFilter(id) {
+  activeTimeframeId = id;
+  updateFilterBars();
+  renderAll();
+}
+
+function clearTimeframeFilter() {
+  activeTimeframeId = null;
+  updateFilterBars();
+  renderAll();
+}
+
+function updateFilterBars() {
+  var tf = getActiveTimeframe();
+  var bars = [
+    {bar: 'active-filter-bar', label: 'afb-label'},
+    {bar: 'active-filter-bar2', label: 'afb-label2'}
+  ];
+  bars.forEach(function(b) {
+    var barEl = document.getElementById(b.bar);
+    var lblEl = document.getElementById(b.label);
+    if(!barEl || !lblEl) return;
+    if(tf) {
+      barEl.style.display = 'flex';
+      lblEl.textContent = 'Showing: ' + tf.name + ' (' + tf.start + ' to ' + tf.end + ')';
+    } else {
+      barEl.style.display = 'none';
+    }
+  });
+}
+
+// -- Conversion helpers ---------------------------------
+function jpyToCad(j) { return j * rates.JPY_CAD; }
+function cadToJpy(c) { return c / rates.JPY_CAD; }
+function cadToUsd(c) { return c / rates.USD_CAD; }
+function fmtNum(v, ccy) {
+  if(ccy==='JPY') return Math.round(v).toLocaleString();
+  return v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 
 function updateHints() {
   var jpy = parseFloat(document.getElementById('f-jpy').value) || 0;
   var cad = parseFloat(document.getElementById('f-cad').value) || 0;
-  document.getElementById('jpy-hint').textContent = jpy ? '= CA$' + jpyToCad(jpy).toFixed(2) : '= — CAD';
-  document.getElementById('cad-hint').textContent = cad ? '= ¥' + Math.round(cadToJpy(cad)).toLocaleString() : '= — JPY';
+  document.getElementById('jpy-hint').textContent = jpy ? '= CA$' + jpyToCad(jpy).toFixed(2) : '= -- CAD';
+  document.getElementById('cad-hint').textContent = cad ? '= &#165;' + Math.round(cadToJpy(cad)).toLocaleString() : '= -- JPY';
 }
 
 document.getElementById('f-jpy').addEventListener('input', updateHints);
 document.getElementById('f-cad').addEventListener('input', updateHints);
 
+// -- Add expense ----------------------------------------
 function addExpense() {
   var city = document.getElementById('f-city').value;
   var cat  = document.getElementById('f-cat').value;
@@ -279,178 +398,294 @@ function addExpense() {
   var jpy  = parseFloat(document.getElementById('f-jpy').value) || 0;
   var cad  = parseFloat(document.getElementById('f-cad').value) || 0;
   var date = document.getElementById('f-date').value;
-
-  if (!city || !cat || !desc || (!jpy && !cad) || !date) {
-    showToast('Please fill in all fields'); return;
-  }
-
+  if(!city||!cat||!desc||(!jpy&&!cad)||!date) { showToast('Please fill in all fields'); return; }
   var amtCad = cad || jpyToCad(jpy);
   var amtJpy = jpy || cadToJpy(cad);
   var amtUsd = cadToUsd(amtCad);
-
-  expenses.push({
-    id: Date.now(), city, cat, desc,
-    amtCad: Math.round(amtCad * 100) / 100,
-    amtJpy: Math.round(amtJpy),
-    amtUsd: Math.round(amtUsd * 100) / 100,
-    date
-  });
-
+  expenses.push({ id:Date.now(), city, cat, desc, amtCad:Math.round(amtCad*100)/100, amtJpy:Math.round(amtJpy), amtUsd:Math.round(amtUsd*100)/100, date });
   saveExpenses();
-  document.getElementById('f-city').value = '';
-  document.getElementById('f-cat').value = '';
-  document.getElementById('f-desc').value = '';
-  document.getElementById('f-jpy').value = '';
-  document.getElementById('f-cad').value = '';
+  document.getElementById('f-city').value='';
+  document.getElementById('f-cat').value='';
+  document.getElementById('f-desc').value='';
+  document.getElementById('f-jpy').value='';
+  document.getElementById('f-cad').value='';
   updateHints();
-  renderExpenses();
+  renderAll();
   showToast('Expense added');
 }
 
 function deleteExpense(id) {
-  expenses = expenses.filter(function(e){return e.id !== id;});
+  expenses = expenses.filter(function(e) { return e.id !== id; });
   saveExpenses();
-  renderExpenses();
+  renderAll();
   showToast('Deleted');
 }
 
-function renderExpenses() {
-  var totCad = expenses.reduce(function(s,e){return s+e.amtCad;},0);
-  var totUsd = cadToUsd(totCad);
-  var totJpy = expenses.reduce(function(s,e){return s+e.amtJpy;},0);
-
-  document.getElementById('tot-cad').textContent = '$' + totCad.toFixed(2);
-  document.getElementById('tot-usd').textContent = '$' + totUsd.toFixed(2);
-  document.getElementById('tot-jpy').textContent = '¥' + Math.round(totJpy).toLocaleString();
-
-  var list = document.getElementById('expense-list');
-  if (expenses.length === 0) {
-    list.innerHTML = '<div class="empty"><div class="empty-icon">&#128184;</div><div>No expenses yet.<br>Add your first one above.</div></div>';
-    renderBreakdown([]);
-    renderExportSummary(totCad, totUsd, totJpy);
-    return;
-  }
-
-  var sorted = expenses.slice().sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-  list.innerHTML = sorted.map(function(e){
-    var d = new Date(e.date+'T12:00:00');
-    var ds = d.toLocaleDateString([],{month:'short',day:'numeric'});
-    return '<div class="expense-item">'+
-      '<div class="exp-left">'+
-        '<div class="exp-cat">'+e.cat+'</div>'+
-        '<div class="exp-desc">'+e.desc+'</div>'+
-        '<div class="exp-meta">'+e.city+' &middot; '+ds+'</div>'+
-        '<button class="del-btn" onclick="deleteExpense('+e.id+')">Delete</button>'+
-      '</div>'+
-      '<div class="exp-right">'+
-        '<div class="exp-cad">CA$'+e.amtCad.toFixed(2)+'</div>'+
-        '<div class="exp-usd">US$'+e.amtUsd.toFixed(2)+'</div>'+
-        '<div class="exp-jpy">&#165;'+e.amtJpy.toLocaleString()+'</div>'+
-      '</div>'+
-    '</div>';
-  }).join('');
-
-  renderBreakdown(sorted);
-  renderExportSummary(totCad, totUsd, totJpy);
+// -- Render ---------------------------------------------
+function renderAll() {
+  renderExpenses();
+  renderBreakdown();
+  renderTimeframes();
+  updateWidgetPreview();
+  updateSyncSelect();
 }
 
-function renderBreakdown(sorted) {
-  var cities = ['Tokyo','Osaka','Kyoto','Kobe','Nara','Yokohama','Other'];
-  var totCad = expenses.reduce(function(s,e){return s+e.amtCad;},0);
+function renderExpenses() {
+  var filtered = getFilteredExpenses();
+  var totCad = filtered.reduce(function(s,e){return s+e.amtCad;},0);
+  var totUsd = cadToUsd(totCad);
+  var totJpy = filtered.reduce(function(s,e){return s+e.amtJpy;},0);
+  document.getElementById('tot-cad').textContent = '$' + totCad.toFixed(2);
+  document.getElementById('tot-usd').textContent = '$' + totUsd.toFixed(2);
+  document.getElementById('tot-jpy').textContent = '&#165;' + Math.round(totJpy).toLocaleString();
+  var list = document.getElementById('expense-list');
+  if(!list) return;
+  if(!filtered.length) {
+    list.innerHTML = '<div class="empty">&#128184;<br>No expenses yet. Add one above.</div>';
+    return;
+  }
+  var sorted = filtered.slice().sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+  list.innerHTML = sorted.map(function(e) {
+    var d = new Date(e.date+'T12:00:00');
+    var ds = d.toLocaleDateString([],{month:'short',day:'numeric'});
+    return '<div class="expense-item">' +
+      '<div class="exp-left">' +
+        '<div class="exp-cat">' + e.cat + '</div>' +
+        '<div class="exp-desc">' + e.desc + '</div>' +
+        '<div class="exp-meta">' + e.city + ' &middot; ' + ds + '</div>' +
+        '<button class="del-btn" onclick="deleteExpense(' + e.id + ')">Delete</button>' +
+      '</div>' +
+      '<div class="exp-right">' +
+        '<div class="exp-cad">CA$' + e.amtCad.toFixed(2) + '</div>' +
+        '<div class="exp-usd">US$' + e.amtUsd.toFixed(2) + '</div>' +
+        '<div class="exp-jpy">&#165;' + e.amtJpy.toLocaleString() + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderBreakdown() {
+  var filtered = getFilteredExpenses();
+  var cities = ['Tokyo','Osaka','Kyoto','Kobe','Nara','Yokohama','Toronto','Markham','Richmond Hill','Vaughan','Mississauga','Waterloo','Other'];
+  var totCad = filtered.reduce(function(s,e){return s+e.amtCad;},0);
   var bd = document.getElementById('city-breakdown');
+  if(!bd) return;
   var html = '';
   var hasSomething = false;
-
-  cities.forEach(function(city){
-    var items = expenses.filter(function(e){return e.city===city;});
-    if (!items.length) return;
+  cities.forEach(function(city) {
+    var items = filtered.filter(function(e){return e.city===city;});
+    if(!items.length) return;
     hasSomething = true;
     var cad = items.reduce(function(s,e){return s+e.amtCad;},0);
     var usd = cadToUsd(cad);
     var jpy = items.reduce(function(s,e){return s+e.amtJpy;},0);
     var pct = totCad > 0 ? (cad/totCad*100) : 0;
-    html += '<div class="city-section">'+
-      '<div class="city-name">'+city+' <span style="color:var(--muted);font-weight:400;font-size:12px;">('+items.length+' expense'+(items.length>1?'s':'')+')</span></div>'+
-      '<div class="city-bar"><div class="city-bar-fill" style="width:'+pct.toFixed(1)+'%"></div></div>'+
-      '<div class="city-totals"><b>CA$'+cad.toFixed(2)+'</b> &middot; US$'+usd.toFixed(2)+' &middot; &#165;'+Math.round(jpy).toLocaleString()+' &middot; '+pct.toFixed(0)+'% of total</div>'+
+    html += '<div class="city-section">' +
+      '<div class="city-name">' + city + ' <span style="color:var(--muted);font-weight:400;font-size:12px">(' + items.length + ' expense' + (items.length>1?'s':'') + ')</span></div>' +
+      '<div class="city-bar"><div class="city-bar-fill" style="width:' + pct.toFixed(1) + '%"></div></div>' +
+      '<div class="city-totals"><b>CA$' + cad.toFixed(2) + '</b> &middot; US$' + usd.toFixed(2) + ' &middot; &#165;' + Math.round(jpy).toLocaleString() + ' &middot; ' + pct.toFixed(0) + '% of total</div>' +
     '</div>';
   });
-
-  if (!hasSomething) {
-    html = '<div class="empty"><div class="empty-icon">&#128506;</div><div>Add expenses to see<br>your breakdown by city.</div></div>';
-  }
+  if(!hasSomething) html = '<div class="empty">&#128506;<br>Add expenses to see breakdown by city.</div>';
   bd.innerHTML = html;
 }
 
-function renderExportSummary(totCad, totUsd, totJpy) {
-  var cities = ['Tokyo','Osaka','Kyoto','Kobe','Nara','Yokohama','Other'];
-  var rows = cities.map(function(city){
-    var items = expenses.filter(function(e){return e.city===city;});
-    if (!items.length) return '';
-    var cad = items.reduce(function(s,e){return s+e.amtCad;},0);
-    return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border)"><span>'+city+'</span><span style="color:var(--text)">CA$'+cad.toFixed(2)+'</span></div>';
-  }).filter(Boolean).join('');
-
-  document.getElementById('export-summary').innerHTML =
-    '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border)"><span>Total CAD</span><span style="color:#e8856a;font-weight:600">CA$'+totCad.toFixed(2)+'</span></div>'+
-    '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border)"><span>Total USD</span><span style="color:#6aaee8;font-weight:600">US$'+totUsd.toFixed(2)+'</span></div>'+
-    '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--border)"><span>Total JPY</span><span style="color:#6abf8e;font-weight:600">&#165;'+Math.round(totJpy).toLocaleString()+'</span></div>'+
-    (rows ? '<div style="margin-top:10px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">By city</div>'+rows : '');
+// -- Timeframes -----------------------------------------
+function renderTimeframes() {
+  var list = document.getElementById('tf-list');
+  if(!list) return;
+  if(!timeframes.length) {
+    list.innerHTML = '<div class="empty">No timeframes yet.<br>Create one to filter expenses by date range.</div>';
+    return;
+  }
+  list.innerHTML = timeframes.map(function(tf) {
+    var tfExpenses = expenses.filter(function(e){return e.date>=tf.start&&e.date<=tf.end;});
+    var tfCad = tfExpenses.reduce(function(s,e){return s+e.amtCad;},0);
+    var isActive = activeTimeframeId === tf.id;
+    return '<div class="tf-card' + (isActive?' active-tf':'') + '">' +
+      '<div class="tf-card-row">' +
+        '<div>' +
+          '<div class="tf-name">' + tf.name + (isActive?'<span class="tf-badge">Active filter</span>':'') + '</div>' +
+          '<div class="tf-dates">' + tf.start + ' &mdash; ' + tf.end + '</div>' +
+        '</div>' +
+        '<div class="tf-stats">CA$' + tfCad.toFixed(2) + '<br><span style="color:var(--muted);font-size:10px">' + tfExpenses.length + ' expenses</span></div>' +
+      '</div>' +
+      '<div class="tf-actions">' +
+        '<button class="tf-action-btn primary" onclick="setTimeframeFilter(\'' + tf.id + '\')">Filter expenses</button>' +
+        '<button class="tf-action-btn" onclick="openTfModal(\'' + tf.id + '\')">Edit</button>' +
+        '<button class="tf-action-btn danger" onclick="deleteTf(\'' + tf.id + '\')">Delete</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
-// ── Export ────────────────────────────────────────────
+function openTfModal(id) {
+  editingTfId = id || null;
+  var title = document.getElementById('tf-modal-title');
+  var nameInput = document.getElementById('tf-name-input');
+  var startInput = document.getElementById('tf-start-input');
+  var endInput = document.getElementById('tf-end-input');
+  if(id) {
+    var tf = timeframes.find(function(t){return t.id===id;});
+    if(!tf) return;
+    title.textContent = 'Edit Timeframe';
+    nameInput.value = tf.name;
+    startInput.value = tf.start;
+    endInput.value = tf.end;
+  } else {
+    title.textContent = 'New Timeframe';
+    nameInput.value = '';
+    startInput.value = '';
+    endInput.value = '';
+  }
+  document.getElementById('tf-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeTfModal() {
+  document.getElementById('tf-modal').style.display = 'none';
+  document.body.style.overflow = '';
+  editingTfId = null;
+}
+
+function saveTf() {
+  var name = document.getElementById('tf-name-input').value.trim();
+  var start = document.getElementById('tf-start-input').value;
+  var end = document.getElementById('tf-end-input').value;
+  if(!name||!start||!end) { showToast('Please fill in all fields'); return; }
+  if(start > end) { showToast('End date must be after start date'); return; }
+  if(editingTfId) {
+    var tf = timeframes.find(function(t){return t.id===editingTfId;});
+    if(tf) { tf.name=name; tf.start=start; tf.end=end; }
+  } else {
+    timeframes.push({ id: 'tf-' + Date.now(), name, start, end });
+  }
+  saveTimeframes();
+  closeTfModal();
+  renderAll();
+  showToast(editingTfId ? 'Timeframe updated' : 'Timeframe created');
+}
+
+function deleteTf(id) {
+  if(!confirm('Delete this timeframe?')) return;
+  timeframes = timeframes.filter(function(t){return t.id!==id;});
+  if(activeTimeframeId === id) activeTimeframeId = null;
+  saveTimeframes();
+  renderAll();
+  showToast('Timeframe deleted');
+}
+
+// -- Export / Sync --------------------------------------
+function updateSyncSelect() {
+  var sel = document.getElementById('sync-tf-select');
+  if(!sel) return;
+  var current = sel.value;
+  sel.innerHTML = '<option value="">All expenses</option>';
+  timeframes.forEach(function(tf) {
+    var opt = document.createElement('option');
+    opt.value = tf.id;
+    opt.textContent = tf.name + ' (' + tf.start + ' to ' + tf.end + ')';
+    sel.appendChild(opt);
+  });
+  if(current) sel.value = current;
+}
+
+function updateWidgetPreview() {
+  var sel = document.getElementById('sync-tf-select');
+  var tfId = sel ? sel.value : '';
+  var tf = tfId ? timeframes.find(function(t){return t.id===tfId;}) : null;
+  var nameEl = document.getElementById('wp-tf-name');
+  var datesEl = document.getElementById('wp-tf-dates');
+  if(nameEl) nameEl.textContent = tf ? tf.name : 'All expenses';
+  if(datesEl) datesEl.textContent = tf ? tf.start + ' to ' + tf.end : 'All time';
+}
+
+function getExpensesForSync() {
+  var sel = document.getElementById('sync-tf-select');
+  var tfId = sel ? sel.value : '';
+  if(!tfId) return expenses;
+  var tf = timeframes.find(function(t){return t.id===tfId;});
+  if(!tf) return expenses;
+  return expenses.filter(function(e){return e.date>=tf.start&&e.date<=tf.end;});
+}
+
+function syncToWidget() {
+  var sel = document.getElementById('sync-tf-select');
+  var tfId = sel ? sel.value : '';
+  var tf = tfId ? timeframes.find(function(t){return t.id===tfId;}) : null;
+  var filtered = getExpensesForSync();
+  var totCad = filtered.reduce(function(s,e){return s+e.amtCad;},0);
+  var totUsd = cadToUsd(totCad);
+  var totJpy = filtered.reduce(function(s,e){return s+e.amtJpy;},0);
+  var snapshot = {
+    lastUpdated: new Date().toISOString(),
+    timeframe: tf ? { name:tf.name, start:tf.start, end:tf.end } : null,
+    rates: rates,
+    totals: { cad:Math.round(totCad*100)/100, usd:Math.round(totUsd*100)/100, jpy:Math.round(totJpy) },
+    expenses: filtered
+  };
+  var json = JSON.stringify(snapshot, null, 2);
+  var blob = new Blob([json], {type:'application/json'});
+  var file = new File([blob], 'expenses.json', {type:'application/json'});
+  if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+    navigator.share({files:[file], title:'expenses.json'})
+      .then(function(){showToast('Saved! Choose iCloud Drive / Scriptable');})
+      .catch(function(err){if(err.name!=='AbortError') fallbackDl(json);});
+  } else {
+    fallbackDl(json);
+  }
+}
+
+function fallbackDl(json) {
+  var a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+  a.download = 'expenses.json';
+  a.click();
+  showToast('Move expenses.json to iCloud Drive / Scriptable /');
+}
+
 function exportCSV() {
-  if (!expenses.length) { showToast('No expenses to export'); return; }
+  if(!expenses.length){showToast('No expenses');return;}
   var rows = ['Date,City,Category,Description,CAD,USD,JPY'];
   expenses.slice().sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(e){
     rows.push([e.date,e.city,e.cat,'"'+e.desc+'"',e.amtCad.toFixed(2),e.amtUsd.toFixed(2),e.amtJpy].join(','));
   });
-  download('japan-trip-expenses.csv', rows.join('\n'), 'text/csv');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(rows.join('\n'));
+  a.download = 'japan-trip-expenses.csv';
+  a.click();
   showToast('CSV downloaded');
 }
 
 function exportText() {
-  if (!expenses.length) { showToast('No expenses to export'); return; }
+  if(!expenses.length){showToast('No expenses');return;}
   var totCad = expenses.reduce(function(s,e){return s+e.amtCad;},0);
   var totUsd = cadToUsd(totCad);
   var totJpy = expenses.reduce(function(s,e){return s+e.amtJpy;},0);
-  var lines = [
-    'Japan Trip Expenses — Apr 28 – May 8, 2026',
-    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-    'Total: CA$'+totCad.toFixed(2)+' / US$'+totUsd.toFixed(2)+' / ¥'+Math.round(totJpy).toLocaleString(),
-    '',
-    'ALL EXPENSES',
-    '─────────────────────────────'
-  ];
+  var lines = ['Japan Trip Expenses - Apr 28 to May 8, 2026', 'Total: CA$'+totCad.toFixed(2)+' / US$'+totUsd.toFixed(2)+' / Y'+Math.round(totJpy).toLocaleString(), ''];
   expenses.slice().sort(function(a,b){return new Date(a.date)-new Date(b.date);}).forEach(function(e){
-    lines.push(e.date+' | '+e.city+' | '+e.cat+' | '+e.desc+' | CA$'+e.amtCad.toFixed(2)+' / ¥'+e.amtJpy.toLocaleString());
+    lines.push(e.date+' | '+e.city+' | '+e.cat+' | '+e.desc+' | CA$'+e.amtCad.toFixed(2)+' / Y'+e.amtJpy.toLocaleString());
   });
-  download('japan-trip-summary.txt', lines.join('\n'), 'text/plain');
+  var a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(lines.join('\n'));
+  a.download = 'japan-trip-summary.txt';
+  a.click();
   showToast('Summary downloaded');
 }
 
-function download(filename, content, type) {
-  var a = document.createElement('a');
-  a.href = 'data:'+type+';charset=utf-8,'+encodeURIComponent(content);
-  a.download = filename;
-  a.click();
-}
-
 function confirmClear() {
-  if (confirm('Delete all expenses? This cannot be undone.')) {
-    expenses = [];
-    saveExpenses();
-    renderExpenses();
-    showToast('All data cleared');
+  if(confirm('Delete all expenses? Cannot be undone.')) {
+    expenses = []; saveExpenses(); renderAll(); showToast('Cleared');
   }
 }
 
-// ── UI helpers ────────────────────────────────────────
+// -- UI helpers -----------------------------------------
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active');});
   document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active');});
-  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
   btn.classList.add('active');
+  renderAll();
 }
 
 var toastTimer;
@@ -459,58 +694,17 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){t.classList.remove('show');}, 2000);
+  toastTimer = setTimeout(function(){t.classList.remove('show');}, 2500);
 }
 
-// ── iCloud Widget Sync ───────────────────────────────
-function syncToWidget() {
-  var totCad = expenses.reduce(function(s,e){return s+e.amtCad;},0);
-  var totUsd = cadToUsd(totCad);
-  var totJpy = expenses.reduce(function(s,e){return s+e.amtJpy;},0);
-  var snapshot = {
-    lastUpdated: new Date().toISOString(),
-    rates: rates,
-    totals: {
-      cad: Math.round(totCad*100)/100,
-      usd: Math.round(totUsd*100)/100,
-      jpy: Math.round(totJpy)
-    },
-    expenses: expenses
-  };
-  var json = JSON.stringify(snapshot, null, 2);
-  var blob = new Blob([json], {type: 'application/json'});
-  var file = new File([blob], 'expenses.json', {type: 'application/json'});
-
-  // Use Web Share API if available (iOS 15+) - shows Files picker
-  // so user can save directly to iCloud Drive / Scriptable /
-  if (navigator.share && navigator.canShare && navigator.canShare({files: [file]})) {
-    navigator.share({
-      files: [file],
-      title: 'expenses.json'
-    }).then(function() {
-      showToast('Saved! Choose iCloud Drive / Scriptable /');
-    }).catch(function(e) {
-      if (e.name !== 'AbortError') fallbackDownload(json);
-    });
-  } else {
-    fallbackDownload(json);
-  }
-}
-
-function fallbackDownload(json) {
-  var a = document.createElement('a');
-  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
-  a.download = 'expenses.json';
-  a.click();
-  showToast('Saved! Move expenses.json to iCloud Drive / Scriptable /');
-}
-
-// ── Init ──────────────────────────────────────────────
-var today = new Date().toISOString().split('T')[0];
-document.getElementById('f-date').value = today;
-updateRateBar();
-renderExpenses();
-fetchRates();
+// -- Init -----------------------------------------------
+document.addEventListener('DOMContentLoaded', function() {
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').value = today;
+  updateRateBar();
+  renderAll();
+  fetchRates();
+});
 </script>
 </body>
 </html>
