@@ -12,40 +12,24 @@
 :root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;--border:rgba(255,255,255,0.08);--text:#f0ede8;--muted:#888;--subtle:#444;--accent:#e8c96a;--green:#6abf8e;--red:#e86a6a;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Text',BlinkMacSystemFont,sans-serif;min-height:100vh;overscroll-behavior:none}
-
 .topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--safe-top) + 14px) 18px 0;border-bottom:0.5px solid var(--border)}
 .topbar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;padding-bottom:12px}
 .tabs{display:flex}
 .tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
 .tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
-
 .tab-content{display:none;padding:14px 14px calc(var(--safe-bottom) + 80px)}
 .tab-content.active{display:block}
-
-/* Add entry form */
-.photo-upload{width:100%;aspect-ratio:4/3;background:var(--surface);border:0.5px dashed var(--subtle);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;margin-bottom:12px}
-.photo-upload img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
-.photo-upload-label{font-size:13px;color:var(--muted);text-align:center;z-index:1;pointer-events:none}
-.photo-upload-icon{font-size:32px;margin-bottom:8px}
-#photo-input{display:none}
-
 .field{margin-bottom:10px}
 .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500}
-.field input,.field textarea{width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif;-webkit-appearance:none;resize:none}
+.field input,.field textarea,.field select{width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif;-webkit-appearance:none;resize:none}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
 .field input::placeholder,.field textarea::placeholder{color:var(--subtle)}
-
+.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#1a1600;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:4px}
+.btn-primary:active{opacity:0.8}
 .loc-row{display:flex;align-items:center;gap:8px}
 .loc-row input{flex:1}
 .loc-btn{padding:10px 14px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,sans-serif;flex-shrink:0}
 .loc-btn.got{color:var(--green);border-color:rgba(106,191,142,0.3)}
-.loc-btn:active{opacity:0.7}
-
-.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#1a1600;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:4px}
-.btn-primary:active{opacity:0.8}
-.btn-primary:disabled{opacity:0.4}
-
-/* Feed */
 .entry-card{background:var(--surface);border-radius:16px;border:0.5px solid var(--border);overflow:hidden;margin-bottom:14px}
 .entry-photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
 .entry-photo-placeholder{width:100%;aspect-ratio:4/3;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:32px}
@@ -56,24 +40,24 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
 .entry-loc{font-size:12px;color:var(--accent);display:flex;align-items:center;gap:4px}
 .entry-loc-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .entry-starred{cursor:pointer;font-size:16px;margin-left:auto}
-.del-btn{font-size:11px;padding:4px 10px;background:rgba(232,106,106,0.1);color:var(--red);border:0.5px solid rgba(232,106,106,0.2);border-radius:6px;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px}
-
-/* Export tab */
-.export-btn{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
-.export-btn:active{background:var(--surface2)}
-.sync-note{font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border-radius:12px;padding:12px 14px;margin-top:12px}
-.sync-note b{color:var(--text)}
-
-.empty{text-align:center;padding:40px 20px;color:var(--muted)}
-.empty-icon{font-size:36px;margin-bottom:10px}
-
-.toast{position:fixed;bottom:calc(var(--safe-bottom) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
+.del-btn{font-size:11px;padding:4px 10px;background:rgba(232,106,106,0.1);color:var(--red);border:0.5px solid rgba(232,106,106,0.2);border-radius:6px;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px;margin-right:6px}
 .stats-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
 .stat-card{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:10px 12px}
 .stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
 .stat-val{font-size:18px;font-weight:600;color:var(--accent)}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.export-btn{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.export-btn:active{background:var(--surface2)}
+.sync-note{font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border-radius:12px;padding:12px 14px;margin-top:12px}
+.sync-note b{color:var(--text)}
+.toast{position:fixed;bottom:calc(var(--safe-bottom) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal-bg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:500;background:rgba(0,0,0,0.7);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-box{background:var(--surface);margin:40px 14px calc(var(--safe-bottom)+20px);border-radius:20px;padding:20px;border:0.5px solid var(--border)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;font-family:-apple-system,sans-serif;line-height:1}
 </style>
 </head>
 <body>
@@ -90,17 +74,23 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
 
 <!-- ADD TAB -->
 <div class="tab-content active" id="tab-add">
-  <div class="photo-upload" id="photo-upload">
-    <div class="photo-upload-label" id="photo-placeholder">
-      <div class="photo-upload-icon">&#128247;</div>
-      <div style="display:flex;gap:10px;margin-top:4px">
-        <button onclick="document.getElementById('photo-camera').click()" style="padding:8px 16px;background:var(--accent);border:none;border-radius:20px;font-size:13px;font-weight:600;color:#1a1600;cursor:pointer;font-family:-apple-system,sans-serif">Take Photo</button>
-        <button onclick="document.getElementById('photo-library').click()" style="padding:8px 16px;background:var(--surface2);border:0.5px solid var(--border);border-radius:20px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;font-family:-apple-system,sans-serif">Choose Photo</button>
-      </div>
-    </div>
+
+  <!-- Photo preview -->
+  <div id="photo-preview" style="display:none;width:100%;aspect-ratio:4/3;border-radius:16px;overflow:hidden;margin-bottom:8px">
+    <img id="photo-preview-img" style="width:100%;height:100%;object-fit:cover;display:block">
   </div>
-  <input type="file" id="photo-camera" accept="image/*" capture="environment" style="display:none">
-  <input type="file" id="photo-library" accept="image/*" style="display:none">
+
+  <!-- Photo buttons -->
+  <div id="photo-btn-row" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+    <label for="photo-camera" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;background:var(--accent);border-radius:12px;font-size:14px;font-weight:600;color:#1a1600;cursor:pointer;text-align:center" id="photo-camera-label">
+      &#128247; Take Photo
+      <input type="file" id="photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
+    </label>
+    <label for="photo-library" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;text-align:center">
+      &#128444; Choose Photo
+      <input type="file" id="photo-library" accept="image/*" style="display:none" onchange="handlePhoto(event)">
+    </label>
+  </div>
 
   <div class="field">
     <label>Caption</label>
@@ -115,24 +105,26 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
     </div>
   </div>
 
+  <!-- Date & Time -->
   <div class="field">
     <label>Date & Time</label>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div id="datetime-display" style="flex:1;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif"></div>
-      <button id="datetime-lock-btn" onclick="toggleDatetimeLock()" style="padding:10px 14px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;color:var(--green);font-size:13px;cursor:pointer;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,sans-serif;flex-shrink:0">Live</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <button id="dt-live-btn" onclick="useLiveTime()" style="padding:10px;background:var(--green);border:none;border-radius:10px;font-size:13px;font-weight:600;color:#0a1a0f;cursor:pointer;font-family:-apple-system,sans-serif">Now (live)</button>
+      <button id="dt-manual-btn" onclick="useManualTime()" style="padding:10px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;font-family:-apple-system,sans-serif">Set manually</button>
     </div>
-    <input type="datetime-local" id="f-datetime" style="display:none">
+    <div id="dt-live-display" style="padding:10px 12px;background:var(--surface2);border:0.5px solid rgba(106,191,142,0.3);border-radius:10px;font-size:14px;color:var(--green);font-family:-apple-system,sans-serif"></div>
+    <input type="datetime-local" id="f-datetime" style="display:none;width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--accent);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif">
   </div>
 
-  <button class="btn-primary" id="add-btn" onclick="addEntry()">Add to Journal</button>
+  <button class="btn-primary" onclick="addEntry()">Add to Journal</button>
 </div>
 
 <!-- FEED TAB -->
 <div class="tab-content" id="tab-feed">
   <div class="stats-row">
-    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="stat-entries">0</div></div>
-    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="stat-photos">0</div></div>
-    <div class="stat-card"><div class="stat-label">Starred</div><div class="stat-val" id="stat-starred">0</div></div>
+    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="st-total">0</div></div>
+    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="st-photos">0</div></div>
+    <div class="stat-card"><div class="stat-label">Starred</div><div class="stat-val" id="st-starred">0</div></div>
   </div>
   <div id="feed"></div>
 </div>
@@ -140,9 +132,9 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
 <!-- SYNC TAB -->
 <div class="tab-content" id="tab-sync">
   <div class="stats-row">
-    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="stat-entries2">0</div></div>
-    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="stat-photos2">0</div></div>
-    <div class="stat-card"><div class="stat-label">Starred</div><div class="stat-val" id="stat-starred2">0</div></div>
+    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="st-total2">0</div></div>
+    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="st-photos2">0</div></div>
+    <div class="stat-card"><div class="stat-label">Starred</div><div class="stat-val" id="st-starred2">0</div></div>
   </div>
   <button class="export-btn" onclick="syncToWidget()">&#9729; Save journal.json to iCloud</button>
   <div class="sync-note">
@@ -150,304 +142,259 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
     1. Tap "Save journal.json to iCloud"<br>
     2. In the share sheet, tap <b>Save to Files</b><br>
     3. Navigate to <b>iCloud Drive &rarr; Scriptable</b><br>
-    4. Tap Save &mdash; widget updates on next refresh<br><br>
-    The file contains up to <b>20 photos</b> (starred first, then newest).
-    Photos are compressed to ~50KB each to keep the file small.
+    4. Tap Save &mdash; widget updates on next refresh
   </div>
-  <button class="export-btn" style="margin-top:16px" onclick="confirmClear()">&#128465; Clear all entries</button>
+  <button class="export-btn" style="margin-top:16px;color:var(--red)" onclick="confirmClear()">&#128465; Clear all entries</button>
+</div>
+
+<!-- SUMMARY TAB -->
+<div class="tab-content" id="tab-summary">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="st-total3">0</div></div>
+    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="st-photos3">0</div></div>
+    <div class="stat-card"><div class="stat-label">Days</div><div class="stat-val" id="st-days3">0</div></div>
+  </div>
+  <div style="background:var(--surface);border-radius:14px;border:0.5px solid var(--border);padding:14px;margin-bottom:12px">
+    <div class="field" style="margin-bottom:8px">
+      <label>Trip title</label>
+      <input type="text" id="sum-title" placeholder="e.g. Japan Spring 2026">
+    </div>
+    <div class="field" style="margin-bottom:0">
+      <label>Extra context for the AI (optional)</label>
+      <textarea id="sum-context" rows="2" placeholder="e.g. first time in Japan, travelled with girlfriend, baseball game at Jingu..."></textarea>
+    </div>
+  </div>
+  <button class="btn-primary" id="gen-btn" onclick="generateSummary()">Generate Trip Summary</button>
+  <div id="gen-status" style="text-align:center;font-size:13px;color:var(--muted);margin-top:10px;display:none"></div>
+  <div id="gen-error" style="background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.25);border-radius:12px;padding:12px;font-size:13px;color:var(--red);margin-top:10px;display:none"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-bg" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Edit Entry</span>
+      <button class="modal-close" onclick="closeEdit()">&#10005;</button>
+    </div>
+    <div id="edit-preview" style="display:none;width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;margin-bottom:8px">
+      <img id="edit-preview-img" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <label for="edit-photo-camera" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:var(--accent);border-radius:10px;font-size:13px;font-weight:600;color:#1a1600;cursor:pointer;text-align:center">
+        &#128247; Retake
+        <input type="file" id="edit-photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handleEditPhoto(event)">
+      </label>
+      <label for="edit-photo-library" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;text-align:center">
+        &#128444; Change
+        <input type="file" id="edit-photo-library" accept="image/*" style="display:none" onchange="handleEditPhoto(event)">
+      </label>
+    </div>
+    <div class="field"><label>Caption</label><textarea id="edit-caption" rows="2"></textarea></div>
+    <div class="field"><label>Location</label>
+      <div class="loc-row">
+        <input type="text" id="edit-location">
+        <button class="loc-btn" onclick="getLocationForEdit()">&#128205; GPS</button>
+      </div>
+    </div>
+    <div class="field"><label>Date & Time</label><input type="datetime-local" id="edit-datetime"></div>
+    <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
+    <button onclick="closeEdit()" style="width:100%;padding:11px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;color:var(--muted);cursor:pointer;font-family:-apple-system,sans-serif;margin-top:8px">Cancel</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-var entries = JSON.parse(localStorage.getItem('jpJournal_entries') || '[]');
-var pendingPhoto = null; // base64 compressed
-var pendingPhotoFull = null; // for display
+// -- State ----------------------------------------------
+var entries = JSON.parse(localStorage.getItem('jpJournal_v2') || '[]');
+var pendingPhoto = null;
+var editingId = null;
+var editingPhoto = null;
+var dtIsLive = true;
+var dtTimer = null;
 
-// -- Photo handling ------------------------------------
-document.addEventListener('DOMContentLoaded', function() {
-  function handlePhotoSelect(e) {
-  var file = e.target.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    var img = new Image();
-    img.onload = function() {
-      // Full size preview
-      pendingPhotoFull = ev.target.result;
+// -- Date/Time ------------------------------------------
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-      // Compressed for storage/widget (~50KB target)
-      pendingPhoto = compressImage(img, 400, 0.6);
+function nowISO() {
+  var d = new Date();
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) +
+         'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
 
-      // Show preview
-      var upload = document.getElementById('photo-upload');
-      upload.innerHTML = '<img src="' + pendingPhotoFull + '" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">' +
-        '<div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2">' +
-        '<button onclick=\'document.getElementById("photo-camera").click()\' style=\'padding:6px 12px;background:rgba(0,0,0,0.65);border:none;border-radius:16px;font-size:12px;color:white;cursor:pointer;font-family:-apple-system,sans-serif\'>Retake</button>' +
-        '<button onclick=\'document.getElementById("photo-library").click()\' style=\'padding:6px 12px;background:rgba(0,0,0,0.65);border:none;border-radius:16px;font-size:12px;color:white;cursor:pointer;font-family:-apple-system,sans-serif\'>Change</button>' +
-        '</div>';
-    };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-  e.target.value = '';
+function fmtClock(d) {
+  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate() +
+         ' - ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+
+function tickClock() {
+  var el = document.getElementById('dt-live-display');
+  var inp = document.getElementById('f-datetime');
+  if (!el || !dtIsLive) return;
+  var now = new Date();
+  el.textContent = fmtClock(now);
+  if (inp) inp.value = nowISO();
+}
+
+function useLiveTime() {
+  dtIsLive = true;
+  var lb = document.getElementById('dt-live-btn');
+  var mb = document.getElementById('dt-manual-btn');
+  var ld = document.getElementById('dt-live-display');
+  var inp = document.getElementById('f-datetime');
+  if (lb) { lb.style.background = 'var(--green)'; lb.style.color = '#0a1a0f'; }
+  if (mb) { mb.style.background = 'var(--surface2)'; mb.style.color = 'var(--muted)'; }
+  if (ld) ld.style.display = 'block';
+  if (inp) inp.style.display = 'none';
+  tickClock();
+}
+
+function useManualTime() {
+  dtIsLive = false;
+  var lb = document.getElementById('dt-live-btn');
+  var mb = document.getElementById('dt-manual-btn');
+  var ld = document.getElementById('dt-live-display');
+  var inp = document.getElementById('f-datetime');
+  if (lb) { lb.style.background = 'var(--surface2)'; lb.style.color = 'var(--muted)'; }
+  if (mb) { mb.style.background = 'var(--accent)'; mb.style.color = '#1a1600'; }
+  if (ld) ld.style.display = 'none';
+  if (inp) {
+    inp.style.display = 'block';
+    if (!inp.value) inp.value = nowISO();
   }
-  document.getElementById('photo-camera').addEventListener('change', handlePhotoSelect);
-  document.getElementById('photo-library').addEventListener('change', handlePhotoSelect);
-}); // end DOMContentLoaded
+}
 
-function compressImage(img, maxWidth, quality) {
+// -- Photo handling -------------------------------------
+function compressImage(img, maxW, quality) {
   var canvas = document.createElement('canvas');
-  var ratio = Math.min(maxWidth / img.width, maxWidth / img.height, 1);
+  var ratio = Math.min(maxW / img.width, maxW / img.height, 1);
   canvas.width = Math.round(img.width * ratio);
   canvas.height = Math.round(img.height * ratio);
-  var ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
   return canvas.toDataURL('image/jpeg', quality);
 }
 
-// -- Location ------------------------------------------
-var pendingCoords = null;
+function handlePhoto(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      pendingPhoto = compressImage(img, 400, 0.6);
+      var prev = document.getElementById('photo-preview');
+      var prevImg = document.getElementById('photo-preview-img');
+      if (prev) prev.style.display = 'block';
+      if (prevImg) prevImg.src = pendingPhoto;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  ev.target.value = '';
+}
+
+function handleEditPhoto(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      editingPhoto = compressImage(img, 400, 0.6);
+      var prev = document.getElementById('edit-preview');
+      var prevImg = document.getElementById('edit-preview-img');
+      if (prev) prev.style.display = 'block';
+      if (prevImg) prevImg.src = editingPhoto;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  ev.target.value = '';
+}
+
+// -- Location -------------------------------------------
+function reverseGeocode(lat, lng, callback) {
+  fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var a = data.address;
+      var place = a.tourism || a.amenity || a.suburb || a.neighbourhood || a.city_district || '';
+      var city = a.city || a.town || a.village || '';
+      var loc = (place && city && place !== city) ? place + ', ' + city : place || city || 'Japan';
+      callback(loc);
+    })
+    .catch(function() { callback(lat.toFixed(4) + ', ' + lng.toFixed(4)); });
+}
 
 function getLocation() {
   var btn = document.getElementById('loc-btn');
-  btn.textContent = 'Getting...';
+  if (btn) btn.textContent = 'Getting...';
   navigator.geolocation.getCurrentPosition(function(pos) {
-    pendingCoords = {lat: pos.coords.latitude, lng: pos.coords.longitude};
-    // Reverse geocode using nominatim
-    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + pendingCoords.lat + '&lon=' + pendingCoords.lng + '&format=json')
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        var addr = data.address;
-        var place = addr.tourism || addr.amenity || addr.suburb || addr.neighbourhood || addr.city_district || addr.city || addr.town || '';
-        var city = addr.city || addr.town || addr.village || '';
-        var loc = place && city && place !== city ? place + ', ' + city : place || city || 'Japan';
-        document.getElementById('f-location').value = loc;
-        btn.textContent = 'Got it';
-        btn.className = 'loc-btn got';
-        showToast('Location found');
-      }).catch(function() {
-        document.getElementById('f-location').value = pendingCoords.lat.toFixed(4) + ', ' + pendingCoords.lng.toFixed(4);
-        btn.textContent = 'Got it';
-        btn.className = 'loc-btn got';
-      });
-  }, function(err) {
-    btn.textContent = 'GPS';
+    reverseGeocode(pos.coords.latitude, pos.coords.longitude, function(loc) {
+      var el = document.getElementById('f-location');
+      if (el) el.value = loc;
+      if (btn) { btn.textContent = 'Got it'; btn.className = 'loc-btn got'; }
+      showToast('Location found');
+    });
+  }, function() {
+    if (btn) btn.textContent = '&#128205; GPS';
     showToast('Could not get location');
   }, {enableHighAccuracy: true, timeout: 10000});
 }
 
-// -- Add entry -----------------------------------------
+function getLocationForEdit() {
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    reverseGeocode(pos.coords.latitude, pos.coords.longitude, function(loc) {
+      var el = document.getElementById('edit-location');
+      if (el) el.value = loc;
+      showToast('Location updated');
+    });
+  }, function() { showToast('Could not get location'); }, {enableHighAccuracy: true, timeout: 10000});
+}
+
+// -- Add entry ------------------------------------------
 function addEntry() {
-  var caption  = document.getElementById('f-caption').value.trim();
+  var caption = document.getElementById('f-caption').value.trim();
   var location = document.getElementById('f-location').value.trim();
   var datetime = document.getElementById('f-datetime').value;
-
   if (!caption) { showToast('Please add a caption'); return; }
   if (!datetime) { showToast('Please set a date and time'); return; }
-
-  var entry = {
-    id: Date.now(),
-    caption: caption,
-    location: location,
-    datetime: datetime,
-    coords: pendingCoords,
-    photo: pendingPhoto || null,
-    starred: false
-  };
-
-  entries.unshift(entry);
-  saveEntries();
-
-  // Reset form
+  entries.unshift({ id: Date.now(), caption: caption, location: location, datetime: datetime, photo: pendingPhoto, starred: false });
+  save();
+  // reset form
   document.getElementById('f-caption').value = '';
   document.getElementById('f-location').value = '';
-  pendingCoords = null;
+  var pp = document.getElementById('photo-preview');
+  var ppi = document.getElementById('photo-preview-img');
+  if (pp) pp.style.display = 'none';
+  if (ppi) ppi.src = '';
   pendingPhoto = null;
-  pendingPhotoFull = null;
-  document.getElementById('photo-upload').innerHTML =
-    '<div class="photo-upload-label"><div class="photo-upload-icon">&#128247;</div><div>Tap to add photo</div></div>';
-  document.getElementById('loc-btn').textContent = '\u{1F4CD} GPS';
-  document.getElementById('loc-btn').className = 'loc-btn';
-  datetimeLocked = false; tickDatetime();
-
+  var lb = document.getElementById('loc-btn');
+  if (lb) { lb.textContent = '&#128205; GPS'; lb.className = 'loc-btn'; }
+  useLiveTime();
   renderFeed();
   showToast('Entry added');
 }
 
-// -- Delete / star -------------------------------------
-function deleteEntry(id) {
-  entries = entries.filter(function(e) { return e.id !== id; });
-  saveEntries();
-  renderFeed();
-  showToast('Deleted');
-}
-
-function toggleStar(id) {
-  var e = entries.find(function(e) { return e.id === id; });
-  if (e) { e.starred = !e.starred; saveEntries(); renderFeed(); }
-}
-
-function saveEntries() {
-  localStorage.setItem('jpJournal_entries', JSON.stringify(entries));
-}
-
-// -- Render feed ---------------------------------------
-function renderFeed() {
-  var feed = document.getElementById('feed');
-  var total = entries.length;
-  var withPhoto = entries.filter(function(e) { return e.photo; }).length;
-  var starred = entries.filter(function(e) { return e.starred; }).length;
-
-  ['stat-entries','stat-entries2'].forEach(function(id) {
-    var el = document.getElementById(id); if (el) el.textContent = total;
-  });
-  ['stat-photos','stat-photos2'].forEach(function(id) {
-    var el = document.getElementById(id); if (el) el.textContent = withPhoto;
-  });
-  ['stat-starred','stat-starred2'].forEach(function(id) {
-    var el = document.getElementById(id); if (el) el.textContent = starred;
-  });
-  var days3 = document.getElementById('stat-days3');
-  var entries3 = document.getElementById('stat-entries3');
-  var photos3 = document.getElementById('stat-photos3');
-  if (days3) {
-    var uniqueDays = new Set(entries.map(function(e) { return e.datetime ? e.datetime.slice(0,10) : ''; })).size;
-    days3.textContent = uniqueDays;
-  }
-  if (entries3) entries3.textContent = total;
-  if (photos3) photos3.textContent = withPhoto;
-
-  if (entries.length === 0) {
-    feed.innerHTML = '<div class="empty"><div class="empty-icon">&#128211;</div><div>No entries yet.<br>Add your first memory above.</div></div>';
-    return;
-  }
-
-  feed.innerHTML = entries.map(function(e) {
-    var dt = new Date(e.datetime);
-    var dateStr = dt.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
-    var timeStr = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    var photoHtml = e.photo
-      ? '<img class="entry-photo" src="' + e.photo + '" loading="lazy">'
-      : '<div class="entry-photo-placeholder">&#127757;</div>';
-    var locHtml = e.location
-      ? '<span class="entry-loc"><span class="entry-loc-dot"></span>' + e.location + '</span>'
-      : '';
-    var mapLink = e.coords
-      ? '<a href="https://maps.apple.com/?q=' + e.coords.lat + ',' + e.coords.lng + '" style="color:var(--accent);font-size:11px;text-decoration:none;margin-left:auto">Open in Maps</a>'
-      : '';
-    return '<div class="entry-card">' +
-      photoHtml +
-      '<div class="entry-body">' +
-        '<div class="entry-caption">' + e.caption + '</div>' +
-        '<div class="entry-meta">' +
-          '<span class="entry-date">' + dateStr + ' &middot; ' + timeStr + '</span>' +
-          locHtml +
-          '<span class="entry-starred" onclick="toggleStar(' + e.id + ')" title="Star for widget">' + (e.starred ? '&#11088;' : '&#9734;') + '</span>' +
-        '</div>' +
-        (mapLink ? '<div style="margin-top:6px">' + mapLink + '</div>' : '') +
-        '<button class="del-btn" onclick="openEdit(' + e.id + ')" style="margin-right:6px">Edit</button>' +
-        '<button class="del-btn" onclick="deleteEntry(' + e.id + ')">Delete</button>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-// -- Sync to widget -------------------------------------
-function syncToWidget() {
-  if (entries.length === 0) { showToast('No entries to sync'); return; }
-
-  // Starred first, then newest -- up to 20 photos
-  var withPhotos = entries.filter(function(e) { return e.photo; });
-  var starred = withPhotos.filter(function(e) { return e.starred; });
-  var rest = withPhotos.filter(function(e) { return !e.starred; });
-  var pool = starred.concat(rest).slice(0, 20);
-
-  var snapshot = {
-    lastUpdated: new Date().toISOString(),
-    count: entries.length,
-    photos: pool.map(function(e) {
-      return {
-        id: e.id,
-        caption: e.caption,
-        location: e.location || '',
-        datetime: e.datetime,
-        photo: e.photo,
-        starred: e.starred
-      };
-    })
-  };
-
-  var json = JSON.stringify(snapshot);
-  var blob = new Blob([json], {type: 'application/json'});
-  var file = new File([blob], 'journal.json', {type: 'application/json'});
-
-  if (navigator.share && navigator.canShare && navigator.canShare({files: [file]})) {
-    navigator.share({files: [file], title: 'journal.json'})
-      .then(function() { showToast('Saved! Choose iCloud Drive / Scriptable'); })
-      .catch(function(err) { if (err.name !== 'AbortError') fallbackDownload(json); });
-  } else {
-    fallbackDownload(json);
-  }
-}
-
-function fallbackDownload(json) {
-  var a = document.createElement('a');
-  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
-  a.download = 'journal.json';
-  a.click();
-  showToast('Move journal.json to iCloud Drive / Scriptable /');
-}
-
-function confirmClear() {
-  if (confirm('Delete all journal entries? Cannot be undone.')) {
-    entries = [];
-    saveEntries();
-    renderFeed();
-    showToast('Cleared');
-  }
-}
-
-// -- Helpers -------------------------------------------
-function switchTab(id, btn) {
-  document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
-  document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
-  if (id === 'feed' || id === 'sync' || id === 'summary') renderFeed();
-}
-
-var toastTimer;
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
-}
-
-var datetimeLocked = false;
-// -- Edit entry ---------------------------------------
-var editingId = null;
-var editingPhoto = null;
-
+// -- Edit -----------------------------------------------
 function openEdit(id) {
   var e = entries.find(function(x) { return x.id === id; });
   if (!e) return;
   editingId = id;
-  editingPhoto = e.photo || null;
-
+  editingPhoto = null;
   document.getElementById('edit-caption').value = e.caption || '';
   document.getElementById('edit-location').value = e.location || '';
   document.getElementById('edit-datetime').value = e.datetime || '';
-
-  var upload = document.getElementById('edit-photo-upload');
+  var prev = document.getElementById('edit-preview');
+  var prevImg = document.getElementById('edit-preview-img');
   if (e.photo) {
-    upload.innerHTML = '<img src="' + e.photo + '" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0"><div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:white;font-size:11px;padding:4px 8px;border-radius:8px">Tap to change</div>';
+    if (prev) prev.style.display = 'block';
+    if (prevImg) prevImg.src = e.photo;
   } else {
-    upload.innerHTML = '<div class="photo-upload-label"><div class="photo-upload-icon">&#128247;</div><div>Tap to add photo</div></div>';
+    if (prev) prev.style.display = 'none';
   }
-
   document.getElementById('edit-modal').style.display = 'block';
   document.body.style.overflow = 'hidden';
 }
@@ -460,273 +407,214 @@ function closeEdit() {
 }
 
 function saveEdit() {
-  if (!editingId) return;
   var e = entries.find(function(x) { return x.id === editingId; });
   if (!e) return;
-  e.caption  = document.getElementById('edit-caption').value.trim();
+  e.caption = document.getElementById('edit-caption').value.trim();
   e.location = document.getElementById('edit-location').value.trim();
   e.datetime = document.getElementById('edit-datetime').value;
-  if (editingPhoto !== null) e.photo = editingPhoto;
-  saveEntries();
+  if (editingPhoto) e.photo = editingPhoto;
+  save();
   renderFeed();
   closeEdit();
   showToast('Entry updated');
 }
 
-function handleEditPhotoChange(ev) {
-  var file = ev.target.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e2) {
-    var img = new Image();
-    img.onload = function() {
-      editingPhoto = compressImage(img, 400, 0.6);
-      var upload = document.getElementById('edit-photo-upload');
-      upload.innerHTML = '<img src="' + editingPhoto + '" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0"><div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:white;font-size:11px;padding:4px 8px;border-radius:8px">Tap to change</div>';
-    };
-    img.src = e2.target.result;
+// -- Delete / star --------------------------------------
+function deleteEntry(id) {
+  entries = entries.filter(function(e) { return e.id !== id; });
+  save();
+  renderFeed();
+  showToast('Deleted');
+}
+
+function toggleStar(id) {
+  var e = entries.find(function(x) { return x.id === id; });
+  if (e) { e.starred = !e.starred; save(); renderFeed(); }
+}
+
+function save() {
+  localStorage.setItem('jpJournal_v2', JSON.stringify(entries));
+}
+
+// -- Render ---------------------------------------------
+function renderFeed() {
+  var total = entries.length;
+  var withPhoto = entries.filter(function(e) { return e.photo; }).length;
+  var starred = entries.filter(function(e) { return e.starred; }).length;
+  var days = new Set(entries.map(function(e) { return e.datetime ? e.datetime.slice(0,10) : ''; })).size;
+
+  function setEl(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+  setEl('st-total', total); setEl('st-total2', total); setEl('st-total3', total);
+  setEl('st-photos', withPhoto); setEl('st-photos2', withPhoto); setEl('st-photos3', withPhoto);
+  setEl('st-starred', starred); setEl('st-starred2', starred);
+  setEl('st-days3', days);
+
+  var feed = document.getElementById('feed');
+  if (!feed) return;
+  if (!entries.length) {
+    feed.innerHTML = '<div class="empty"><div class="empty-icon">&#128211;</div><div>No entries yet.<br>Add your first memory above.</div></div>';
+    return;
+  }
+  feed.innerHTML = entries.map(function(e) {
+    var dt = new Date(e.datetime);
+    var ds = dt.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
+    var ts = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    var photoHtml = e.photo
+      ? '<img class="entry-photo" src="' + e.photo + '" loading="lazy">'
+      : '<div class="entry-photo-placeholder">&#127757;</div>';
+    var locHtml = e.location
+      ? '<span class="entry-loc"><span class="entry-loc-dot"></span>' + e.location + '</span>' : '';
+    return '<div class="entry-card">' + photoHtml +
+      '<div class="entry-body">' +
+        '<div class="entry-caption">' + e.caption + '</div>' +
+        '<div class="entry-meta">' +
+          '<span class="entry-date">' + ds + ' &middot; ' + ts + '</span>' +
+          locHtml +
+          '<span class="entry-starred" onclick="toggleStar(' + e.id + ')">' + (e.starred ? '&#11088;' : '&#9734;') + '</span>' +
+        '</div>' +
+        '<div style="margin-top:8px">' +
+          '<button class="del-btn" onclick="openEdit(' + e.id + ')">Edit</button>' +
+          '<button class="del-btn" onclick="deleteEntry(' + e.id + ')">Delete</button>' +
+        '</div>' +
+      '</div></div>';
+  }).join('');
+}
+
+// -- Sync -----------------------------------------------
+function syncToWidget() {
+  if (!entries.length) { showToast('No entries to sync'); return; }
+  var withPhotos = entries.filter(function(e) { return e.photo; });
+  var pool = withPhotos.filter(function(e) { return e.starred; })
+    .concat(withPhotos.filter(function(e) { return !e.starred; })).slice(0, 20);
+  var snapshot = {
+    lastUpdated: new Date().toISOString(),
+    count: entries.length,
+    photos: pool.map(function(e) {
+      return { id: e.id, caption: e.caption, location: e.location || '', datetime: e.datetime, photo: e.photo, starred: e.starred };
+    })
   };
-  reader.readAsDataURL(file);
-  ev.target.value = '';
+  var json = JSON.stringify(snapshot);
+  var blob = new Blob([json], {type: 'application/json'});
+  var file = new File([blob], 'journal.json', {type: 'application/json'});
+  if (navigator.share && navigator.canShare && navigator.canShare({files: [file]})) {
+    navigator.share({files: [file], title: 'journal.json'})
+      .then(function() { showToast('Saved! Choose iCloud Drive / Scriptable'); })
+      .catch(function(err) { if (err.name !== 'AbortError') dlJson(json); });
+  } else {
+    dlJson(json);
+  }
 }
 
-function getLocationForEdit() {
-  navigator.geolocation.getCurrentPosition(function(pos) {
-    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + pos.coords.latitude + '&lon=' + pos.coords.longitude + '&format=json')
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        var addr = data.address;
-        var place = addr.tourism || addr.amenity || addr.suburb || addr.city_district || addr.city || addr.town || '';
-        var city = addr.city || addr.town || addr.village || '';
-        var loc = place && city && place !== city ? place + ', ' + city : place || city || 'Japan';
-        document.getElementById('edit-location').value = loc;
-        showToast('Location updated');
-      }).catch(function() {
-        document.getElementById('edit-location').value = pos.coords.latitude.toFixed(4) + ', ' + pos.coords.longitude.toFixed(4);
-      });
-  }, function() { showToast('Could not get location'); }, {enableHighAccuracy: true, timeout: 10000});
+function dlJson(json) {
+  var a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+  a.download = 'journal.json';
+  a.click();
+  showToast('Move journal.json to iCloud Drive / Scriptable /');
 }
 
-// -- Generate summary ----------------------------------
+function confirmClear() {
+  if (confirm('Delete all journal entries? Cannot be undone.')) {
+    entries = []; save(); renderFeed(); showToast('Cleared');
+  }
+}
+
+// -- Summary --------------------------------------------
 function generateSummary() {
-  if (entries.length === 0) { showToast('No entries to summarise'); return; }
-
+  if (!entries.length) { showToast('No entries to summarise'); return; }
   var btn = document.getElementById('gen-btn');
   var status = document.getElementById('gen-status');
   var errDiv = document.getElementById('gen-error');
-  btn.disabled = true;
-  errDiv.style.display = 'none';
-  status.style.display = 'block';
-  status.textContent = 'Writing your trip summary...';
-
-  var title = document.getElementById('sum-title').value.trim() || 'Japan Trip 2026';
+  if (btn) btn.disabled = true;
+  if (errDiv) errDiv.style.display = 'none';
+  if (status) { status.style.display = 'block'; status.textContent = 'Writing your trip summary...'; }
+  var title = (document.getElementById('sum-title').value.trim()) || 'Japan Trip 2026';
   var context = document.getElementById('sum-context').value.trim();
-
-  // Sort entries by date
-  var sorted = entries.slice().sort(function(a, b) { return new Date(a.datetime) - new Date(b.datetime); });
-
-  // Build entry list for the prompt (no photos -- just text)
+  var sorted = entries.slice().sort(function(a,b) { return new Date(a.datetime) - new Date(b.datetime); });
   var entryText = sorted.map(function(e, i) {
     var dt = new Date(e.datetime);
-    var dateStr = dt.toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
-    var timeStr = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    var line = (i+1) + '. ' + dateStr + ' at ' + timeStr; if (e.location) line += ' -- ' + e.location; line += '\n   "' + e.caption + '"'; return line;
+    var ds = dt.toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
+    var ts = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    return (i+1) + '. ' + ds + ' at ' + ts + (e.location ? ' -- ' + e.location : '') + '\n   "' + e.caption + '"';
   }).join('\n\n');
-
-  var prompt = 'You are writing a warm, personal travel diary for someone who just returned from a trip to Japan.' +
-    ' Based on the journal entries below, write a beautiful narrative summary of the trip.' +
-    ' Write in first person, warm and reflective tone -- like a diary entry written the day after returning home.' +
-    ' Weave together the moments, places, and feelings into flowing paragraphs.' +
-    ' Include specific details from the entries. Do not use bullet points.' +
-    ' Length: around 400-600 words.' +
-    (context ? '\n\nExtra context: ' + context : '') +
-    '\n\nTrip title: ' + title +
+  var prompt = 'You are writing a warm, personal travel diary for someone who just returned from a trip to Japan. Based on the journal entries below, write a beautiful narrative summary of the trip. Write in first person, warm and reflective tone like a diary entry written the day after returning home. Weave together the moments, places, and feelings into flowing paragraphs. Include specific details from the entries. Do not use bullet points. Length: around 400-600 words.' +
+    (context ? ' Extra context: ' + context : '') +
+    ' Trip title: ' + title +
     '\n\nJournal entries:\n\n' + entryText;
-
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{role: 'user', content: prompt}]
-    })
+    body: JSON.stringify({model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{role: 'user', content: prompt}]})
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
     var text = (data.content || []).filter(function(b) { return b.type === 'text'; }).map(function(b) { return b.text; }).join('');
     if (!text) throw new Error('No text in response');
     openSummaryPage(title, text, sorted);
-    btn.disabled = false;
-    status.style.display = 'none';
+    if (btn) btn.disabled = false;
+    if (status) status.style.display = 'none';
   })
   .catch(function(e) {
-    btn.disabled = false;
-    status.style.display = 'none';
-    errDiv.textContent = 'Could not generate summary: ' + e.message + '. Make sure you are connected to the internet.';
-    errDiv.style.display = 'block';
+    if (btn) btn.disabled = false;
+    if (status) status.style.display = 'none';
+    if (errDiv) { errDiv.textContent = 'Could not generate: ' + e.message; errDiv.style.display = 'block'; }
   });
 }
 
-function openSummaryPage(title, narrative, entries) {
-  var photos = entries.filter(function(e) { return e.photo; }).slice(0, 12);
-
-  var photoGrid = photos.map(function(e) {
-    var dt = new Date(e.datetime);
-    var dateStr = dt.toLocaleDateString([], {month:'short', day:'numeric'});
-    return '<div style="break-inside:avoid;margin-bottom:20px">' +
-      '<img src="' + e.photo + '" style="width:100%;border-radius:12px;display:block;margin-bottom:8px">' +
-      '<div style="font-size:13px;color:#555;font-style:italic">' + e.caption + '</div>' +
-      (e.location ? '<div style="font-size:12px;color:#888;margin-top:3px">&#128205; ' + e.location + ' &middot; ' + dateStr + '</div>' : '') +
-    '</div>';
-  }).join('');
-
-  // Get date range
-  var firstDate = new Date(entries[0].datetime).toLocaleDateString([], {month:'long', day:'numeric'});
-  var lastDate = new Date(entries[entries.length-1].datetime).toLocaleDateString([], {month:'long', day:'numeric', year:'numeric'});
-  var dateRange = entries.length > 1 ? firstDate + ' - ' + lastDate : firstDate;
-
-  // Unique locations
+function openSummaryPage(title, narrative, sorted) {
+  var photos = sorted.filter(function(e) { return e.photo; }).slice(0, 12);
+  var firstDate = sorted.length ? new Date(sorted[0].datetime).toLocaleDateString([], {month:'long', day:'numeric'}) : '';
+  var lastDate = sorted.length > 1 ? new Date(sorted[sorted.length-1].datetime).toLocaleDateString([], {month:'long', day:'numeric', year:'numeric'}) : firstDate;
+  var dateRange = sorted.length > 1 ? firstDate + ' - ' + lastDate : firstDate;
   var locs = [];
-  entries.forEach(function(e) { if (e.location && locs.indexOf(e.location) === -1) locs.push(e.location); });
-
-  var html = '<!DOCTYPE html><html lang="en"><head>' +
-    '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<title>' + title + '</title>' +
-    '<style>' +
-    '@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap");' +
-    'body{margin:0;background:#faf9f6;color:#2c2c2c;font-family:"Inter",sans-serif;font-size:16px;line-height:1.7}' +
-    '.hero{background:#1a1a1a;color:#f0ede8;padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden}' +
-    (photos[0] ? '.hero{background-image:url(' + photos[0].photo + ');background-size:cover;background-position:center}' +
-    '.hero-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55)}' : '.hero-overlay{}') +
-    '.hero-content{position:relative;z-index:1}' +
-    '.hero h1{font-family:"Playfair Display",serif;font-size:clamp(32px,6vw,56px);font-weight:700;margin:0 0 12px;letter-spacing:-0.5px}' +
-    '.hero .dates{font-size:14px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;margin-bottom:8px}' +
-    '.hero .places{font-size:15px;opacity:0.7;font-style:italic}' +
-    '.content{max-width:680px;margin:0 auto;padding:60px 24px}' +
-    '.narrative{font-family:"Playfair Display",serif;font-size:19px;line-height:1.85;color:#2c2c2c;margin-bottom:60px}' +
-    '.narrative p{margin:0 0 1.4em}' +
-    '.section-title{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#999;margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid #e8e4dc}' +
-    '.photo-grid{columns:2;column-gap:16px}' +
-    '@media(max-width:500px){.photo-grid{columns:1}}' +
-    '.stat-row{display:flex;gap:24px;margin-bottom:50px;flex-wrap:wrap}' +
-    '.stat{text-align:center;flex:1;min-width:80px}' +
-    '.stat-num{font-size:32px;font-weight:700;color:#2c2c2c;font-family:"Playfair Display",serif}' +
-    '.stat-lbl{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px}' +
-    '.footer{text-align:center;padding:40px 24px;font-size:12px;color:#bbb;border-top:1px solid #e8e4dc}' +
-    '@media print{.no-print{display:none}.hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}}' +
-    '</style></head><body>' +
-    '<div class="hero">' +
-    '<div class="hero-overlay"></div>' +
-    '<div class="hero-content">' +
-    '<div class="dates">' + dateRange + '</div>' +
-    '<h1>' + title + '</h1>' +
-    (locs.length > 0 ? '<div class="places">' + locs.slice(0,5).join(' &middot; ') + '</div>' : '') +
-    '</div></div>' +
-    '<div class="content">' +
-    '<div class="stat-row">' +
-    '<div class="stat"><div class="stat-num">' + entries.length + '</div><div class="stat-lbl">Moments</div></div>' +
-    '<div class="stat"><div class="stat-num">' + photos.length + '</div><div class="stat-lbl">Photos</div></div>' +
-    '<div class="stat"><div class="stat-num">' + locs.length + '</div><div class="stat-lbl">Places</div></div>' +
-    '</div>' +
-    '<div class="section-title">The story</div>' +
-    '<div class="narrative">' + narrative.split('\n\n').map(function(p) { return p.trim() ? '<p>' + p.trim() + '</p>' : ''; }).join('') + '</div>' +
-    (photos.length > 0 ? '<div class="section-title">Memories</div><div class="photo-grid">' + photoGrid + '</div>' : '') +
-    '</div>' +
-    '<div class="footer">Generated from Japan Journal &middot; ' + new Date().toLocaleDateString([], {month:'long', year:'numeric'}) + '</div>' +
-    '</body></html>';
-
-  var blob = new Blob([html], {type: 'text/html'});
-  var url = URL.createObjectURL(blob);
-  window.open(url, '_blank');
+  sorted.forEach(function(e) { if (e.location && locs.indexOf(e.location) === -1) locs.push(e.location); });
+  var heroStyle = photos[0] ? 'background-image:url(' + photos[0].photo + ');background-size:cover;background-position:center' : '';
+  var photoGrid = photos.map(function(e) {
+    var ds = new Date(e.datetime).toLocaleDateString([], {month:'short', day:'numeric'});
+    return '<div style="break-inside:avoid;margin-bottom:20px"><img src="' + e.photo + '" style="width:100%;border-radius:12px;display:block;margin-bottom:8px"><div style="font-size:13px;color:#555;font-style:italic">' + e.caption + '</div>' + (e.location ? '<div style="font-size:12px;color:#888;margin-top:3px">' + e.location + ' &middot; ' + ds + '</div>' : '') + '</div>';
+  }).join('');
+  var paras = narrative.split('\n\n').map(function(p) { return p.trim() ? '<p>' + p.trim() + '</p>' : ''; }).join('');
+  var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + title + '</title><style>@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap");body{margin:0;background:#faf9f6;color:#2c2c2c;font-family:"Inter",sans-serif;font-size:16px;line-height:1.7}.hero{padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden;' + heroStyle + '}.overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55)}.hc{position:relative;z-index:1;color:#f0ede8}.hc h1{font-family:"Playfair Display",serif;font-size:clamp(32px,6vw,56px);font-weight:700;margin:0 0 12px}.hc .dates{font-size:14px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;margin-bottom:8px}.hc .places{font-size:15px;opacity:0.7;font-style:italic}.content{max-width:680px;margin:0 auto;padding:60px 24px}.narrative{font-family:"Playfair Display",serif;font-size:19px;line-height:1.85;color:#2c2c2c;margin-bottom:60px}.narrative p{margin:0 0 1.4em}.sec{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#999;margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid #e8e4dc}.grid{columns:2;column-gap:16px}@media(max-width:500px){.grid{columns:1}}.stats{display:flex;gap:24px;margin-bottom:50px;flex-wrap:wrap}.stat{text-align:center;flex:1;min-width:80px}.stat-n{font-size:32px;font-weight:700;font-family:"Playfair Display",serif}.stat-l{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px}.footer{text-align:center;padding:40px 24px;font-size:12px;color:#bbb;border-top:1px solid #e8e4dc}</style></head><body>' +
+    '<div class="hero"><div class="overlay"></div><div class="hc"><div class="dates">' + dateRange + '</div><h1>' + title + '</h1>' + (locs.length ? '<div class="places">' + locs.slice(0,5).join(' &middot; ') + '</div>' : '') + '</div></div>' +
+    '<div class="content"><div class="stats"><div class="stat"><div class="stat-n">' + sorted.length + '</div><div class="stat-l">Moments</div></div><div class="stat"><div class="stat-n">' + photos.length + '</div><div class="stat-l">Photos</div></div><div class="stat"><div class="stat-n">' + locs.length + '</div><div class="stat-l">Places</div></div></div>' +
+    '<div class="sec">The story</div><div class="narrative">' + paras + '</div>' +
+    (photos.length ? '<div class="sec">Memories</div><div class="grid">' + photoGrid + '</div>' : '') +
+    '</div><div class="footer">Japan Journal &middot; ' + new Date().toLocaleDateString([], {month:'long', year:'numeric'}) + '</div></body></html>';
+  window.open(URL.createObjectURL(new Blob([html], {type:'text/html'})), '_blank');
 }
 
-var datetimeInterval = null;
-
-function formatDatetimeDisplay(d) {
-  var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  var h = d.getHours(); var m = d.getMinutes(); var s = d.getSeconds();
-  var ampm = h >= 12 ? "PM" : "AM";
-  h = h % 12 || 12;
-  return days[d.getDay()] + " " + months[d.getMonth()] + " " + d.getDate() +
-    " . " + h + ":" + (m<10?"0"+m:m) + ":" + (s<10?"0"+s:s) + " " + ampm;
+// -- UI helpers -----------------------------------------
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  renderFeed();
 }
 
-function toLocalISO(d) {
-  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
-function tickDatetime() {
-  if (datetimeLocked) return;
-  var now = new Date();
-  document.getElementById('datetime-display').textContent = formatDatetimeDisplay(now);
-  document.getElementById('f-datetime').value = toLocalISO(now);
-}
-
-function toggleDatetimeLock() {
-  datetimeLocked = !datetimeLocked;
-  var btn = document.getElementById('datetime-lock-btn');
-  var display = document.getElementById('datetime-display');
-  if (datetimeLocked) {
-    btn.textContent = "Edit";
-    btn.style.color = "var(--accent)";
-    display.style.color = "var(--text)";
-  } else {
-    btn.textContent = "Live";
-    btn.style.color = "var(--green)";
-    display.style.color = "var(--text)";
-    tickDatetime();
+// -- Init -----------------------------------------------
+document.addEventListener('DOMContentLoaded', function() {
+  // Hide Take Photo on desktop
+  if (!('ontouchstart' in window) && !/Mobi|Android/i.test(navigator.userAgent)) {
+    var cl = document.getElementById('photo-camera-label');
+    var br = document.getElementById('photo-btn-row');
+    if (cl) cl.style.display = 'none';
+    if (br) br.style.gridTemplateColumns = '1fr';
   }
-}
-
-datetimeInterval = setInterval(tickDatetime, 1000);
-tickDatetime();
-renderFeed();
+  dtTimer = setInterval(tickClock, 1000);
+  useLiveTime();
+  renderFeed();
+});
 </script>
-
-<!-- EDIT MODAL -->
-<div id="edit-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:500;background:rgba(0,0,0,0.7);overflow-y:auto;-webkit-overflow-scrolling:touch">
-  <div style="background:var(--surface);margin:40px 14px calc(var(--safe-bottom)+20px);border-radius:20px;padding:20px;border:0.5px solid var(--border)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <span style="font-size:16px;font-weight:600">Edit Entry</span>
-      <button onclick="closeEdit()" style="background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;font-family:-apple-system,sans-serif">&#10005;</button>
-    </div>
-    <div class="photo-upload" id="edit-photo-upload" onclick="document.getElementById('edit-photo-input').click()" style="margin-bottom:12px">
-      <div class="photo-upload-label"><div class="photo-upload-icon">&#128247;</div><div>Tap to change photo</div></div>
-    </div>
-    <input type="file" id="edit-photo-input" accept="image/*" style="display:none" onchange="handleEditPhotoChange(event)">
-    <div class="field"><label>Caption</label><textarea id="edit-caption" rows="2" style="width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif;resize:none"></textarea></div>
-    <div class="field"><label>Location</label>
-      <div class="loc-row">
-        <input type="text" id="edit-location" style="flex:1;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif">
-        <button class="loc-btn" onclick="getLocationForEdit()">&#128205; GPS</button>
-      </div>
-    </div>
-    <div class="field"><label>Date & Time</label><input type="datetime-local" id="edit-datetime" style="width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif"></div>
-    <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
-    <button onclick="closeEdit()" style="width:100%;padding:11px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;color:var(--muted);cursor:pointer;font-family:-apple-system,sans-serif;margin-top:8px">Cancel</button>
-  </div>
-</div>
-
-<!-- SUMMARY TAB -->
-<div class="tab-content" id="tab-summary">
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="stat-entries3">0</div></div>
-    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="stat-photos3">0</div></div>
-    <div class="stat-card"><div class="stat-label">Days</div><div class="stat-val" id="stat-days3">0</div></div>
-  </div>
-
-  <div style="background:var(--surface);border-radius:14px;border:0.5px solid var(--border);padding:14px;margin-bottom:12px">
-    <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Trip details</div>
-    <div class="field" style="margin-bottom:8px"><label>Trip title</label><input type="text" id="sum-title" placeholder="e.g. Japan Spring 2026" style="width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif"></div>
-    <div class="field" style="margin-bottom:0"><label>Any extra context for the AI?</label><textarea id="sum-context" rows="2" placeholder="e.g. first time in Japan, travelled with girlfriend, baseball game at Jingu..." style="width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif;resize:none"></textarea></div>
-  </div>
-
-  <button class="btn-primary" id="gen-btn" onclick="generateSummary()">Generate Trip Summary</button>
-  <div id="gen-status" style="text-align:center;font-size:13px;color:var(--muted);margin-top:10px;display:none"></div>
-  <div id="gen-error" style="background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.25);border-radius:12px;padding:12px;font-size:13px;color:var(--red);margin-top:10px;display:none"></div>
-</div>
-
 </body>
 </html>
