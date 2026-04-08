@@ -3,30 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Journal">
 <meta name="theme-color" content="#0f0f0f">
 <title>Japan Journal</title>
 <style>
-:root{
-  --bg:#0f0f0f;
-  --surface:#1a1a1a;
-  --surface2:#222;
-  --border:rgba(255,255,255,0.08);
-  --text:#f0ede8;
-  --muted:#888;
-  --subtle:#444;
-  --accent:#e8c96a;
-  --green:#6abf8e;
-  --red:#e86a6a;
-  --safe-top:env(safe-area-inset-top,0px);
-  --safe-bottom:env(safe-area-inset-bottom,0px)
-}
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;--border:rgba(255,255,255,0.08);--text:#f0ede8;--muted:#888;--subtle:#444;--accent:#e8c96a;--green:#6abf8e;--red:#e86a6a;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Text',BlinkMacSystemFont,sans-serif;min-height:100vh;overscroll-behavior:none}
 button,input,textarea,select{font:inherit}
 .topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--safe-top) + 14px) 18px 0;border-bottom:0.5px solid var(--border)}
 .topbar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;padding-bottom:12px}
 .tabs{display:flex}
-.tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s}
+.tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s}
 .tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
 .tab-content{display:none;padding:14px 14px calc(var(--safe-bottom) + 80px)}
 .tab-content.active{display:block}
@@ -37,7 +27,7 @@ button,input,textarea,select{font:inherit}
 .field input::placeholder,.field textarea::placeholder{color:var(--subtle)}
 .btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#1a1600;cursor:pointer;margin-top:4px}
 .btn-secondary{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer}
-.btn-danger{width:100%;padding:12px;background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.2);border-radius:12px;font-size:14px;font-weight:500;color:var(--red);cursor:pointer}
+.btn-danger{width:100%;padding:12px;background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.2);border-radius:12px;font-size:14px;font-weight:500;color:var(--red);cursor:pointer;margin-top:8px}
 .btn-primary:active,.btn-secondary:active,.btn-danger:active{opacity:0.85}
 .loc-row{display:flex;align-items:center;gap:8px}
 .loc-row input{flex:1}
@@ -77,9 +67,8 @@ button,input,textarea,select{font:inherit}
 .status{font-size:13px;color:var(--muted);text-align:center;margin-top:10px;display:none}
 .error{background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.25);border-radius:12px;padding:12px;font-size:13px;color:var(--red);margin-top:10px;display:none}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-@media (max-width: 520px){
-  .filters,.toolbar{grid-template-columns:1fr}
-}
+.sync-btn{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
+.sync-btn:active{background:var(--surface2)}
 </style>
 </head>
 <body>
@@ -89,60 +78,56 @@ button,input,textarea,select{font:inherit}
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('add',this)">New Entry</button>
     <button class="tab-btn" onclick="switchTab('feed',this)">Feed</button>
+    <button class="tab-btn" onclick="switchTab('sync',this)">Sync</button>
     <button class="tab-btn" onclick="switchTab('summary',this)">Summary</button>
   </div>
 </div>
 
+<!-- NEW ENTRY TAB -->
 <div class="tab-content active" id="tab-add">
   <div id="photo-preview" class="preview-box">
     <img id="photo-preview-img" alt="Photo preview">
   </div>
-
   <div id="photo-btn-row" class="toolbar">
-    <label for="photo-camera" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center">
-      📷 Take Photo
+    <label for="photo-camera" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;margin-top:0" id="photo-camera-label">
+      &#128247; Take Photo
       <input type="file" id="photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
     </label>
     <label for="photo-library" class="btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center">
-      🖼 Choose Photo
+      &#128444; Choose Photo
       <input type="file" id="photo-library" accept="image/*" style="display:none" onchange="handlePhoto(event)">
     </label>
   </div>
-
   <div class="field">
     <label>Caption</label>
     <textarea id="f-caption" rows="2" placeholder="What's happening here..."></textarea>
   </div>
-
   <div class="field">
     <label>Location</label>
     <div class="loc-row">
       <input type="text" id="f-location" placeholder="e.g. Fushimi Inari, Kyoto">
-      <button class="loc-btn" id="loc-btn" onclick="getLocation()">📍 GPS</button>
+      <button class="loc-btn" id="loc-btn" onclick="getLocation()">&#128205; GPS</button>
     </div>
   </div>
-
   <div class="field">
-    <label>Date & Time</label>
+    <label>Date &amp; Time</label>
     <div class="toolbar" style="margin-bottom:8px">
-      <button id="dt-live-btn" onclick="useLiveTime()" class="btn-primary" style="background:var(--green);color:#0a1a0f">Now (live)</button>
+      <button id="dt-live-btn" onclick="useLiveTime()" class="btn-primary" style="background:var(--green);color:#0a1a0f;margin-top:0">Now (live)</button>
       <button id="dt-manual-btn" onclick="useManualTime()" class="btn-secondary" style="color:var(--muted)">Set manually</button>
     </div>
-    <div id="dt-live-display" class="card" style="padding:10px 12px;color:var(--green);border-color:rgba(106,191,142,0.3);margin-bottom:0"></div>
+    <div id="dt-live-display" class="card" style="padding:10px 12px;color:var(--green);border-color:rgba(106,191,142,0.3);margin-bottom:0;font-size:14px"></div>
     <input type="datetime-local" id="f-datetime" style="display:none">
   </div>
-
   <button class="btn-primary" onclick="addEntry()">Add to Journal</button>
-  <p class="helper" style="margin-top:10px">Photos are stored in your browser on this device. For a lot of images, switch to IndexedDB later for better storage capacity.</p>
 </div>
 
+<!-- FEED TAB -->
 <div class="tab-content" id="tab-feed">
   <div class="stats-row">
     <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="st-total">0</div></div>
     <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="st-photos">0</div></div>
     <div class="stat-card"><div class="stat-label">Starred</div><div class="stat-val" id="st-starred">0</div></div>
   </div>
-
   <div class="filters">
     <div class="field" style="margin-bottom:0">
       <label>Search</label>
@@ -157,17 +142,44 @@ button,input,textarea,select{font:inherit}
       </select>
     </div>
   </div>
-
   <div id="feed"></div>
 </div>
 
+<!-- SYNC TAB -->
+<div class="tab-content" id="tab-sync">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="st-total2">0</div></div>
+    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="st-photos2">0</div></div>
+    <div class="stat-card"><div class="stat-label">Starred</div><div class="stat-val" id="st-starred2">0</div></div>
+  </div>
+  <button class="sync-btn" onclick="syncToWidget()">&#9729; Save journal.json to iCloud</button>
+  <div class="card" style="margin-top:12px">
+    <div class="helper">
+      <strong style="color:var(--text)">How to sync to widget:</strong><br>
+      1. Tap "Save journal.json to iCloud"<br>
+      2. In the share sheet, tap <strong style="color:var(--text)">Save to Files</strong><br>
+      3. Navigate to <strong style="color:var(--text)">iCloud Drive &rarr; Scriptable</strong><br>
+      4. Tap Save &mdash; widget updates on next refresh<br><br>
+      Sends up to <strong style="color:var(--text)">20 photos</strong> (starred first, then newest).
+    </div>
+  </div>
+  <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn-secondary" style="flex:1;min-width:140px" onclick="exportJournal()">Export backup</button>
+    <label class="btn-secondary" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+      Import backup
+      <input type="file" accept="application/json" style="display:none" onchange="importJournal(event)">
+    </label>
+  </div>
+  <button class="btn-danger" onclick="confirmClear()">Delete all entries</button>
+</div>
+
+<!-- SUMMARY TAB -->
 <div class="tab-content" id="tab-summary">
   <div class="stats-row">
     <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="st-total3">0</div></div>
     <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="st-photos3">0</div></div>
     <div class="stat-card"><div class="stat-label">Days</div><div class="stat-val" id="st-days3">0</div></div>
   </div>
-
   <div class="card">
     <div class="field" style="margin-bottom:8px">
       <label>Trip title</label>
@@ -175,7 +187,7 @@ button,input,textarea,select{font:inherit}
     </div>
     <div class="field" style="margin-bottom:8px">
       <label>Extra context for the AI (optional)</label>
-      <textarea id="sum-context" rows="2" placeholder="e.g. first time in Japan, travelled with friends, baseball game at Jingu..."></textarea>
+      <textarea id="sum-context" rows="2" placeholder="e.g. first time in Japan, travelled with girlfriend, baseball game at Jingu..."></textarea>
     </div>
     <div class="filters">
       <div class="field" style="margin-bottom:0">
@@ -188,56 +200,40 @@ button,input,textarea,select{font:inherit}
       </div>
     </div>
   </div>
-
   <button class="btn-primary" id="gen-btn" onclick="generateSummary()">Generate Trip Summary</button>
   <div id="gen-status" class="status"></div>
   <div id="gen-error" class="error"></div>
-
-  <div class="card" style="margin-top:12px">
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn-secondary" style="flex:1;min-width:180px" onclick="exportJournal()">Export journal backup</button>
-      <label class="btn-secondary" style="flex:1;min-width:180px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer">
-        Import journal backup
-        <input type="file" accept="application/json" style="display:none" onchange="importJournal(event)">
-      </label>
-    </div>
-    <p class="helper" style="margin-top:10px">Use export/import if you want to keep a copy of your trips or move them to another device.</p>
-  </div>
-
-  <button class="btn-danger" onclick="confirmClear()">Delete all entries</button>
 </div>
 
+<!-- EDIT MODAL -->
 <div class="modal-bg" id="edit-modal">
   <div class="modal-box">
     <div class="modal-header">
       <span class="modal-title">Edit Entry</span>
-      <button class="modal-close" onclick="closeEdit()">×</button>
+      <button class="modal-close" onclick="closeEdit()">&#215;</button>
     </div>
-
     <div id="edit-preview" class="preview-box">
       <img id="edit-preview-img" alt="Edit preview">
     </div>
-
     <div class="toolbar">
-      <label for="edit-photo-camera" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center">
-        📷 Retake
+      <label for="edit-photo-camera" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;margin-top:0">
+        &#128247; Retake
         <input type="file" id="edit-photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handleEditPhoto(event)">
       </label>
       <label for="edit-photo-library" class="btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center">
-        🖼 Change
+        &#128444; Change
         <input type="file" id="edit-photo-library" accept="image/*" style="display:none" onchange="handleEditPhoto(event)">
       </label>
     </div>
-
     <div class="field"><label>Caption</label><textarea id="edit-caption" rows="2"></textarea></div>
     <div class="field">
       <label>Location</label>
       <div class="loc-row">
         <input type="text" id="edit-location">
-        <button class="loc-btn" onclick="getLocationForEdit()">📍 GPS</button>
+        <button class="loc-btn" onclick="getLocationForEdit()">&#128205; GPS</button>
       </div>
     </div>
-    <div class="field"><label>Date & Time</label><input type="datetime-local" id="edit-datetime"></div>
+    <div class="field"><label>Date &amp; Time</label><input type="datetime-local" id="edit-datetime"></div>
     <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
     <button class="btn-secondary" onclick="closeEdit()" style="margin-top:8px">Cancel</button>
   </div>
@@ -255,124 +251,127 @@ var dtIsLive = true;
 var dtTimer = null;
 
 function pad(n){ return n < 10 ? '0' + n : '' + n; }
+
 function nowISO(){
   var d = new Date();
-  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) +
+         'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
 }
+
 function fmtClock(d){
-  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate() + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate() +
+         ' - ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
 }
+
 function tickClock(){
-  var el=document.getElementById('dt-live-display');
-  var inp=document.getElementById('f-datetime');
+  var el = document.getElementById('dt-live-display');
+  var inp = document.getElementById('f-datetime');
   if(!el || !dtIsLive) return;
-  var now=new Date();
-  el.textContent=fmtClock(now);
-  if(inp) inp.value=nowISO();
+  var now = new Date();
+  el.textContent = fmtClock(now);
+  if(inp) inp.value = nowISO();
 }
+
 function useLiveTime(){
-  dtIsLive=true;
-  var lb=document.getElementById('dt-live-btn');
-  var mb=document.getElementById('dt-manual-btn');
-  var ld=document.getElementById('dt-live-display');
-  var inp=document.getElementById('f-datetime');
-  if(lb){ lb.style.background='var(--green)'; lb.style.color='#0a1a0f'; }
-  if(mb){ mb.style.background='transparent'; mb.style.color='var(--muted)'; }
-  if(ld) ld.style.display='block';
-  if(inp) inp.style.display='none';
+  dtIsLive = true;
+  var lb = document.getElementById('dt-live-btn');
+  var mb = document.getElementById('dt-manual-btn');
+  var ld = document.getElementById('dt-live-display');
+  var inp = document.getElementById('f-datetime');
+  if(lb){ lb.style.background = 'var(--green)'; lb.style.color = '#0a1a0f'; }
+  if(mb){ mb.style.background = 'transparent'; mb.style.color = 'var(--muted)'; mb.style.border = '0.5px solid var(--border)'; }
+  if(ld) ld.style.display = 'block';
+  if(inp) inp.style.display = 'none';
   tickClock();
 }
+
 function useManualTime(){
-  dtIsLive=false;
-  var lb=document.getElementById('dt-live-btn');
-  var mb=document.getElementById('dt-manual-btn');
-  var ld=document.getElementById('dt-live-display');
-  var inp=document.getElementById('f-datetime');
-  if(lb){ lb.style.background='transparent'; lb.style.color='var(--muted)'; }
-  if(mb){ mb.style.background='var(--accent)'; mb.style.color='#1a1600'; }
-  if(ld) ld.style.display='none';
+  dtIsLive = false;
+  var lb = document.getElementById('dt-live-btn');
+  var mb = document.getElementById('dt-manual-btn');
+  var ld = document.getElementById('dt-live-display');
+  var inp = document.getElementById('f-datetime');
+  if(lb){ lb.style.background = 'transparent'; lb.style.color = 'var(--muted)'; lb.style.border = '0.5px solid var(--border)'; }
+  if(mb){ mb.style.background = 'var(--accent)'; mb.style.color = '#1a1600'; mb.style.border = 'none'; }
+  if(ld) ld.style.display = 'none';
   if(inp){
-    inp.style.display='block';
-    if(!inp.value) inp.value=nowISO();
+    inp.style.display = 'block';
+    if(!inp.value) inp.value = nowISO();
   }
 }
 
 function compressImage(img, maxDim, quality){
-  var canvas=document.createElement('canvas');
-  var ratio=Math.min(maxDim / Math.max(img.width, img.height), 1);
-  canvas.width=Math.round(img.width * ratio);
-  canvas.height=Math.round(img.height * ratio);
-  var ctx=canvas.getContext('2d');
-  ctx.imageSmoothingEnabled=true;
-  ctx.imageSmoothingQuality='high';
+  var canvas = document.createElement('canvas');
+  var ratio = Math.min(maxDim / Math.max(img.width, img.height), 1);
+  canvas.width = Math.round(img.width * ratio);
+  canvas.height = Math.round(img.height * ratio);
+  var ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   return canvas.toDataURL('image/jpeg', quality);
 }
 
 function loadPickedImage(file, callback){
   if(!file) return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    var img=new Image();
-    img.onload=function(){
-      callback(compressImage(img, 1600, 0.9));
-    };
-    img.src=e.target.result;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var img = new Image();
+    img.onload = function(){ callback(compressImage(img, 1600, 0.9)); };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
 
 function handlePhoto(ev){
-  var file=ev.target.files[0];
-  loadPickedImage(file, function(dataUrl){
-    pendingPhoto=dataUrl;
-    var prev=document.getElementById('photo-preview');
-    var prevImg=document.getElementById('photo-preview-img');
-    if(prev) prev.style.display='block';
-    if(prevImg) prevImg.src=dataUrl;
+  loadPickedImage(ev.target.files[0], function(dataUrl){
+    pendingPhoto = dataUrl;
+    var prev = document.getElementById('photo-preview');
+    var prevImg = document.getElementById('photo-preview-img');
+    if(prev) prev.style.display = 'block';
+    if(prevImg) prevImg.src = dataUrl;
   });
-  ev.target.value='';
+  ev.target.value = '';
 }
 
 function handleEditPhoto(ev){
-  var file=ev.target.files[0];
-  loadPickedImage(file, function(dataUrl){
-    editingPhoto=dataUrl;
-    var prev=document.getElementById('edit-preview');
-    var prevImg=document.getElementById('edit-preview-img');
-    if(prev) prev.style.display='block';
-    if(prevImg) prevImg.src=dataUrl;
+  loadPickedImage(ev.target.files[0], function(dataUrl){
+    editingPhoto = dataUrl;
+    var prev = document.getElementById('edit-preview');
+    var prevImg = document.getElementById('edit-preview-img');
+    if(prev) prev.style.display = 'block';
+    if(prevImg) prevImg.src = dataUrl;
   });
-  ev.target.value='';
+  ev.target.value = '';
 }
 
 function reverseGeocode(lat, lng, callback){
   fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json')
     .then(function(r){ return r.json(); })
     .then(function(data){
-      var a=(data && data.address) || {};
-      var place=a.tourism || a.amenity || a.suburb || a.neighbourhood || a.city_district || '';
-      var city=a.city || a.town || a.village || '';
-      var loc=(place && city && place !== city) ? place + ', ' + city : place || city || 'Unknown location';
+      var a = (data && data.address) || {};
+      var place = a.tourism || a.amenity || a.suburb || a.neighbourhood || a.city_district || '';
+      var city = a.city || a.town || a.village || '';
+      var loc = (place && city && place !== city) ? place + ', ' + city : place || city || 'Japan';
       callback(loc);
     })
     .catch(function(){ callback(lat.toFixed(4) + ', ' + lng.toFixed(4)); });
 }
 
 function getLocation(){
-  var btn=document.getElementById('loc-btn');
-  if(btn) btn.textContent='Getting...';
+  var btn = document.getElementById('loc-btn');
+  if(btn) btn.textContent = 'Getting...';
   navigator.geolocation.getCurrentPosition(function(pos){
     reverseGeocode(pos.coords.latitude, pos.coords.longitude, function(loc){
-      var el=document.getElementById('f-location');
-      if(el) el.value=loc;
-      if(btn){ btn.textContent='Got it'; btn.className='loc-btn got'; }
+      var el = document.getElementById('f-location');
+      if(el) el.value = loc;
+      if(btn){ btn.textContent = 'Got it'; btn.className = 'loc-btn got'; }
       showToast('Location found');
     });
   }, function(){
-    if(btn){ btn.textContent='📍 GPS'; btn.className='loc-btn'; }
+    if(btn){ btn.textContent = '&#128205; GPS'; btn.className = 'loc-btn'; }
     showToast('Could not get location');
   }, {enableHighAccuracy:true, timeout:10000});
 }
@@ -380,98 +379,74 @@ function getLocation(){
 function getLocationForEdit(){
   navigator.geolocation.getCurrentPosition(function(pos){
     reverseGeocode(pos.coords.latitude, pos.coords.longitude, function(loc){
-      var el=document.getElementById('edit-location');
-      if(el) el.value=loc;
+      var el = document.getElementById('edit-location');
+      if(el) el.value = loc;
       showToast('Location updated');
     });
   }, function(){ showToast('Could not get location'); }, {enableHighAccuracy:true, timeout:10000});
 }
 
 function addEntry(){
-  var caption=document.getElementById('f-caption').value.trim();
-  var location=document.getElementById('f-location').value.trim();
-  var datetime=document.getElementById('f-datetime').value;
+  var caption = document.getElementById('f-caption').value.trim();
+  var location = document.getElementById('f-location').value.trim();
+  var datetime = document.getElementById('f-datetime').value;
   if(!caption){ showToast('Please add a caption'); return; }
   if(!datetime){ showToast('Please set a date and time'); return; }
-
-  entries.unshift({
-    id: Date.now(),
-    caption: caption,
-    location: location,
-    datetime: datetime,
-    photo: pendingPhoto,
-    starred: false
-  });
-
+  entries.unshift({ id:Date.now(), caption:caption, location:location, datetime:datetime, photo:pendingPhoto, starred:false });
   save();
-  document.getElementById('f-caption').value='';
-  document.getElementById('f-location').value='';
-  var pp=document.getElementById('photo-preview');
-  var ppi=document.getElementById('photo-preview-img');
-  if(pp) pp.style.display='none';
-  if(ppi) ppi.src='';
-  pendingPhoto=null;
-  var lb=document.getElementById('loc-btn');
-  if(lb){ lb.textContent='📍 GPS'; lb.className='loc-btn'; }
+  document.getElementById('f-caption').value = '';
+  document.getElementById('f-location').value = '';
+  var pp = document.getElementById('photo-preview');
+  var ppi = document.getElementById('photo-preview-img');
+  if(pp) pp.style.display = 'none';
+  if(ppi) ppi.src = '';
+  pendingPhoto = null;
+  var lb = document.getElementById('loc-btn');
+  if(lb){ lb.textContent = '&#128205; GPS'; lb.className = 'loc-btn'; }
   useLiveTime();
   renderFeed();
   showToast('Entry added');
 }
 
 function openEdit(id){
-  var e=entries.find(function(x){ return x.id === id; });
+  var e = entries.find(function(x){ return x.id === id; });
   if(!e) return;
-  editingId=id;
-  editingPhoto=null;
-  document.getElementById('edit-caption').value=e.caption || '';
-  document.getElementById('edit-location').value=e.location || '';
-  document.getElementById('edit-datetime').value=e.datetime || '';
-  var prev=document.getElementById('edit-preview');
-  var prevImg=document.getElementById('edit-preview-img');
-  if(e.photo){
-    if(prev) prev.style.display='block';
-    if(prevImg) prevImg.src=e.photo;
-  } else {
-    if(prev) prev.style.display='none';
-  }
-  document.getElementById('edit-modal').style.display='block';
-  document.body.style.overflow='hidden';
+  editingId = id; editingPhoto = null;
+  document.getElementById('edit-caption').value = e.caption || '';
+  document.getElementById('edit-location').value = e.location || '';
+  document.getElementById('edit-datetime').value = e.datetime || '';
+  var prev = document.getElementById('edit-preview');
+  var prevImg = document.getElementById('edit-preview-img');
+  if(e.photo){ if(prev) prev.style.display='block'; if(prevImg) prevImg.src=e.photo; }
+  else { if(prev) prev.style.display='none'; }
+  document.getElementById('edit-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
 }
 
 function closeEdit(){
-  document.getElementById('edit-modal').style.display='none';
-  document.body.style.overflow='';
-  editingId=null;
-  editingPhoto=null;
+  document.getElementById('edit-modal').style.display = 'none';
+  document.body.style.overflow = '';
+  editingId = null; editingPhoto = null;
 }
 
 function saveEdit(){
-  var e=entries.find(function(x){ return x.id === editingId; });
+  var e = entries.find(function(x){ return x.id === editingId; });
   if(!e) return;
-  e.caption=document.getElementById('edit-caption').value.trim();
-  e.location=document.getElementById('edit-location').value.trim();
-  e.datetime=document.getElementById('edit-datetime').value;
-  if(editingPhoto) e.photo=editingPhoto;
-  save();
-  renderFeed();
-  closeEdit();
-  showToast('Entry updated');
+  e.caption = document.getElementById('edit-caption').value.trim();
+  e.location = document.getElementById('edit-location').value.trim();
+  e.datetime = document.getElementById('edit-datetime').value;
+  if(editingPhoto) e.photo = editingPhoto;
+  save(); renderFeed(); closeEdit(); showToast('Entry updated');
 }
 
 function deleteEntry(id){
-  entries=entries.filter(function(e){ return e.id !== id; });
-  save();
-  renderFeed();
-  showToast('Deleted');
+  entries = entries.filter(function(e){ return e.id !== id; });
+  save(); renderFeed(); showToast('Deleted');
 }
 
 function toggleStar(id){
-  var e=entries.find(function(x){ return x.id === id; });
-  if(e){
-    e.starred=!e.starred;
-    save();
-    renderFeed();
-  }
+  var e = entries.find(function(x){ return x.id === id; });
+  if(e){ e.starred = !e.starred; save(); renderFeed(); }
 }
 
 function save(){
@@ -480,200 +455,215 @@ function save(){
 }
 
 function getFilteredEntries(){
-  var search=(document.getElementById('feed-search') || {}).value || '';
-  var filter=(document.getElementById('feed-filter') || {}).value || 'all';
-  search=search.trim().toLowerCase();
-
+  var search = ((document.getElementById('feed-search') || {}).value || '').trim().toLowerCase();
+  var filter = (document.getElementById('feed-filter') || {}).value || 'all';
   return entries.filter(function(e){
-    var matchesFilter = filter === 'all'
-      || (filter === 'starred' && e.starred)
-      || (filter === 'photos' && !!e.photo);
-
-    var haystack=(e.caption + ' ' + (e.location || '')).toLowerCase();
-    var matchesSearch=!search || haystack.indexOf(search) !== -1;
-    return matchesFilter && matchesSearch;
+    var matchesFilter = filter === 'all' || (filter === 'starred' && e.starred) || (filter === 'photos' && !!e.photo);
+    var haystack = (e.caption + ' ' + (e.location || '')).toLowerCase();
+    return matchesFilter && (!search || haystack.indexOf(search) !== -1);
   });
 }
 
 function updateStats(){
-  var total=entries.length;
-  var withPhoto=entries.filter(function(e){ return !!e.photo; }).length;
-  var starred=entries.filter(function(e){ return !!e.starred; }).length;
-  var days=new Set(entries.map(function(e){ return e.datetime ? e.datetime.slice(0,10) : ''; }).filter(Boolean)).size;
-
-  function setText(id, value){ var el=document.getElementById(id); if(el) el.textContent=value; }
-  setText('st-total', total);
-  setText('st-photos', withPhoto);
-  setText('st-starred', starred);
-  setText('st-total3', total);
-  setText('st-photos3', withPhoto);
+  var total = entries.length;
+  var withPhoto = entries.filter(function(e){ return !!e.photo; }).length;
+  var starred = entries.filter(function(e){ return !!e.starred; }).length;
+  var days = new Set(entries.map(function(e){ return e.datetime ? e.datetime.slice(0,10) : ''; }).filter(Boolean)).size;
+  function setText(id, val){ var el=document.getElementById(id); if(el) el.textContent=val; }
+  setText('st-total', total); setText('st-total2', total); setText('st-total3', total);
+  setText('st-photos', withPhoto); setText('st-photos2', withPhoto); setText('st-photos3', withPhoto);
+  setText('st-starred', starred); setText('st-starred2', starred);
   setText('st-days3', days);
 }
 
 function renderFeed(){
   updateStats();
-  var feed=document.getElementById('feed');
+  var feed = document.getElementById('feed');
   if(!feed) return;
-  var shown=getFilteredEntries();
-
+  var shown = getFilteredEntries();
   if(!shown.length){
-    feed.innerHTML='<div class="empty"><div class="empty-icon">📔</div><div>No matching entries yet.</div></div>';
+    feed.innerHTML = '<div class="empty"><div class="empty-icon">&#128211;</div><div>No matching entries yet.</div></div>';
     return;
   }
-
-  feed.innerHTML=shown.map(function(e){
-    var dt=new Date(e.datetime);
-    var ds=dt.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
-    var ts=dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    var photoHtml=e.photo
+  feed.innerHTML = shown.map(function(e){
+    var dt = new Date(e.datetime);
+    var ds = dt.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
+    var ts = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    var photoHtml = e.photo
       ? '<img class="entry-photo" src="' + e.photo + '" loading="lazy" alt="Journal photo">'
-      : '<div class="entry-photo-placeholder">🌏</div>';
-    var locHtml=e.location
-      ? '<span class="entry-loc"><span class="entry-loc-dot"></span>' + escapeHtml(e.location) + '</span>'
-      : '';
-
-    return '<div class="entry-card">' +
-      photoHtml +
+      : '<div class="entry-photo-placeholder">&#127757;</div>';
+    var locHtml = e.location
+      ? '<span class="entry-loc"><span class="entry-loc-dot"></span>' + escapeHtml(e.location) + '</span>' : '';
+    return '<div class="entry-card">' + photoHtml +
       '<div class="entry-body">' +
         '<div class="entry-caption">' + escapeHtml(e.caption) + '</div>' +
         '<div class="entry-meta">' +
-          '<span class="entry-date">' + ds + ' · ' + ts + '</span>' +
+          '<span class="entry-date">' + ds + ' &middot; ' + ts + '</span>' +
           locHtml +
-          '<span class="entry-starred" onclick="toggleStar(' + e.id + ')">' + (e.starred ? '⭐' : '☆') + '</span>' +
+          '<span class="entry-starred" onclick="toggleStar(' + e.id + ')">' + (e.starred ? '&#11088;' : '&#9734;') + '</span>' +
         '</div>' +
         '<div class="entry-actions">' +
           '<button class="small-btn" onclick="openEdit(' + e.id + ')">Edit</button>' +
           '<button class="small-btn delete" onclick="deleteEntry(' + e.id + ')">Delete</button>' +
         '</div>' +
-      '</div>' +
-    '</div>';
+      '</div></div>';
   }).join('');
 }
 
-function getEntriesForSummary(){
-  var start=document.getElementById('sum-start').value;
-  var end=document.getElementById('sum-end').value;
-
-  return entries
-    .filter(function(e){
-      var day=(e.datetime || '').slice(0,10);
-      if(start && day < start) return false;
-      if(end && day > end) return false;
-      return true;
+function syncToWidget(){
+  if(!entries.length){ showToast('No entries to sync'); return; }
+  var withPhotos = entries.filter(function(e){ return e.photo; });
+  var pool = withPhotos.filter(function(e){ return e.starred; })
+    .concat(withPhotos.filter(function(e){ return !e.starred; })).slice(0, 20);
+  var snapshot = {
+    lastUpdated: new Date().toISOString(),
+    count: entries.length,
+    photos: pool.map(function(e){
+      return { id:e.id, caption:e.caption, location:e.location||'', datetime:e.datetime, photo:e.photo, starred:e.starred };
     })
-    .sort(function(a,b){ return new Date(a.datetime) - new Date(b.datetime); });
-}
-
-function generateSummary(){
-  var picked=getEntriesForSummary();
-  if(!picked.length){ showToast('No entries in that range'); return; }
-
-  var btn=document.getElementById('gen-btn');
-  var status=document.getElementById('gen-status');
-  var errDiv=document.getElementById('gen-error');
-  if(btn) btn.disabled=true;
-  if(errDiv) errDiv.style.display='none';
-  if(status){ status.style.display='block'; status.textContent='Writing your trip summary...'; }
-
-  var title=(document.getElementById('sum-title').value.trim()) || 'Trip Summary';
-  var context=document.getElementById('sum-context').value.trim();
-  var entryText=picked.map(function(e, i){
-    var dt=new Date(e.datetime);
-    var ds=dt.toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
-    var ts=dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    return (i+1) + '. ' + ds + ' at ' + ts + (e.location ? ' — ' + e.location : '') + '\n   "' + e.caption + '"';
-  }).join('\n\n');
-
-  var prompt='You are writing a warm, personal travel diary for someone reflecting on their trip. Based on the journal entries below, write a beautiful narrative summary in first person. Use a warm, reflective tone. Weave together the moments, places, and feelings into flowing paragraphs. Include specific details from the entries. Do not use bullet points. Length: around 400-600 words.' +
-    (context ? ' Extra context: ' + context : '') +
-    ' Trip title: ' + title +
-    '\n\nJournal entries:\n\n' + entryText;
-
-  fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',
-      max_tokens:1000,
-      messages:[{role:'user', content:prompt}]
-    })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    var text=(data.content || []).filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; }).join('');
-    if(!text) throw new Error('No text in response');
-    openSummaryPage(title, text, picked);
-    if(btn) btn.disabled=false;
-    if(status) status.style.display='none';
-  })
-  .catch(function(e){
-    if(btn) btn.disabled=false;
-    if(status) status.style.display='none';
-    if(errDiv){ errDiv.textContent='Could not generate: ' + e.message; errDiv.style.display='block'; }
-  });
-}
-
-function openSummaryPage(title, narrative, sorted){
-  var photos=sorted.filter(function(e){ return !!e.photo; }).slice(0, 12);
-  var firstDate=sorted.length ? new Date(sorted[0].datetime).toLocaleDateString([], {month:'long', day:'numeric'}) : '';
-  var lastDate=sorted.length > 1 ? new Date(sorted[sorted.length-1].datetime).toLocaleDateString([], {month:'long', day:'numeric', year:'numeric'}) : firstDate;
-  var dateRange=sorted.length > 1 ? firstDate + ' - ' + lastDate : firstDate;
-  var locs=[];
-  sorted.forEach(function(e){ if(e.location && locs.indexOf(e.location) === -1) locs.push(e.location); });
-  var heroStyle=photos[0] ? 'background-image:url(' + photos[0].photo + ');background-size:cover;background-position:center' : '';
-  var photoGrid=photos.map(function(e){
-    var ds=new Date(e.datetime).toLocaleDateString([], {month:'short', day:'numeric'});
-    return '<div style="break-inside:avoid;margin-bottom:20px"><img src="' + e.photo + '" style="width:100%;border-radius:12px;display:block;margin-bottom:8px" alt="Trip photo"><div style="font-size:13px;color:#555;font-style:italic">' + escapeHtml(e.caption) + '</div>' + (e.location ? '<div style="font-size:12px;color:#888;margin-top:3px">' + escapeHtml(e.location) + ' · ' + ds + '</div>' : '') + '</div>';
-  }).join('');
-  var paras=narrative.split('\n\n').map(function(p){ return p.trim() ? '<p>' + escapeHtml(p.trim()) + '</p>' : ''; }).join('');
-  var html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(title) + '</title><style>@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap");body{margin:0;background:#faf9f6;color:#2c2c2c;font-family:"Inter",sans-serif;font-size:16px;line-height:1.7}.hero{padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden;' + heroStyle + '}.overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55)}.hc{position:relative;z-index:1;color:#f0ede8}.hc h1{font-family:"Playfair Display",serif;font-size:clamp(32px,6vw,56px);font-weight:700;margin:0 0 12px}.hc .dates{font-size:14px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;margin-bottom:8px}.hc .places{font-size:15px;opacity:0.7;font-style:italic}.content{max-width:680px;margin:0 auto;padding:60px 24px}.narrative{font-family:"Playfair Display",serif;font-size:19px;line-height:1.85;color:#2c2c2c;margin-bottom:60px}.narrative p{margin:0 0 1.4em;white-space:pre-wrap}.sec{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#999;margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid #e8e4dc}.grid{columns:2;column-gap:16px}@media(max-width:500px){.grid{columns:1}}.stats{display:flex;gap:24px;margin-bottom:50px;flex-wrap:wrap}.stat{text-align:center;flex:1;min-width:80px}.stat-n{font-size:32px;font-weight:700;font-family:"Playfair Display",serif}.stat-l{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px}.footer{text-align:center;padding:40px 24px;font-size:12px;color:#bbb;border-top:1px solid #e8e4dc}</style></head><body>' +
-    '<div class="hero"><div class="overlay"></div><div class="hc"><div class="dates">' + escapeHtml(dateRange) + '</div><h1>' + escapeHtml(title) + '</h1>' + (locs.length ? '<div class="places">' + escapeHtml(locs.slice(0,5).join(' · ')) + '</div>' : '') + '</div></div>' +
-    '<div class="content"><div class="stats"><div class="stat"><div class="stat-n">' + sorted.length + '</div><div class="stat-l">Moments</div></div><div class="stat"><div class="stat-n">' + photos.length + '</div><div class="stat-l">Photos</div></div><div class="stat"><div class="stat-n">' + locs.length + '</div><div class="stat-l">Places</div></div></div>' +
-    '<div class="sec">The story</div><div class="narrative">' + paras + '</div>' +
-    (photos.length ? '<div class="sec">Memories</div><div class="grid">' + photoGrid + '</div>' : '') +
-    '</div><div class="footer">Japan Journal</div></body></html>';
-  window.open(URL.createObjectURL(new Blob([html], {type:'text/html'})), '_blank');
+  };
+  var json = JSON.stringify(snapshot);
+  var blob = new Blob([json], {type:'application/json'});
+  var file = new File([blob], 'journal.json', {type:'application/json'});
+  if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+    navigator.share({files:[file], title:'journal.json'})
+      .then(function(){ showToast('Saved! Choose iCloud Drive / Scriptable'); })
+      .catch(function(err){ if(err.name !== 'AbortError') dlFile(json, 'journal.json'); });
+  } else {
+    dlFile(json, 'journal.json');
+  }
 }
 
 function exportJournal(){
-  var payload={ version:3, exportedAt:new Date().toISOString(), entries:entries };
-  var blob=new Blob([JSON.stringify(payload)], {type:'application/json'});
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='japan-journal-backup.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
+  var payload = { version:3, exportedAt:new Date().toISOString(), entries:entries };
+  dlFile(JSON.stringify(payload), 'japan-journal-backup.json');
   showToast('Backup exported');
 }
 
+function dlFile(content, filename){
+  var a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(content);
+  a.download = filename;
+  a.click();
+}
+
 function importJournal(ev){
-  var file=ev.target.files[0];
+  var file = ev.target.files[0];
   if(!file) return;
-  var reader=new FileReader();
-  reader.onload=function(e){
+  var reader = new FileReader();
+  reader.onload = function(e){
     try {
-      var data=JSON.parse(e.target.result);
-      var incoming=Array.isArray(data) ? data : data.entries;
-      if(!Array.isArray(incoming)) throw new Error('Invalid backup file');
-      entries=incoming;
-      save();
-      renderFeed();
-      showToast('Backup imported');
-    } catch(err){
-      showToast('Import failed');
-    }
+      var data = JSON.parse(e.target.result);
+      var incoming = Array.isArray(data) ? data : data.entries;
+      if(!Array.isArray(incoming)) throw new Error('Invalid backup');
+      entries = incoming;
+      save(); renderFeed(); showToast('Backup imported');
+    } catch(err){ showToast('Import failed'); }
   };
   reader.readAsText(file);
-  ev.target.value='';
+  ev.target.value = '';
 }
 
 function confirmClear(){
   if(confirm('Delete all journal entries? This cannot be undone.')){
-    entries=[];
-    save();
-    renderFeed();
-    showToast('Cleared');
+    entries = []; save(); renderFeed(); showToast('Cleared');
   }
+}
+
+function getEntriesForSummary(){
+  var start = document.getElementById('sum-start').value;
+  var end = document.getElementById('sum-end').value;
+  return entries.filter(function(e){
+    var day = (e.datetime || '').slice(0, 10);
+    if(start && day < start) return false;
+    if(end && day > end) return false;
+    return true;
+  }).sort(function(a,b){ return new Date(a.datetime) - new Date(b.datetime); });
+}
+
+function generateSummary(){
+  var picked = getEntriesForSummary();
+  if(!picked.length){ showToast('No entries in that range'); return; }
+  var btn = document.getElementById('gen-btn');
+  var status = document.getElementById('gen-status');
+  var errDiv = document.getElementById('gen-error');
+  if(btn) btn.disabled = true;
+  if(errDiv) errDiv.style.display = 'none';
+  if(status){ status.style.display = 'block'; status.textContent = 'Writing your trip summary...'; }
+  var title = (document.getElementById('sum-title').value.trim()) || 'Japan Trip 2026';
+  var context = document.getElementById('sum-context').value.trim();
+  var entryText = picked.map(function(e, i){
+    var dt = new Date(e.datetime);
+    var ds = dt.toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
+    var ts = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    return (i+1) + '. ' + ds + ' at ' + ts + (e.location ? ' - ' + e.location : '') + '\n   "' + e.caption + '"';
+  }).join('\n\n');
+  var prompt = 'You are writing a warm, personal travel diary for someone reflecting on their trip to Japan. Based on the journal entries below, write a beautiful narrative summary in first person. Use a warm, reflective tone like a diary entry written the day after returning home. Weave together the moments, places, and feelings into flowing paragraphs. Include specific details from the entries. Do not use bullet points. Length: around 400-600 words.' +
+    (context ? ' Extra context: ' + context : '') +
+    ' Trip title: ' + title +
+    '\n\nJournal entries:\n\n' + entryText;
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user', content:prompt}] })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    var text = (data.content || []).filter(function(b){ return b.type==='text'; }).map(function(b){ return b.text; }).join('');
+    if(!text) throw new Error('No text in response');
+    openSummaryPage(title, text, picked);
+    if(btn) btn.disabled = false;
+    if(status) status.style.display = 'none';
+  })
+  .catch(function(e){
+    if(btn) btn.disabled = false;
+    if(status) status.style.display = 'none';
+    if(errDiv){ errDiv.textContent = 'Could not generate: ' + e.message; errDiv.style.display = 'block'; }
+  });
+}
+
+function openSummaryPage(title, narrative, sorted){
+  var photos = sorted.filter(function(e){ return !!e.photo; }).slice(0, 12);
+  var firstDate = sorted.length ? new Date(sorted[0].datetime).toLocaleDateString([], {month:'long', day:'numeric'}) : '';
+  var lastDate = sorted.length > 1 ? new Date(sorted[sorted.length-1].datetime).toLocaleDateString([], {month:'long', day:'numeric', year:'numeric'}) : firstDate;
+  var dateRange = sorted.length > 1 ? firstDate + ' - ' + lastDate : firstDate;
+  var locs = [];
+  sorted.forEach(function(e){ if(e.location && locs.indexOf(e.location) === -1) locs.push(e.location); });
+  var heroStyle = photos[0] ? 'background-image:url(' + photos[0].photo + ');background-size:cover;background-position:center' : '';
+  var photoGrid = photos.map(function(e){
+    var ds = new Date(e.datetime).toLocaleDateString([], {month:'short', day:'numeric'});
+    return '<div style="break-inside:avoid;margin-bottom:20px"><img src="' + e.photo + '" style="width:100%;border-radius:12px;display:block;margin-bottom:8px" alt="Trip photo"><div style="font-size:13px;color:#555;font-style:italic">' + escapeHtml(e.caption) + '</div>' + (e.location ? '<div style="font-size:12px;color:#888;margin-top:3px">' + escapeHtml(e.location) + ' - ' + ds + '</div>' : '') + '</div>';
+  }).join('');
+  var paras = narrative.split('\n\n').map(function(p){ return p.trim() ? '<p>' + escapeHtml(p.trim()) + '</p>' : ''; }).join('');
+  var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(title) + '</title>' +
+    '<style>@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap");' +
+    'body{margin:0;background:#faf9f6;color:#2c2c2c;font-family:"Inter",sans-serif;font-size:16px;line-height:1.7}' +
+    '.hero{padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden;' + heroStyle + '}' +
+    '.overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55)}' +
+    '.hc{position:relative;z-index:1;color:#f0ede8}' +
+    '.hc h1{font-family:"Playfair Display",serif;font-size:clamp(32px,6vw,56px);font-weight:700;margin:0 0 12px}' +
+    '.hc .dates{font-size:14px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;margin-bottom:8px}' +
+    '.hc .places{font-size:15px;opacity:0.7;font-style:italic}' +
+    '.content{max-width:680px;margin:0 auto;padding:60px 24px}' +
+    '.narrative{font-family:"Playfair Display",serif;font-size:19px;line-height:1.85;color:#2c2c2c;margin-bottom:60px}' +
+    '.narrative p{margin:0 0 1.4em}' +
+    '.sec{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#999;margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid #e8e4dc}' +
+    '.grid{columns:2;column-gap:16px}@media(max-width:500px){.grid{columns:1}}' +
+    '.stats{display:flex;gap:24px;margin-bottom:50px;flex-wrap:wrap}' +
+    '.stat{text-align:center;flex:1;min-width:80px}' +
+    '.stat-n{font-size:32px;font-weight:700;font-family:"Playfair Display",serif}' +
+    '.stat-l{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px}' +
+    '.footer{text-align:center;padding:40px 24px;font-size:12px;color:#bbb;border-top:1px solid #e8e4dc}' +
+    '</style></head><body>' +
+    '<div class="hero"><div class="overlay"></div><div class="hc"><div class="dates">' + escapeHtml(dateRange) + '</div><h1>' + escapeHtml(title) + '</h1>' + (locs.length ? '<div class="places">' + escapeHtml(locs.slice(0,5).join(' - ')) + '</div>' : '') + '</div></div>' +
+    '<div class="content"><div class="stats">' +
+    '<div class="stat"><div class="stat-n">' + sorted.length + '</div><div class="stat-l">Moments</div></div>' +
+    '<div class="stat"><div class="stat-n">' + photos.length + '</div><div class="stat-l">Photos</div></div>' +
+    '<div class="stat"><div class="stat-n">' + locs.length + '</div><div class="stat-l">Places</div></div>' +
+    '</div><div class="sec">The story</div><div class="narrative">' + paras + '</div>' +
+    (photos.length ? '<div class="sec">Memories</div><div class="grid">' + photoGrid + '</div>' : '') +
+    '</div><div class="footer">Japan Journal</div></body></html>';
+  window.open(URL.createObjectURL(new Blob([html], {type:'text/html'})), '_blank');
 }
 
 function switchTab(id, btn){
@@ -686,25 +676,26 @@ function switchTab(id, btn){
 
 var toastTimer;
 function showToast(msg){
-  var t=document.getElementById('toast');
+  var t = document.getElementById('toast');
   if(!t) return;
-  t.textContent=msg;
+  t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(function(){ t.classList.remove('show'); }, 2500);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2500);
 }
 
 function escapeHtml(str){
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 document.addEventListener('DOMContentLoaded', function(){
-  dtTimer=setInterval(tickClock, 1000);
+  if(!('ontouchstart' in window) && !/Mobi|Android/i.test(navigator.userAgent)){
+    var cl = document.getElementById('photo-camera-label');
+    var br = document.getElementById('photo-btn-row');
+    if(cl) cl.style.display = 'none';
+    if(br) br.style.gridTemplateColumns = '1fr';
+  }
+  dtTimer = setInterval(tickClock, 1000);
   useLiveTime();
   renderFeed();
 });
