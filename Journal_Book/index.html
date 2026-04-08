@@ -84,18 +84,23 @@ html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF P
     <button class="tab-btn active" onclick="switchTab('add',this)">New Entry</button>
     <button class="tab-btn" onclick="switchTab('feed',this)">Feed</button>
     <button class="tab-btn" onclick="switchTab('sync',this)">Sync</button>
+    <button class="tab-btn" onclick="switchTab('summary',this)">Summary</button>
   </div>
 </div>
 
 <!-- ADD TAB -->
 <div class="tab-content active" id="tab-add">
-  <div class="photo-upload" id="photo-upload" onclick="document.getElementById('photo-input').click()">
-    <div class="photo-upload-label">
+  <div class="photo-upload" id="photo-upload">
+    <div class="photo-upload-label" id="photo-placeholder">
       <div class="photo-upload-icon">&#128247;</div>
-      <div>Tap to add photo</div>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button onclick="document.getElementById('photo-camera').click()" style="padding:8px 16px;background:var(--accent);border:none;border-radius:20px;font-size:13px;font-weight:600;color:#1a1600;cursor:pointer;font-family:-apple-system,sans-serif">Take Photo</button>
+        <button onclick="document.getElementById('photo-library').click()" style="padding:8px 16px;background:var(--surface2);border:0.5px solid var(--border);border-radius:20px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;font-family:-apple-system,sans-serif">Choose Photo</button>
+      </div>
     </div>
   </div>
-  <input type="file" id="photo-input" accept="image/*" capture="environment">
+  <input type="file" id="photo-camera" accept="image/*" capture="environment" style="display:none">
+  <input type="file" id="photo-library" accept="image/*" style="display:none">
 
   <div class="field">
     <label>Caption</label>
@@ -159,8 +164,9 @@ var entries = JSON.parse(localStorage.getItem('jpJournal_entries') || '[]');
 var pendingPhoto = null; // base64 compressed
 var pendingPhotoFull = null; // for display
 
-// ── Photo handling ────────────────────────────────────
-document.getElementById('photo-input').addEventListener('change', function(e) {
+// -- Photo handling ------------------------------------
+document.addEventListener('DOMContentLoaded', function() {
+  function handlePhotoSelect(e) {
   var file = e.target.files[0];
   if (!file) return;
   var reader = new FileReader();
@@ -175,13 +181,20 @@ document.getElementById('photo-input').addEventListener('change', function(e) {
 
       // Show preview
       var upload = document.getElementById('photo-upload');
-      upload.innerHTML = '<img src="' + pendingPhotoFull + '" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0"><div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:white;font-size:11px;padding:4px 8px;border-radius:8px;z-index:2">Tap to change</div>';
+      upload.innerHTML = '<img src="' + pendingPhotoFull + '" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0">' +
+        '<div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2">' +
+        '<button onclick=\'document.getElementById("photo-camera").click()\' style=\'padding:6px 12px;background:rgba(0,0,0,0.65);border:none;border-radius:16px;font-size:12px;color:white;cursor:pointer;font-family:-apple-system,sans-serif\'>Retake</button>' +
+        '<button onclick=\'document.getElementById("photo-library").click()\' style=\'padding:6px 12px;background:rgba(0,0,0,0.65);border:none;border-radius:16px;font-size:12px;color:white;cursor:pointer;font-family:-apple-system,sans-serif\'>Change</button>' +
+        '</div>';
     };
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
   e.target.value = '';
-});
+  }
+  document.getElementById('photo-camera').addEventListener('change', handlePhotoSelect);
+  document.getElementById('photo-library').addEventListener('change', handlePhotoSelect);
+}); // end DOMContentLoaded
 
 function compressImage(img, maxWidth, quality) {
   var canvas = document.createElement('canvas');
@@ -193,7 +206,7 @@ function compressImage(img, maxWidth, quality) {
   return canvas.toDataURL('image/jpeg', quality);
 }
 
-// ── Location ──────────────────────────────────────────
+// -- Location ------------------------------------------
 var pendingCoords = null;
 
 function getLocation() {
@@ -224,7 +237,7 @@ function getLocation() {
   }, {enableHighAccuracy: true, timeout: 10000});
 }
 
-// ── Add entry ─────────────────────────────────────────
+// -- Add entry -----------------------------------------
 function addEntry() {
   var caption  = document.getElementById('f-caption').value.trim();
   var location = document.getElementById('f-location').value.trim();
@@ -256,13 +269,13 @@ function addEntry() {
     '<div class="photo-upload-label"><div class="photo-upload-icon">&#128247;</div><div>Tap to add photo</div></div>';
   document.getElementById('loc-btn').textContent = '\u{1F4CD} GPS';
   document.getElementById('loc-btn').className = 'loc-btn';
-  setDefaultDatetime();
+  datetimeLocked = false; tickDatetime();
 
   renderFeed();
   showToast('Entry added');
 }
 
-// ── Delete / star ─────────────────────────────────────
+// -- Delete / star -------------------------------------
 function deleteEntry(id) {
   entries = entries.filter(function(e) { return e.id !== id; });
   saveEntries();
@@ -279,7 +292,7 @@ function saveEntries() {
   localStorage.setItem('jpJournal_entries', JSON.stringify(entries));
 }
 
-// ── Render feed ───────────────────────────────────────
+// -- Render feed ---------------------------------------
 function renderFeed() {
   var feed = document.getElementById('feed');
   var total = entries.length;
@@ -295,6 +308,15 @@ function renderFeed() {
   ['stat-starred','stat-starred2'].forEach(function(id) {
     var el = document.getElementById(id); if (el) el.textContent = starred;
   });
+  var days3 = document.getElementById('stat-days3');
+  var entries3 = document.getElementById('stat-entries3');
+  var photos3 = document.getElementById('stat-photos3');
+  if (days3) {
+    var uniqueDays = new Set(entries.map(function(e) { return e.datetime ? e.datetime.slice(0,10) : ''; })).size;
+    days3.textContent = uniqueDays;
+  }
+  if (entries3) entries3.textContent = total;
+  if (photos3) photos3.textContent = withPhoto;
 
   if (entries.length === 0) {
     feed.innerHTML = '<div class="empty"><div class="empty-icon">&#128211;</div><div>No entries yet.<br>Add your first memory above.</div></div>';
@@ -324,17 +346,18 @@ function renderFeed() {
           '<span class="entry-starred" onclick="toggleStar(' + e.id + ')" title="Star for widget">' + (e.starred ? '&#11088;' : '&#9734;') + '</span>' +
         '</div>' +
         (mapLink ? '<div style="margin-top:6px">' + mapLink + '</div>' : '') +
+        '<button class="del-btn" onclick="openEdit(' + e.id + ')" style="margin-right:6px">Edit</button>' +
         '<button class="del-btn" onclick="deleteEntry(' + e.id + ')">Delete</button>' +
       '</div>' +
     '</div>';
   }).join('');
 }
 
-// ── Sync to widget ─────────────────────────────────────
+// -- Sync to widget -------------------------------------
 function syncToWidget() {
   if (entries.length === 0) { showToast('No entries to sync'); return; }
 
-  // Starred first, then newest — up to 20 photos
+  // Starred first, then newest -- up to 20 photos
   var withPhotos = entries.filter(function(e) { return e.photo; });
   var starred = withPhotos.filter(function(e) { return e.starred; });
   var rest = withPhotos.filter(function(e) { return !e.starred; });
@@ -385,13 +408,13 @@ function confirmClear() {
   }
 }
 
-// ── Helpers ───────────────────────────────────────────
+// -- Helpers -------------------------------------------
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
   document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
   document.getElementById('tab-' + id).classList.add('active');
   btn.classList.add('active');
-  if (id === 'feed' || id === 'sync') renderFeed();
+  if (id === 'feed' || id === 'sync' || id === 'summary') renderFeed();
 }
 
 var toastTimer;
@@ -404,6 +427,220 @@ function showToast(msg) {
 }
 
 var datetimeLocked = false;
+// -- Edit entry ---------------------------------------
+var editingId = null;
+var editingPhoto = null;
+
+function openEdit(id) {
+  var e = entries.find(function(x) { return x.id === id; });
+  if (!e) return;
+  editingId = id;
+  editingPhoto = e.photo || null;
+
+  document.getElementById('edit-caption').value = e.caption || '';
+  document.getElementById('edit-location').value = e.location || '';
+  document.getElementById('edit-datetime').value = e.datetime || '';
+
+  var upload = document.getElementById('edit-photo-upload');
+  if (e.photo) {
+    upload.innerHTML = '<img src="' + e.photo + '" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0"><div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:white;font-size:11px;padding:4px 8px;border-radius:8px">Tap to change</div>';
+  } else {
+    upload.innerHTML = '<div class="photo-upload-label"><div class="photo-upload-icon">&#128247;</div><div>Tap to add photo</div></div>';
+  }
+
+  document.getElementById('edit-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEdit() {
+  document.getElementById('edit-modal').style.display = 'none';
+  document.body.style.overflow = '';
+  editingId = null;
+  editingPhoto = null;
+}
+
+function saveEdit() {
+  if (!editingId) return;
+  var e = entries.find(function(x) { return x.id === editingId; });
+  if (!e) return;
+  e.caption  = document.getElementById('edit-caption').value.trim();
+  e.location = document.getElementById('edit-location').value.trim();
+  e.datetime = document.getElementById('edit-datetime').value;
+  if (editingPhoto !== null) e.photo = editingPhoto;
+  saveEntries();
+  renderFeed();
+  closeEdit();
+  showToast('Entry updated');
+}
+
+function handleEditPhotoChange(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e2) {
+    var img = new Image();
+    img.onload = function() {
+      editingPhoto = compressImage(img, 400, 0.6);
+      var upload = document.getElementById('edit-photo-upload');
+      upload.innerHTML = '<img src="' + editingPhoto + '" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0"><div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:white;font-size:11px;padding:4px 8px;border-radius:8px">Tap to change</div>';
+    };
+    img.src = e2.target.result;
+  };
+  reader.readAsDataURL(file);
+  ev.target.value = '';
+}
+
+function getLocationForEdit() {
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + pos.coords.latitude + '&lon=' + pos.coords.longitude + '&format=json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var addr = data.address;
+        var place = addr.tourism || addr.amenity || addr.suburb || addr.city_district || addr.city || addr.town || '';
+        var city = addr.city || addr.town || addr.village || '';
+        var loc = place && city && place !== city ? place + ', ' + city : place || city || 'Japan';
+        document.getElementById('edit-location').value = loc;
+        showToast('Location updated');
+      }).catch(function() {
+        document.getElementById('edit-location').value = pos.coords.latitude.toFixed(4) + ', ' + pos.coords.longitude.toFixed(4);
+      });
+  }, function() { showToast('Could not get location'); }, {enableHighAccuracy: true, timeout: 10000});
+}
+
+// -- Generate summary ----------------------------------
+function generateSummary() {
+  if (entries.length === 0) { showToast('No entries to summarise'); return; }
+
+  var btn = document.getElementById('gen-btn');
+  var status = document.getElementById('gen-status');
+  var errDiv = document.getElementById('gen-error');
+  btn.disabled = true;
+  errDiv.style.display = 'none';
+  status.style.display = 'block';
+  status.textContent = 'Writing your trip summary...';
+
+  var title = document.getElementById('sum-title').value.trim() || 'Japan Trip 2026';
+  var context = document.getElementById('sum-context').value.trim();
+
+  // Sort entries by date
+  var sorted = entries.slice().sort(function(a, b) { return new Date(a.datetime) - new Date(b.datetime); });
+
+  // Build entry list for the prompt (no photos -- just text)
+  var entryText = sorted.map(function(e, i) {
+    var dt = new Date(e.datetime);
+    var dateStr = dt.toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
+    var timeStr = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    var line = (i+1) + '. ' + dateStr + ' at ' + timeStr; if (e.location) line += ' -- ' + e.location; line += '\n   "' + e.caption + '"'; return line;
+  }).join('\n\n');
+
+  var prompt = 'You are writing a warm, personal travel diary for someone who just returned from a trip to Japan.' +
+    ' Based on the journal entries below, write a beautiful narrative summary of the trip.' +
+    ' Write in first person, warm and reflective tone -- like a diary entry written the day after returning home.' +
+    ' Weave together the moments, places, and feelings into flowing paragraphs.' +
+    ' Include specific details from the entries. Do not use bullet points.' +
+    ' Length: around 400-600 words.' +
+    (context ? '\n\nExtra context: ' + context : '') +
+    '\n\nTrip title: ' + title +
+    '\n\nJournal entries:\n\n' + entryText;
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{role: 'user', content: prompt}]
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var text = (data.content || []).filter(function(b) { return b.type === 'text'; }).map(function(b) { return b.text; }).join('');
+    if (!text) throw new Error('No text in response');
+    openSummaryPage(title, text, sorted);
+    btn.disabled = false;
+    status.style.display = 'none';
+  })
+  .catch(function(e) {
+    btn.disabled = false;
+    status.style.display = 'none';
+    errDiv.textContent = 'Could not generate summary: ' + e.message + '. Make sure you are connected to the internet.';
+    errDiv.style.display = 'block';
+  });
+}
+
+function openSummaryPage(title, narrative, entries) {
+  var photos = entries.filter(function(e) { return e.photo; }).slice(0, 12);
+
+  var photoGrid = photos.map(function(e) {
+    var dt = new Date(e.datetime);
+    var dateStr = dt.toLocaleDateString([], {month:'short', day:'numeric'});
+    return '<div style="break-inside:avoid;margin-bottom:20px">' +
+      '<img src="' + e.photo + '" style="width:100%;border-radius:12px;display:block;margin-bottom:8px">' +
+      '<div style="font-size:13px;color:#555;font-style:italic">' + e.caption + '</div>' +
+      (e.location ? '<div style="font-size:12px;color:#888;margin-top:3px">&#128205; ' + e.location + ' &middot; ' + dateStr + '</div>' : '') +
+    '</div>';
+  }).join('');
+
+  // Get date range
+  var firstDate = new Date(entries[0].datetime).toLocaleDateString([], {month:'long', day:'numeric'});
+  var lastDate = new Date(entries[entries.length-1].datetime).toLocaleDateString([], {month:'long', day:'numeric', year:'numeric'});
+  var dateRange = entries.length > 1 ? firstDate + ' - ' + lastDate : firstDate;
+
+  // Unique locations
+  var locs = [];
+  entries.forEach(function(e) { if (e.location && locs.indexOf(e.location) === -1) locs.push(e.location); });
+
+  var html = '<!DOCTYPE html><html lang="en"><head>' +
+    '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>' + title + '</title>' +
+    '<style>' +
+    '@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap");' +
+    'body{margin:0;background:#faf9f6;color:#2c2c2c;font-family:"Inter",sans-serif;font-size:16px;line-height:1.7}' +
+    '.hero{background:#1a1a1a;color:#f0ede8;padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden}' +
+    (photos[0] ? '.hero{background-image:url(' + photos[0].photo + ');background-size:cover;background-position:center}' +
+    '.hero-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55)}' : '.hero-overlay{}') +
+    '.hero-content{position:relative;z-index:1}' +
+    '.hero h1{font-family:"Playfair Display",serif;font-size:clamp(32px,6vw,56px);font-weight:700;margin:0 0 12px;letter-spacing:-0.5px}' +
+    '.hero .dates{font-size:14px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;margin-bottom:8px}' +
+    '.hero .places{font-size:15px;opacity:0.7;font-style:italic}' +
+    '.content{max-width:680px;margin:0 auto;padding:60px 24px}' +
+    '.narrative{font-family:"Playfair Display",serif;font-size:19px;line-height:1.85;color:#2c2c2c;margin-bottom:60px}' +
+    '.narrative p{margin:0 0 1.4em}' +
+    '.section-title{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#999;margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid #e8e4dc}' +
+    '.photo-grid{columns:2;column-gap:16px}' +
+    '@media(max-width:500px){.photo-grid{columns:1}}' +
+    '.stat-row{display:flex;gap:24px;margin-bottom:50px;flex-wrap:wrap}' +
+    '.stat{text-align:center;flex:1;min-width:80px}' +
+    '.stat-num{font-size:32px;font-weight:700;color:#2c2c2c;font-family:"Playfair Display",serif}' +
+    '.stat-lbl{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px}' +
+    '.footer{text-align:center;padding:40px 24px;font-size:12px;color:#bbb;border-top:1px solid #e8e4dc}' +
+    '@media print{.no-print{display:none}.hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}}' +
+    '</style></head><body>' +
+    '<div class="hero">' +
+    '<div class="hero-overlay"></div>' +
+    '<div class="hero-content">' +
+    '<div class="dates">' + dateRange + '</div>' +
+    '<h1>' + title + '</h1>' +
+    (locs.length > 0 ? '<div class="places">' + locs.slice(0,5).join(' &middot; ') + '</div>' : '') +
+    '</div></div>' +
+    '<div class="content">' +
+    '<div class="stat-row">' +
+    '<div class="stat"><div class="stat-num">' + entries.length + '</div><div class="stat-lbl">Moments</div></div>' +
+    '<div class="stat"><div class="stat-num">' + photos.length + '</div><div class="stat-lbl">Photos</div></div>' +
+    '<div class="stat"><div class="stat-num">' + locs.length + '</div><div class="stat-lbl">Places</div></div>' +
+    '</div>' +
+    '<div class="section-title">The story</div>' +
+    '<div class="narrative">' + narrative.split('\n\n').map(function(p) { return p.trim() ? '<p>' + p.trim() + '</p>' : ''; }).join('') + '</div>' +
+    (photos.length > 0 ? '<div class="section-title">Memories</div><div class="photo-grid">' + photoGrid + '</div>' : '') +
+    '</div>' +
+    '<div class="footer">Generated from Japan Journal &middot; ' + new Date().toLocaleDateString([], {month:'long', year:'numeric'}) + '</div>' +
+    '</body></html>';
+
+  var blob = new Blob([html], {type: 'text/html'});
+  var url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+}
+
 var datetimeInterval = null;
 
 function formatDatetimeDisplay(d) {
@@ -413,7 +650,7 @@ function formatDatetimeDisplay(d) {
   var ampm = h >= 12 ? "PM" : "AM";
   h = h % 12 || 12;
   return days[d.getDay()] + " " + months[d.getMonth()] + " " + d.getDate() +
-    " · " + h + ":" + (m<10?"0"+m:m) + ":" + (s<10?"0"+s:s) + " " + ampm;
+    " . " + h + ":" + (m<10?"0"+m:m) + ":" + (s<10?"0"+s:s) + " " + ampm;
 }
 
 function toLocalISO(d) {
@@ -447,5 +684,49 @@ datetimeInterval = setInterval(tickDatetime, 1000);
 tickDatetime();
 renderFeed();
 </script>
+
+<!-- EDIT MODAL -->
+<div id="edit-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:500;background:rgba(0,0,0,0.7);overflow-y:auto;-webkit-overflow-scrolling:touch">
+  <div style="background:var(--surface);margin:40px 14px calc(var(--safe-bottom)+20px);border-radius:20px;padding:20px;border:0.5px solid var(--border)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <span style="font-size:16px;font-weight:600">Edit Entry</span>
+      <button onclick="closeEdit()" style="background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;font-family:-apple-system,sans-serif">&#10005;</button>
+    </div>
+    <div class="photo-upload" id="edit-photo-upload" onclick="document.getElementById('edit-photo-input').click()" style="margin-bottom:12px">
+      <div class="photo-upload-label"><div class="photo-upload-icon">&#128247;</div><div>Tap to change photo</div></div>
+    </div>
+    <input type="file" id="edit-photo-input" accept="image/*" style="display:none" onchange="handleEditPhotoChange(event)">
+    <div class="field"><label>Caption</label><textarea id="edit-caption" rows="2" style="width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif;resize:none"></textarea></div>
+    <div class="field"><label>Location</label>
+      <div class="loc-row">
+        <input type="text" id="edit-location" style="flex:1;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif">
+        <button class="loc-btn" onclick="getLocationForEdit()">&#128205; GPS</button>
+      </div>
+    </div>
+    <div class="field"><label>Date & Time</label><input type="datetime-local" id="edit-datetime" style="width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif"></div>
+    <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
+    <button onclick="closeEdit()" style="width:100%;padding:11px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;color:var(--muted);cursor:pointer;font-family:-apple-system,sans-serif;margin-top:8px">Cancel</button>
+  </div>
+</div>
+
+<!-- SUMMARY TAB -->
+<div class="tab-content" id="tab-summary">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="stat-entries3">0</div></div>
+    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="stat-photos3">0</div></div>
+    <div class="stat-card"><div class="stat-label">Days</div><div class="stat-val" id="stat-days3">0</div></div>
+  </div>
+
+  <div style="background:var(--surface);border-radius:14px;border:0.5px solid var(--border);padding:14px;margin-bottom:12px">
+    <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Trip details</div>
+    <div class="field" style="margin-bottom:8px"><label>Trip title</label><input type="text" id="sum-title" placeholder="e.g. Japan Spring 2026" style="width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif"></div>
+    <div class="field" style="margin-bottom:0"><label>Any extra context for the AI?</label><textarea id="sum-context" rows="2" placeholder="e.g. first time in Japan, travelled with girlfriend, baseball game at Jingu..." style="width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,sans-serif;resize:none"></textarea></div>
+  </div>
+
+  <button class="btn-primary" id="gen-btn" onclick="generateSummary()">Generate Trip Summary</button>
+  <div id="gen-status" style="text-align:center;font-size:13px;color:var(--muted);margin-top:10px;display:none"></div>
+  <div id="gen-error" style="background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.25);border-radius:12px;padding:12px;font-size:13px;color:var(--red);margin-top:10px;display:none"></div>
+</div>
+
 </body>
 </html>
