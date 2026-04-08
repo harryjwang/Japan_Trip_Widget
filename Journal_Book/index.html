@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Journal">
+<meta name="theme-color" content="#0f0f0f">
+<title>Japan Journal</title>
+<style>
+:root{--bg:#0f0f0f;--surface:#1a1a1a;--surface2:#222;--border:rgba(255,255,255,0.08);--text:#f0ede8;--muted:#888;--subtle:#444;--accent:#e8c96a;--green:#6abf8e;--red:#e86a6a;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Text',BlinkMacSystemFont,sans-serif;min-height:100vh;overscroll-behavior:none}
+
+.topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--safe-top) + 14px) 18px 0;border-bottom:0.5px solid var(--border)}
+.topbar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;padding-bottom:12px}
+.tabs{display:flex}
+.tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
+
+.tab-content{display:none;padding:14px 14px calc(var(--safe-bottom) + 80px)}
+.tab-content.active{display:block}
+
+/* Add entry form */
+.photo-upload{width:100%;aspect-ratio:4/3;background:var(--surface);border:0.5px dashed var(--subtle);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;margin-bottom:12px}
+.photo-upload img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.photo-upload-label{font-size:13px;color:var(--muted);text-align:center;z-index:1;pointer-events:none}
+.photo-upload-icon{font-size:32px;margin-bottom:8px}
+#photo-input{display:none}
+
+.field{margin-bottom:10px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.field input,.field textarea{width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif;-webkit-appearance:none;resize:none}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+.field input::placeholder,.field textarea::placeholder{color:var(--subtle)}
+
+.loc-row{display:flex;align-items:center;gap:8px}
+.loc-row input{flex:1}
+.loc-btn{padding:10px 14px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,sans-serif;flex-shrink:0}
+.loc-btn.got{color:var(--green);border-color:rgba(106,191,142,0.3)}
+.loc-btn:active{opacity:0.7}
+
+.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#1a1600;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:4px}
+.btn-primary:active{opacity:0.8}
+.btn-primary:disabled{opacity:0.4}
+
+/* Feed */
+.entry-card{background:var(--surface);border-radius:16px;border:0.5px solid var(--border);overflow:hidden;margin-bottom:14px}
+.entry-photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.entry-photo-placeholder{width:100%;aspect-ratio:4/3;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:32px}
+.entry-body{padding:12px 14px 14px}
+.entry-caption{font-size:15px;font-weight:500;line-height:1.4;margin-bottom:8px}
+.entry-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.entry-date{font-size:12px;color:var(--muted)}
+.entry-loc{font-size:12px;color:var(--accent);display:flex;align-items:center;gap:4px}
+.entry-loc-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.entry-starred{cursor:pointer;font-size:16px;margin-left:auto}
+.del-btn{font-size:11px;padding:4px 10px;background:rgba(232,106,106,0.1);color:var(--red);border:0.5px solid rgba(232,106,106,0.2);border-radius:6px;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px}
+
+/* Export tab */
+.export-btn{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.export-btn:active{background:var(--surface2)}
+.sync-note{font-size:12px;color:var(--muted);line-height:1.6;background:var(--surface);border-radius:12px;padding:12px 14px;margin-top:12px}
+.sync-note b{color:var(--text)}
+
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+
+.toast{position:fixed;bottom:calc(var(--safe-bottom) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stat-card{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:10px 12px}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+.stat-val{font-size:18px;font-weight:600;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Japan Journal</h1>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('add',this)">New Entry</button>
+    <button class="tab-btn" onclick="switchTab('feed',this)">Feed</button>
+    <button class="tab-btn" onclick="switchTab('sync',this)">Sync</button>
+  </div>
+</div>
+
+<!-- ADD TAB -->
+<div class="tab-content active" id="tab-add">
+  <div class="photo-upload" id="photo-upload" onclick="document.getElementById('photo-input').click()">
+    <div class="photo-upload-label">
+      <div class="photo-upload-icon">&#128247;</div>
+      <div>Tap to add photo</div>
+    </div>
+  </div>
+  <input type="file" id="photo-input" accept="image/*" capture="environment">
+
+  <div class="field">
+    <label>Caption</label>
+    <textarea id="f-caption" rows="2" placeholder="What's happening here..."></textarea>
+  </div>
+
+  <div class="field">
+    <label>Location</label>
+    <div class="loc-row">
+      <input type="text" id="f-location" placeholder="e.g. Fushimi Inari, Kyoto">
+      <button class="loc-btn" id="loc-btn" onclick="getLocation()">&#128205; GPS</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Date & Time</label>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div id="datetime-display" style="flex:1;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,sans-serif"></div>
+      <button id="datetime-lock-btn" onclick="toggleDatetimeLock()" style="padding:10px 14px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;color:var(--green);font-size:13px;cursor:pointer;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,sans-serif;flex-shrink:0">Live</button>
+    </div>
+    <input type="datetime-local" id="f-datetime" style="display:none">
+  </div>
+
+  <button class="btn-primary" id="add-btn" onclick="addEntry()">Add to Journal</button>
+</div>
+
+<!-- FEED TAB -->
+<div class="tab-content" id="tab-feed">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="stat-entries">0</div></div>
+    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="stat-photos">0</div></div>
+    <div class="stat-card"><div class="stat-label">Starred</div><div class="stat-val" id="stat-starred">0</div></div>
+  </div>
+  <div id="feed"></div>
+</div>
+
+<!-- SYNC TAB -->
+<div class="tab-content" id="tab-sync">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Entries</div><div class="stat-val" id="stat-entries2">0</div></div>
+    <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="stat-photos2">0</div></div>
+    <div class="stat-card"><div class="stat-label">Starred</div><div class="stat-val" id="stat-starred2">0</div></div>
+  </div>
+  <button class="export-btn" onclick="syncToWidget()">&#9729; Save journal.json to iCloud</button>
+  <div class="sync-note">
+    <b>How to sync to widget:</b><br>
+    1. Tap "Save journal.json to iCloud"<br>
+    2. In the share sheet, tap <b>Save to Files</b><br>
+    3. Navigate to <b>iCloud Drive &rarr; Scriptable</b><br>
+    4. Tap Save &mdash; widget updates on next refresh<br><br>
+    The file contains up to <b>20 photos</b> (starred first, then newest).
+    Photos are compressed to ~50KB each to keep the file small.
+  </div>
+  <button class="export-btn" style="margin-top:16px" onclick="confirmClear()">&#128465; Clear all entries</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var entries = JSON.parse(localStorage.getItem('jpJournal_entries') || '[]');
+var pendingPhoto = null; // base64 compressed
+var pendingPhotoFull = null; // for display
+
+// ── Photo handling ────────────────────────────────────
+document.getElementById('photo-input').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var img = new Image();
+    img.onload = function() {
+      // Full size preview
+      pendingPhotoFull = ev.target.result;
+
+      // Compressed for storage/widget (~50KB target)
+      pendingPhoto = compressImage(img, 400, 0.6);
+
+      // Show preview
+      var upload = document.getElementById('photo-upload');
+      upload.innerHTML = '<img src="' + pendingPhotoFull + '" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0"><div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:white;font-size:11px;padding:4px 8px;border-radius:8px;z-index:2">Tap to change</div>';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+
+function compressImage(img, maxWidth, quality) {
+  var canvas = document.createElement('canvas');
+  var ratio = Math.min(maxWidth / img.width, maxWidth / img.height, 1);
+  canvas.width = Math.round(img.width * ratio);
+  canvas.height = Math.round(img.height * ratio);
+  var ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL('image/jpeg', quality);
+}
+
+// ── Location ──────────────────────────────────────────
+var pendingCoords = null;
+
+function getLocation() {
+  var btn = document.getElementById('loc-btn');
+  btn.textContent = 'Getting...';
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    pendingCoords = {lat: pos.coords.latitude, lng: pos.coords.longitude};
+    // Reverse geocode using nominatim
+    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + pendingCoords.lat + '&lon=' + pendingCoords.lng + '&format=json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var addr = data.address;
+        var place = addr.tourism || addr.amenity || addr.suburb || addr.neighbourhood || addr.city_district || addr.city || addr.town || '';
+        var city = addr.city || addr.town || addr.village || '';
+        var loc = place && city && place !== city ? place + ', ' + city : place || city || 'Japan';
+        document.getElementById('f-location').value = loc;
+        btn.textContent = 'Got it';
+        btn.className = 'loc-btn got';
+        showToast('Location found');
+      }).catch(function() {
+        document.getElementById('f-location').value = pendingCoords.lat.toFixed(4) + ', ' + pendingCoords.lng.toFixed(4);
+        btn.textContent = 'Got it';
+        btn.className = 'loc-btn got';
+      });
+  }, function(err) {
+    btn.textContent = 'GPS';
+    showToast('Could not get location');
+  }, {enableHighAccuracy: true, timeout: 10000});
+}
+
+// ── Add entry ─────────────────────────────────────────
+function addEntry() {
+  var caption  = document.getElementById('f-caption').value.trim();
+  var location = document.getElementById('f-location').value.trim();
+  var datetime = document.getElementById('f-datetime').value;
+
+  if (!caption) { showToast('Please add a caption'); return; }
+  if (!datetime) { showToast('Please set a date and time'); return; }
+
+  var entry = {
+    id: Date.now(),
+    caption: caption,
+    location: location,
+    datetime: datetime,
+    coords: pendingCoords,
+    photo: pendingPhoto || null,
+    starred: false
+  };
+
+  entries.unshift(entry);
+  saveEntries();
+
+  // Reset form
+  document.getElementById('f-caption').value = '';
+  document.getElementById('f-location').value = '';
+  pendingCoords = null;
+  pendingPhoto = null;
+  pendingPhotoFull = null;
+  document.getElementById('photo-upload').innerHTML =
+    '<div class="photo-upload-label"><div class="photo-upload-icon">&#128247;</div><div>Tap to add photo</div></div>';
+  document.getElementById('loc-btn').textContent = '\u{1F4CD} GPS';
+  document.getElementById('loc-btn').className = 'loc-btn';
+  setDefaultDatetime();
+
+  renderFeed();
+  showToast('Entry added');
+}
+
+// ── Delete / star ─────────────────────────────────────
+function deleteEntry(id) {
+  entries = entries.filter(function(e) { return e.id !== id; });
+  saveEntries();
+  renderFeed();
+  showToast('Deleted');
+}
+
+function toggleStar(id) {
+  var e = entries.find(function(e) { return e.id === id; });
+  if (e) { e.starred = !e.starred; saveEntries(); renderFeed(); }
+}
+
+function saveEntries() {
+  localStorage.setItem('jpJournal_entries', JSON.stringify(entries));
+}
+
+// ── Render feed ───────────────────────────────────────
+function renderFeed() {
+  var feed = document.getElementById('feed');
+  var total = entries.length;
+  var withPhoto = entries.filter(function(e) { return e.photo; }).length;
+  var starred = entries.filter(function(e) { return e.starred; }).length;
+
+  ['stat-entries','stat-entries2'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.textContent = total;
+  });
+  ['stat-photos','stat-photos2'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.textContent = withPhoto;
+  });
+  ['stat-starred','stat-starred2'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.textContent = starred;
+  });
+
+  if (entries.length === 0) {
+    feed.innerHTML = '<div class="empty"><div class="empty-icon">&#128211;</div><div>No entries yet.<br>Add your first memory above.</div></div>';
+    return;
+  }
+
+  feed.innerHTML = entries.map(function(e) {
+    var dt = new Date(e.datetime);
+    var dateStr = dt.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
+    var timeStr = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    var photoHtml = e.photo
+      ? '<img class="entry-photo" src="' + e.photo + '" loading="lazy">'
+      : '<div class="entry-photo-placeholder">&#127757;</div>';
+    var locHtml = e.location
+      ? '<span class="entry-loc"><span class="entry-loc-dot"></span>' + e.location + '</span>'
+      : '';
+    var mapLink = e.coords
+      ? '<a href="https://maps.apple.com/?q=' + e.coords.lat + ',' + e.coords.lng + '" style="color:var(--accent);font-size:11px;text-decoration:none;margin-left:auto">Open in Maps</a>'
+      : '';
+    return '<div class="entry-card">' +
+      photoHtml +
+      '<div class="entry-body">' +
+        '<div class="entry-caption">' + e.caption + '</div>' +
+        '<div class="entry-meta">' +
+          '<span class="entry-date">' + dateStr + ' &middot; ' + timeStr + '</span>' +
+          locHtml +
+          '<span class="entry-starred" onclick="toggleStar(' + e.id + ')" title="Star for widget">' + (e.starred ? '&#11088;' : '&#9734;') + '</span>' +
+        '</div>' +
+        (mapLink ? '<div style="margin-top:6px">' + mapLink + '</div>' : '') +
+        '<button class="del-btn" onclick="deleteEntry(' + e.id + ')">Delete</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── Sync to widget ─────────────────────────────────────
+function syncToWidget() {
+  if (entries.length === 0) { showToast('No entries to sync'); return; }
+
+  // Starred first, then newest — up to 20 photos
+  var withPhotos = entries.filter(function(e) { return e.photo; });
+  var starred = withPhotos.filter(function(e) { return e.starred; });
+  var rest = withPhotos.filter(function(e) { return !e.starred; });
+  var pool = starred.concat(rest).slice(0, 20);
+
+  var snapshot = {
+    lastUpdated: new Date().toISOString(),
+    count: entries.length,
+    photos: pool.map(function(e) {
+      return {
+        id: e.id,
+        caption: e.caption,
+        location: e.location || '',
+        datetime: e.datetime,
+        photo: e.photo,
+        starred: e.starred
+      };
+    })
+  };
+
+  var json = JSON.stringify(snapshot);
+  var blob = new Blob([json], {type: 'application/json'});
+  var file = new File([blob], 'journal.json', {type: 'application/json'});
+
+  if (navigator.share && navigator.canShare && navigator.canShare({files: [file]})) {
+    navigator.share({files: [file], title: 'journal.json'})
+      .then(function() { showToast('Saved! Choose iCloud Drive / Scriptable'); })
+      .catch(function(err) { if (err.name !== 'AbortError') fallbackDownload(json); });
+  } else {
+    fallbackDownload(json);
+  }
+}
+
+function fallbackDownload(json) {
+  var a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+  a.download = 'journal.json';
+  a.click();
+  showToast('Move journal.json to iCloud Drive / Scriptable /');
+}
+
+function confirmClear() {
+  if (confirm('Delete all journal entries? Cannot be undone.')) {
+    entries = [];
+    saveEntries();
+    renderFeed();
+    showToast('Cleared');
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'feed' || id === 'sync') renderFeed();
+}
+
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+var datetimeLocked = false;
+var datetimeInterval = null;
+
+function formatDatetimeDisplay(d) {
+  var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var h = d.getHours(); var m = d.getMinutes(); var s = d.getSeconds();
+  var ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return days[d.getDay()] + " " + months[d.getMonth()] + " " + d.getDate() +
+    " · " + h + ":" + (m<10?"0"+m:m) + ":" + (s<10?"0"+s:s) + " " + ampm;
+}
+
+function toLocalISO(d) {
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
+function tickDatetime() {
+  if (datetimeLocked) return;
+  var now = new Date();
+  document.getElementById('datetime-display').textContent = formatDatetimeDisplay(now);
+  document.getElementById('f-datetime').value = toLocalISO(now);
+}
+
+function toggleDatetimeLock() {
+  datetimeLocked = !datetimeLocked;
+  var btn = document.getElementById('datetime-lock-btn');
+  var display = document.getElementById('datetime-display');
+  if (datetimeLocked) {
+    btn.textContent = "Edit";
+    btn.style.color = "var(--accent)";
+    display.style.color = "var(--text)";
+  } else {
+    btn.textContent = "Live";
+    btn.style.color = "var(--green)";
+    display.style.color = "var(--text)";
+    tickDatetime();
+  }
+}
+
+datetimeInterval = setInterval(tickDatetime, 1000);
+tickDatetime();
+renderFeed();
+</script>
+</body>
+</html>
