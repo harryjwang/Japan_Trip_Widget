@@ -74,8 +74,8 @@ button,input,textarea,select{font:inherit}
 .empty{text-align:center;padding:30px 20px;color:var(--muted);background:var(--surface);border-radius:14px;border:0.5px solid var(--border)}
 .toast{position:fixed;bottom:calc(var(--safe-bottom)+90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.modal-bg{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.7);overflow-y:auto;-webkit-overflow-scrolling:touch}
-.modal-box{background:var(--surface);margin:40px 14px calc(var(--safe-bottom)+20px);border-radius:20px;padding:20px;border:0.5px solid var(--border)}
+.modal-bg{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.7);overflow-y:auto;-webkit-overflow-scrolling:touch;align-items:flex-end;justify-content:center;padding-top:12px}
+.modal-box{background:var(--surface);width:calc(100% - 28px);max-width:680px;margin:auto 14px calc(var(--safe-bottom)+8px);border-radius:20px;padding:20px;border:0.5px solid var(--border);max-height:min(82vh, calc(100vh - env(safe-area-inset-top,0px) - 24px));overflow-y:auto}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .modal-title{font-size:16px;font-weight:600}
 .modal-close{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
@@ -538,8 +538,12 @@ function openTfModal(id) {
     startInput.value = '';
     endInput.value = '';
   }
-  document.getElementById('tf-modal').style.display = 'block';
+  document.getElementById('tf-modal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
+  setTimeout(function(){
+    var nameField = document.getElementById('tf-name-input');
+    if(nameField) nameField.scrollIntoView({block:'center', behavior:'smooth'});
+  }, 50);
 }
 
 function closeTfModal() {
