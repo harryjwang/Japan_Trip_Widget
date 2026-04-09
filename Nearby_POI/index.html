@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nearby Spots">
+<meta name="theme-color" content="#0f0f0f">
+<title>Nearby Spots</title>
+<style>
+:root{
+  --bg:#0f0f0f;
+  --surface:#1a1a1a;
+  --surface2:#222;
+  --border:rgba(255,255,255,0.08);
+  --text:#f0ede8;
+  --muted:#888;
+  --subtle:#444;
+  --accent:#e8c96a;
+  --food:#e8856a;
+  --shop:#6abf8e;
+  --sight:#6aaee8;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Text',BlinkMacSystemFont,sans-serif;min-height:100vh;overscroll-behavior:none}
+button,input,select{font:inherit}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 14px;border-bottom:0.5px solid var(--border)}
+.topbar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px}
+.topbar .sub{font-size:12px;color:var(--muted);margin-top:4px}
+.tabs{display:flex;margin-top:12px}
+.tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
+.tab-content{display:none;padding:14px 14px calc(var(--safe-bottom) + 90px)}
+.tab-content.active{display:block}
+.card{background:var(--surface);border-radius:14px;border:0.5px solid var(--border);padding:14px;margin-bottom:12px}
+.stats-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.stat-card{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:10px 12px}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.stat-val{font-size:18px;font-weight:600;color:var(--accent)}
+.helper{font-size:12px;color:var(--muted);line-height:1.6}
+.row{display:flex;gap:8px;align-items:center}
+.row > *{min-width:0}
+.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#1a1600;cursor:pointer}
+.btn-secondary{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer}
+.btn-chip{padding:9px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:999px;color:var(--muted);font-size:12px;cursor:pointer;white-space:nowrap}
+.btn-chip.active{color:var(--text);border-color:var(--accent);background:rgba(232,201,106,0.08)}
+select,input{width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);-webkit-appearance:none}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%}
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border-radius:999px;background:var(--surface2);border:0.5px solid var(--border);font-size:12px;color:var(--muted)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--subtle)}
+.status-dot.live{background:var(--shop)}
+.status-dot.warn{background:var(--accent)}
+.status-dot.error{background:#e86a6a}
+.spot-card{background:var(--surface);border-radius:16px;border:0.5px solid var(--border);padding:14px;margin-bottom:10px}
+.spot-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.spot-title{font-size:15px;font-weight:600;line-height:1.3}
+.spot-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge{font-size:10px;padding:3px 8px;border-radius:999px;font-weight:600;letter-spacing:.02em}
+.badge.food{background:rgba(232,133,106,.14);color:var(--food)}
+.badge.shop{background:rgba(106,191,142,.14);color:var(--shop)}
+.badge.sight{background:rgba(106,174,232,.14);color:var(--sight)}
+.badge.saved{background:rgba(232,201,106,.14);color:var(--accent)}
+.spot-meta{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.55}
+.spot-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.small-btn{font-size:12px;padding:8px 12px;background:var(--surface2);color:var(--text);border:0.5px solid var(--border);border-radius:9px;cursor:pointer}
+.small-btn.save.active{border-color:var(--accent);color:var(--accent)}
+.small-btn.map{color:var(--sight)}
+.empty{text-align:center;padding:36px 20px;color:var(--muted);background:var(--surface);border-radius:14px;border:0.5px solid var(--border)}
+.toast{position:fixed;bottom:calc(var(--safe-bottom) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:560px){
+  .filters{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>Nearby Spots</h1>
+  <div class="sub">Food, shopping, and attractions around you</div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('nearby',this)">Nearby</button>
+    <button class="tab-btn" onclick="switchTab('saved',this)">Saved</button>
+    <button class="tab-btn" onclick="switchTab('settings',this)">Settings</button>
+  </div>
+</div>
+
+<div class="tab-content active" id="tab-nearby">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Results</div><div class="stat-val" id="st-results">0</div></div>
+    <div class="stat-card"><div class="stat-label">Saved</div><div class="stat-val" id="st-saved">0</div></div>
+    <div class="stat-card"><div class="stat-label">Radius</div><div class="stat-val" id="st-radius">1.5 km</div></div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+      <div class="status-pill"><span class="status-dot" id="gps-dot"></span><span id="gps-text">Location not loaded</span></div>
+      <button class="btn-secondary" style="max-width:170px" onclick="findNearby()">Use My Location</button>
+    </div>
+
+    <div class="filters">
+      <div>
+        <label class="helper" style="display:block;margin-bottom:6px">Search term</label>
+        <input id="search-text" type="text" placeholder="e.g. ramen, vintage, shrine" oninput="renderNearby()">
+      </div>
+      <div>
+        <label class="helper" style="display:block;margin-bottom:6px">Radius</label>
+        <select id="radius-select" onchange="updateRadius(); renderNearby();">
+          <option value="500">0.5 km</option>
+          <option value="1000">1 km</option>
+          <option value="1500" selected>1.5 km</option>
+          <option value="3000">3 km</option>
+          <option value="5000">5 km</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="legend">
+      <button class="btn-chip active" data-filter="all" onclick="setTypeFilter('all', this)">All</button>
+      <button class="btn-chip" data-filter="food" onclick="setTypeFilter('food', this)">Food</button>
+      <button class="btn-chip" data-filter="shopping" onclick="setTypeFilter('shopping', this)">Shopping</button>
+      <button class="btn-chip" data-filter="attraction" onclick="setTypeFilter('attraction', this)">Attractions</button>
+    </div>
+
+    <div class="legend" style="margin-top:12px">
+      <div class="legend-item"><span class="dot" style="background:var(--food)"></span>Food</div>
+      <div class="legend-item"><span class="dot" style="background:var(--shop)"></span>Shopping</div>
+      <div class="legend-item"><span class="dot" style="background:var(--sight)"></span>Attractions</div>
+    </div>
+  </div>
+
+  <div id="nearby-list"></div>
+</div>
+
+<div class="tab-content" id="tab-saved">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Saved</div><div class="stat-val" id="st-saved-2">0</div></div>
+    <div class="stat-card"><div class="stat-label">Food</div><div class="stat-val" id="st-saved-food">0</div></div>
+    <div class="stat-card"><div class="stat-label">Other</div><div class="stat-val" id="st-saved-other">0</div></div>
+  </div>
+  <div id="saved-list"></div>
+</div>
+
+<div class="tab-content" id="tab-settings">
+  <div class="card">
+    <div class="helper" style="margin-bottom:10px">This version uses your phone's GPS and a built-in sample places dataset, so it can still demo the experience without needing a live places API.</div>
+    <div class="helper" style="margin-bottom:10px">To make it truly dynamic for any city, the next step would be connecting a live places source like Google Places, Foursquare, or OpenStreetMap Overpass.</div>
+    <button class="btn-primary" onclick="findNearby()">Refresh My Location</button>
+    <button class="btn-secondary" style="margin-top:8px" onclick="clearSaved()">Clear Saved Spots</button>
+  </div>
+  <div class="card">
+    <div class="helper"><b style="color:var(--text)">How it works</b><br>1. It asks for your location.<br>2. It estimates distance to known places.<br>3. It filters by food, shopping, or attractions.<br>4. You can save places or open walking directions.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'nearby_spots_saved_v1';
+let savedSpots = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let currentPosition = null;
+let currentTypeFilter = 'all';
+
+const sampleSpots = [
+  { id:'1', name:'Ichiran Shibuya', type:'food', lat:35.6595, lng:139.7005, note:'Late-night ramen chain, quick and easy.', area:'Shibuya' },
+  { id:'2', name:'MEGA Don Quijote', type:'shopping', lat:35.6604, lng:139.6987, note:'Souvenirs, snacks, and random finds.', area:'Shibuya' },
+  { id:'3', name:'Meiji Shrine', type:'attraction', lat:35.6764, lng:139.6993, note:'Quiet shrine and forest walk.', area:'Harajuku' },
+  { id:'4', name:'Nakamise Street', type:'shopping', lat:35.7119, lng:139.7965, note:'Classic souvenir street near Senso-ji.', area:'Asakusa' },
+  { id:'5', name:'Senso-ji Temple', type:'attraction', lat:35.7148, lng:139.7967, note:'Tokyo landmark with strong evening atmosphere.', area:'Asakusa' },
+  { id:'6', name:'Gyukatsu Motomura', type:'food', lat:35.6592, lng:139.6994, note:'Popular beef cutlet spot.', area:'Shibuya' },
+  { id:'7', name:'Kappabashi Kitchen Street', type:'shopping', lat:35.7140, lng:139.7907, note:'Great for knives, ceramics, and cooking tools.', area:'Taito' },
+  { id:'8', name:'Tokyo Skytree', type:'attraction', lat:35.7101, lng:139.8107, note:'Observation decks and shopping complex.', area:'Sumida' },
+  { id:'9', name:'Tsukiji Outer Market', type:'food', lat:35.6655, lng:139.7708, note:'Seafood, street snacks, and breakfast stops.', area:'Tsukiji' },
+  { id:'10', name:'GINZA SIX', type:'shopping', lat:35.6697, lng:139.7646, note:'Upscale mall with rooftop garden.', area:'Ginza' },
+  { id:'11', name:'teamLab Planets', type:'attraction', lat:35.6490, lng:139.7899, note:'Immersive digital art museum.', area:'Toyosu' },
+  { id:'12', name:'Uobei Shibuya Dogenzaka', type:'food', lat:35.6598, lng:139.6989, note:'Fast conveyor-belt sushi.', area:'Shibuya' }
+];
+
+function switchTab(id, btn){
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  renderAll();
+}
+
+function saveSaved(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(savedSpots));
+}
+
+function updateRadius(){
+  const meters = Number(document.getElementById('radius-select').value);
+  document.getElementById('st-radius').textContent = meters >= 1000 ? (meters / 1000).toFixed(meters % 1000 === 0 ? 0 : 1) + ' km' : meters + ' m';
+}
+
+function setTypeFilter(type, btn){
+  currentTypeFilter = type;
+  document.querySelectorAll('.btn-chip').forEach(el => el.classList.remove('active'));
+  btn.classList.add('active');
+  renderNearby();
+}
+
+function findNearby(){
+  const dot = document.getElementById('gps-dot');
+  const text = document.getElementById('gps-text');
+  dot.className = 'status-dot warn';
+  text.textContent = 'Finding your location...';
+
+  if(!navigator.geolocation){
+    dot.className = 'status-dot error';
+    text.textContent = 'Location not supported on this device';
+    showToast('Geolocation not supported');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(function(pos){
+    currentPosition = {
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude
+    };
+    dot.className = 'status-dot live';
+    text.textContent = currentPosition.lat.toFixed(4) + ', ' + currentPosition.lng.toFixed(4);
+    renderNearby();
+    showToast('Nearby spots updated');
+  }, function(){
+    dot.className = 'status-dot error';
+    text.textContent = 'Could not get your location';
+    renderNearby();
+    showToast('Could not get location');
+  }, { enableHighAccuracy:true, timeout:10000 });
+}
+
+function deg2rad(d){ return d * (Math.PI / 180); }
+function distanceMeters(aLat, aLng, bLat, bLng){
+  const R = 6371000;
+  const dLat = deg2rad(bLat - aLat);
+  const dLng = deg2rad(bLng - aLng);
+  const x = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(aLat)) * Math.cos(deg2rad(bLat)) * Math.sin(dLng/2) * Math.sin(dLng/2);
+  const c = 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
+  return R * c;
+}
+
+function formatDistance(m){
+  return m < 1000 ? Math.round(m) + ' m away' : (m/1000).toFixed(1) + ' km away';
+}
+
+function filteredNearby(){
+  const search = document.getElementById('search-text').value.trim().toLowerCase();
+  const radius = Number(document.getElementById('radius-select').value);
+
+  let list = sampleSpots.map(spot => {
+    const distance = currentPosition ? distanceMeters(currentPosition.lat, currentPosition.lng, spot.lat, spot.lng) : null;
+    return { ...spot, distance };
+  });
+
+  if(currentPosition){
+    list = list.filter(spot => spot.distance <= radius);
+  }
+
+  if(currentTypeFilter !== 'all'){
+    list = list.filter(spot => spot.type === currentTypeFilter);
+  }
+
+  if(search){
+    list = list.filter(spot => {
+      const haystack = (spot.name + ' ' + spot.note + ' ' + spot.area).toLowerCase();
+      return haystack.includes(search);
+    });
+  }
+
+  list.sort((a,b) => {
+    if(a.distance == null && b.distance == null) return 0;
+    if(a.distance == null) return 1;
+    if(b.distance == null) return -1;
+    return a.distance - b.distance;
+  });
+
+  return list;
+}
+
+function typeLabel(type){
+  if(type === 'food') return 'Food';
+  if(type === 'shopping') return 'Shopping';
+  return 'Attraction';
+}
+
+function typeClass(type){
+  if(type === 'food') return 'food';
+  if(type === 'shopping') return 'shop';
+  return 'sight';
+}
+
+function isSaved(id){
+  return savedSpots.some(s => s.id === id);
+}
+
+function toggleSave(id){
+  const spot = sampleSpots.find(s => s.id === id);
+  if(!spot) return;
+  if(isSaved(id)){
+    savedSpots = savedSpots.filter(s => s.id !== id);
+    showToast('Removed from saved');
+  } else {
+    savedSpots.unshift(spot);
+    showToast('Saved');
+  }
+  saveSaved();
+  renderAll();
+}
+
+function openMap(lat, lng, name){
+  const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(lat + ',' + lng + ' ' + name);
+  window.open(url, '_blank');
+}
+
+function spotCard(spot, savedView=false){
+  const saved = isSaved(spot.id);
+  return '<div class="spot-card">' +
+    '<div class="spot-head">' +
+      '<div>' +
+        '<div class="spot-title">' + escapeHtml(spot.name) + '</div>' +
+        '<div class="spot-badges">' +
+          '<span class="badge ' + typeClass(spot.type) + '">' + typeLabel(spot.type) + '</span>' +
+          (saved ? '<span class="badge saved">Saved</span>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="spot-meta">' + escapeHtml(spot.area) + (spot.distance != null ? ' · ' + formatDistance(spot.distance) : '') + '<br>' + escapeHtml(spot.note) + '</div>' +
+    '<div class="spot-actions">' +
+      '<button class="small-btn save ' + (saved ? 'active' : '') + '" onclick="toggleSave(\'' + spot.id + '\')">' + (saved ? 'Saved' : 'Save') + '</button>' +
+      '<button class="small-btn map" onclick="openMap(' + spot.lat + ',' + spot.lng + ',\'' + jsEscape(spot.name) + '\')">Open in Maps</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderNearby(){
+  const list = filteredNearby();
+  document.getElementById('st-results').textContent = list.length;
+  const wrap = document.getElementById('nearby-list');
+  if(!list.length){
+    wrap.innerHTML = '<div class="empty">No spots match your current search, filter, or radius.</div>';
+    return;
+  }
+  wrap.innerHTML = list.map(spot => spotCard(spot)).join('');
+}
+
+function renderSaved(){
+  const wrap = document.getElementById('saved-list');
+  const saved = savedSpots.slice();
+  document.getElementById('st-saved').textContent = saved.length;
+  document.getElementById('st-saved-2').textContent = saved.length;
+  document.getElementById('st-saved-food').textContent = saved.filter(s => s.type === 'food').length;
+  document.getElementById('st-saved-other').textContent = saved.filter(s => s.type !== 'food').length;
+
+  if(!saved.length){
+    wrap.innerHTML = '<div class="empty">No saved places yet. Save a few from the Nearby tab.</div>';
+    return;
+  }
+  wrap.innerHTML = saved.map(spot => {
+    const withDistance = currentPosition ? { ...spot, distance: distanceMeters(currentPosition.lat, currentPosition.lng, spot.lat, spot.lng) } : spot;
+    return spotCard(withDistance, true);
+  }).join('');
+}
+
+function clearSaved(){
+  savedSpots = [];
+  saveSaved();
+  renderAll();
+  showToast('Saved spots cleared');
+}
+
+function renderAll(){
+  renderNearby();
+  renderSaved();
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function jsEscape(str){
+  return String(str).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  updateRadius();
+  renderAll();
+});
+</script>
+</body>
+</html>
