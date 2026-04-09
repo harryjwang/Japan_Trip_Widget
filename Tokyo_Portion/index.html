@@ -286,13 +286,6 @@
     white-space: nowrap;
   }
   .map-btn:active { opacity: 0.7; }
-
-  /* PWA home screen mode - add extra top padding for Dynamic Island */
-  @media all and (display-mode: standalone) {
-    .topbar {
-      padding-top: calc(env(safe-area-inset-top, 59px) + 14px);
-    }
-  }
 </style>
 </head>
 <body>
@@ -300,7 +293,7 @@
 <div class="topbar">
   <div class="topbar-inner">
     <div>
-      <div class="topbar h1">🇯🇵 Tokyo Trip</div>
+      <h1>🇯🇵 Tokyo Trip</h1>
       <div class="sub">Days 0–5 · Tap items to check off</div>
     </div>
   </div>
