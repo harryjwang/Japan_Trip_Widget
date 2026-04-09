@@ -22,7 +22,7 @@
     --sight: #6aaee8;
     --book: #e86a6a;
     --accent: #e8c96a;
-    --safe-top: env(safe-area-inset-top, 50px);
+    --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -41,7 +41,7 @@
     background: rgba(15,15,15,0.92);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding: calc(env(safe-area-inset-top, 50px) + 14px) 18px 14px;
+    padding: calc(env(safe-area-inset-top, 0px) + 14px) 18px 14px;
     border-bottom: 0.5px solid var(--border);
   }
   .topbar-inner { display: flex; align-items: center; justify-content: space-between; }
@@ -286,6 +286,13 @@
     white-space: nowrap;
   }
   .map-btn:active { opacity: 0.7; }
+
+  /* PWA home screen mode - add extra top padding for Dynamic Island */
+  @media all and (display-mode: standalone) {
+    .topbar {
+      padding-top: calc(env(safe-area-inset-top, 59px) + 14px);
+    }
+  }
 </style>
 </head>
 <body>
