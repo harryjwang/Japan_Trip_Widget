@@ -5,314 +5,788 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Currency">
-<meta name="theme-color" content="#0f0f0f">
-<title>Currency Converter</title>
+<meta name="apple-mobile-web-app-title" content="Tokyo Trip">
+<meta name="theme-color" content="#1a1a1a">
+<title>Tokyo Trip · Days 0–5</title>
 <style>
   :root {
-    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #222222;
-    --border: rgba(255,255,255,0.08); --text: #f0ede8; --muted: #888;
-    --subtle: #444; --accent: #e8c96a; --green: #6abf8e; --red: #e86a6a;
-    --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0ede8;
+    --muted: #888;
+    --subtle: #555;
+    --food: #e8856a;
+    --shop: #6abf8e;
+    --sight: #6aaee8;
+    --book: #e86a6a;
+    --accent: #e8c96a;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Text', BlinkMacSystemFont, sans-serif; min-height: 100vh; overscroll-behavior: none; }
-
+  html { background: var(--bg); }
+  body {
+    font-family: -apple-system, 'SF Pro Text', BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
   .topbar {
-    position: sticky; top: 0; z-index: 100;
+    position: sticky;
+    top: 0;
+    z-index: 100;
     background: rgba(15,15,15,0.92);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     padding: calc(var(--safe-top) + 14px) 18px 14px;
     border-bottom: 0.5px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
   }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; }
   .topbar h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
-  .topbar .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .refresh-btn {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 13px; font-weight: 500; padding: 8px 14px;
-    border-radius: 20px; border: 0.5px solid var(--border);
-    background: var(--surface2); color: var(--text);
-    cursor: pointer; transition: opacity 0.15s;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-  .refresh-btn:active { opacity: 0.6; }
-  .refresh-btn:disabled { opacity: 0.35; }
-  .spin { display: inline-block; }
-  .spin.active { animation: spin 0.9s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .status-bar {
-    padding: 9px 18px; font-size: 12px;
+  .topbar .sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    padding: 10px 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
     border-bottom: 0.5px solid var(--border);
-    display: flex; align-items: center; gap: 7px;
+    background: var(--bg);
   }
-  .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--subtle); }
-  .dot.live { background: var(--green); }
-  .dot.error { background: var(--red); }
-  .dot.loading { background: var(--accent); }
-  .status-text { color: var(--muted); }
-
-  .content { padding: 14px 14px calc(var(--safe-bottom) + 30px); display: flex; flex-direction: column; gap: 12px; }
-
-  .card { background: var(--surface); border-radius: 16px; border: 0.5px solid var(--border); overflow: hidden; }
-  .card-header { padding: 13px 16px 10px; border-bottom: 0.5px solid var(--border); }
-  .card-title { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
-  .card-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  .rate-strip {
-    display: flex; gap: 0; flex-wrap: wrap;
-    background: var(--surface2); border-bottom: 0.5px solid var(--border);
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-btn {
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
   }
-  .rate-pill {
-    font-size: 11px; color: var(--muted);
-    padding: 7px 16px;
-    border-right: 0.5px solid var(--border);
+  .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .content { padding: 12px 14px calc(var(--safe-bottom) + 80px); }
+  .day-card {
+    background: var(--surface);
+    border-radius: 16px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    border: 0.5px solid var(--border);
   }
-  .rate-pill:last-child { border-right: none; }
-  .rate-pill b { color: var(--accent); font-weight: 500; }
-
-  .card-body { padding: 14px 16px; }
-  .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .ccy-badge {
-    font-size: 12px; font-weight: 500; color: var(--muted);
-    background: var(--surface2); border-radius: 8px;
-    padding: 5px 10px; flex-shrink: 0;
+  .day-header {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
   }
-  .amount-input {
-    flex: 1; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;
-    background: transparent; border: none; color: var(--text); min-width: 0;
+  .day-num {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .d0 { background: #2a2040; color: #c4b8f0; }
+  .d1 { background: #1a3028; color: #6abf8e; }
+  .d2 { background: #3a2018; color: #e8856a; }
+  .d3 { background: #18263a; color: #6aaee8; }
+  .d4 { background: #2e1a2e; color: #d06ad0; }
+  .d5 { background: #2e2610; color: #e8c96a; }
+  .day-header-text { flex: 1; min-width: 0; }
+  .day-title { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+  .day-sub { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chevron { color: var(--subtle); font-size: 12px; transition: transform 0.2s; flex-shrink: 0; }
+  .chevron.open { transform: rotate(180deg); }
+  .day-body { border-top: 0.5px solid var(--border); }
+  .section { padding: 0 16px; }
+  .section-head {
+    display: flex; align-items: center; gap: 6px;
+    padding: 11px 0 8px;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .sdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--border);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .item:last-child { border-bottom: none; }
+  .item.done { opacity: 0.38; }
+  .item.done .item-name { text-decoration: line-through; }
+  .check-wrap { padding-top: 2px; flex-shrink: 0; }
+  .checkbox {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 1.5px solid var(--subtle);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    background: transparent;
+  }
+  .item.done .checkbox {
+    background: var(--subtle);
+    border-color: var(--subtle);
+  }
+  .checkmark { display: none; color: var(--bg); font-size: 12px; font-weight: 700; }
+  .item.done .checkmark { display: block; }
+  .item-text { flex: 1; min-width: 0; }
+  .item-name {
+    font-size: 14px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    line-height: 1.3;
+  }
+  .book-tag {
+    font-size: 10px; padding: 2px 7px;
+    border-radius: 8px;
+    background: rgba(232,106,106,0.15);
+    color: var(--book);
+    font-weight: 600; white-space: nowrap;
+  }
+  .item-tip { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+  .day-tip {
+    margin: 0 16px 14px;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    border-left: 2px solid var(--accent);
+  }
+  .day-tip strong { color: var(--accent); font-weight: 600; }
+  .legend {
+    padding: 14px 18px;
+    display: flex; gap: 14px; flex-wrap: wrap;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg);
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+  .ldot { width: 7px; height: 7px; border-radius: 50%; }
+  .progress-bar { height: 2px; background: var(--surface2); margin: 0 18px 14px; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--food)); border-radius: 2px; transition: width 0.3s; }
+  .progress-label { font-size: 11px; color: var(--muted); padding: 0 18px; margin-bottom: 12px; }
+  .clear-btn {
+    position: fixed;
+    bottom: calc(var(--safe-bottom) + 20px);
+    right: 18px;
+    background: var(--surface2);
+    border: 0.5px solid var(--border);
+    color: var(--muted);
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    z-index: 50;
+  }
+  .add-btn {
+    position: fixed;
+    bottom: calc(var(--safe-bottom) + 20px);
+    left: 18px;
+    background: var(--accent);
+    border: none;
+    color: #1a1600;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    z-index: 50;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sheet-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    backdrop-filter: blur(4px);
+  }
+  .sheet-overlay.open { display: flex; align-items: flex-end; }
+  .sheet {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    border-top: 0.5px solid var(--border);
+    padding: 0 0 calc(var(--safe-bottom) + 20px);
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+  }
+  .sheet-overlay.open .sheet { transform: translateY(0); }
+  .sheet-handle { width: 36px; height: 4px; background: var(--subtle); border-radius: 2px; margin: 12px auto 4px; }
+  .sheet-title { font-size: 16px; font-weight: 600; padding: 10px 18px 16px; border-bottom: 0.5px solid var(--border); }
+  .sheet-body { padding: 16px 18px; }
+  .field-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .field-input {
+    width: 100%; background: var(--surface2); border: 0.5px solid var(--border);
+    border-radius: 10px; color: var(--text); font-size: 15px;
+    padding: 10px 12px; margin-bottom: 14px;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    outline: none;
   }
-  .amount-input:focus { outline: none; }
-
-  .results { display: flex; flex-direction: column; gap: 8px; }
-  .result-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 11px 14px; background: var(--surface2); border-radius: 10px;
-  }
-  .result-ccy { font-size: 12px; font-weight: 500; color: var(--muted); }
-  .result-val { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
-  .result-val.dim { color: var(--subtle); font-size: 16px; font-weight: 400; }
-
-  .quick-row { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
-  .qbtn {
-    font-size: 12px; padding: 5px 12px; border-radius: 20px;
+  .field-input:focus { border-color: var(--accent); }
+  .field-input::placeholder { color: var(--subtle); }
+  .seg-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .seg-btn {
+    flex: 1; min-width: 70px; padding: 8px 6px; border-radius: 10px;
     border: 0.5px solid var(--border); background: transparent;
-    color: var(--muted); cursor: pointer; transition: all 0.12s;
+    color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.15s;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   }
-  .qbtn:active { background: var(--surface2); color: var(--text); }
-
-  .error-card {
-    background: rgba(232,106,106,0.1); border: 0.5px solid rgba(232,106,106,0.25);
-    border-radius: 12px; padding: 12px 16px; font-size: 13px; color: var(--red);
-    display: none; line-height: 1.5;
+  .seg-btn.sel-food { background: rgba(232,133,106,0.18); color: var(--food); border-color: var(--food); }
+  .seg-btn.sel-shopping { background: rgba(106,191,142,0.18); color: var(--shop); border-color: var(--shop); }
+  .seg-btn.sel-sights { background: rgba(106,174,232,0.18); color: var(--sight); border-color: var(--sight); }
+  .day-seg-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .day-seg-btn {
+    padding: 7px 12px; border-radius: 10px;
+    border: 0.5px solid var(--border); background: transparent;
+    color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.15s;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   }
-  .last-known { font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center; }
+  .day-seg-btn.sel { background: var(--surface2); color: var(--text); border-color: var(--subtle); }
+  .sheet-save {
+    width: 100%; padding: 13px; border-radius: 12px;
+    background: var(--accent); border: none; color: #1a1600;
+    font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .sheet-save:disabled { opacity: 0.35; }
+  .custom-tag {
+    font-size: 10px; padding: 2px 7px; border-radius: 8px;
+    background: rgba(232,201,106,0.15); color: var(--accent);
+    font-weight: 600; white-space: nowrap;
+  }
+  .del-btn {
+    flex-shrink: 0; padding: 4px 6px; background: transparent;
+    border: none; color: var(--subtle); font-size: 16px; cursor: pointer;
+    line-height: 1; border-radius: 6px; margin-left: 2px;
+    transition: color 0.15s;
+  }
+  .del-btn:hover { color: var(--book); }
+  .map-btn {
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-top: 5px;
+    font-size: 11px; font-weight: 500;
+    color: var(--sight);
+    background: rgba(106,174,232,0.1);
+    border: 0.5px solid rgba(106,174,232,0.25);
+    border-radius: 6px; padding: 3px 8px;
+    text-decoration: none; cursor: pointer;
+    white-space: nowrap;
+  }
+  .map-btn:active { opacity: 0.7; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div>
-    <div class="topbar h1">Currency</div>
-    <div class="sub" id="sub-title">Tap refresh for live rates</div>
+  <div class="topbar-inner">
+    <div>
+      <div class="topbar h1">🇯🇵 Tokyo Trip</div>
+      <div class="sub">Days 0–5 · Tap items to check off</div>
+    </div>
   </div>
-  <button class="refresh-btn" id="refresh-btn" onclick="fetchRates()">
-    <span class="spin" id="spin">&#8635;</span> Refresh
-  </button>
 </div>
 
-<div class="status-bar">
-  <div class="dot" id="status-dot"></div>
-  <span class="status-text" id="status-text">Not yet fetched</span>
+<div class="legend">
+  <div class="legend-item"><div class="ldot" style="background:var(--food)"></div>Food</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--shop)"></div>Shopping</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--sight)"></div>Sights</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--book)"></div>Book ahead</div>
 </div>
 
-<div class="content">
-  <div class="error-card" id="err-card"></div>
-  <div id="cards-container"></div>
-  <div class="last-known" id="last-known"></div>
+<div class="filter-row" id="filters">
+  <button class="filter-btn active" data-filter="all">All days</button>
+  <button class="filter-btn" data-filter="0">Day 0</button>
+  <button class="filter-btn" data-filter="1">Day 1</button>
+  <button class="filter-btn" data-filter="2">Day 2</button>
+  <button class="filter-btn" data-filter="3">Day 3</button>
+  <button class="filter-btn" data-filter="4">Day 4</button>
+  <button class="filter-btn" data-filter="5">Day 5</button>
+  <button class="filter-btn" data-filter="book">📌 Must book</button>
+  <button class="filter-btn" data-filter="mine">⭐ My items</button>
+</div>
+
+<div style="padding: 12px 18px 4px;">
+  <div class="progress-label" id="prog-label">0 of 0 checked off</div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+
+<div class="content" id="content"></div>
+<button class="clear-btn" id="clear-btn">Reset all</button>
+<button class="add-btn" id="add-btn">＋ Add item</button>
+
+<div class="sheet-overlay" id="sheet-overlay">
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Add your own item</div>
+    <div class="sheet-body">
+      <div class="field-label">Name</div>
+      <input class="field-input" id="custom-name" placeholder="e.g. Ramen spot from TikTok" maxlength="80">
+      <div class="field-label">Note (optional)</div>
+      <input class="field-input" id="custom-tip" placeholder="e.g. Near Shinjuku, opens 6pm" maxlength="160">
+      <div class="field-label">Category</div>
+      <div class="seg-row" id="cat-row">
+        <button class="seg-btn" data-cat="food">Food</button>
+        <button class="seg-btn" data-cat="shopping">Shopping</button>
+        <button class="seg-btn" data-cat="sights">Sightseeing</button>
+      </div>
+      <div class="field-label">Day</div>
+      <div class="day-seg-row" id="day-row">
+        <button class="day-seg-btn" data-day="0">Day 0</button>
+        <button class="day-seg-btn" data-day="1">Day 1</button>
+        <button class="day-seg-btn" data-day="2">Day 2</button>
+        <button class="day-seg-btn" data-day="3">Day 3</button>
+        <button class="day-seg-btn" data-day="4">Day 4</button>
+        <button class="day-seg-btn" data-day="5">Day 5</button>
+      </div>
+      <button class="sheet-save" id="sheet-save" disabled>Add to itinerary</button>
+    </div>
+  </div>
 </div>
 
 <script>
-const CONVERTERS = [
+const DAYS = [
   {
-    id: 'eur',
-    from: 'EUR', to1: 'CAD', to2: 'USD',
-    title: 'Euro \u2192 CAD & USD',
-    sub: 'For your girlfriend in Spain',
-    quick: [50, 100, 200, 500],
-    sym: '\u20AC'
+    index: 0, label: "Day 0", cls: "d0",
+    title: "Arrival · Ginza wander",
+    sub: "Land ~2pm · Check-in · Light Ginza explore",
+    tip: "<strong>Day tip:</strong> Keep it easy. You just landed. Save your appetite for the days ahead.",
+    food: [
+      { name: "Tonkatsu Marushichi Ginza", tip: "Excellent late-afternoon set lunch. Order the hire-katsu (tenderloin). No res needed for solo/pair.", book: false },
+      { name: "Cloud Club Matcha (Ginza)", tip: "Perfect first Japanese matcha moment. Opens until ~8pm. Quick stop, no queue usually.", book: false },
+      { name: "Kaiten Sushi Ginza", tip: "Conveyor belt sushi — low commitment, fun intro. Order seasonal specials off the touch screen.", book: false },
+      { name: "Azabu Yokota Ginza Bettei", tip: "Upscale izakaya vibes. Book ahead if going for dinner on arrival night — fills fast.", book: true },
+    ],
+    shopping: [
+      { name: "Ginza Six", tip: "Iconic mall — browse floors 1–3 for Japanese brands. Closes 8pm weekdays.", book: false },
+      { name: "Itoya", tip: "12-floor stationery paradise. A must. Go to B1 for custom rubber stamps.", book: false },
+      { name: "OK Ginza", tip: "Discount supermarket in Ginza. Stock up on snacks and drinks for the room.", book: false },
+      { name: "Muji (Ginza flagship)", tip: "The largest Muji on earth. Worth seeing even if you don't buy.", book: false },
+    ],
+    sights: [
+      { name: "Ginza stroll + photo booth", tip: "Walk the Chuo-dori. Purikura photo booths near Ginza station.", book: false },
+    ]
   },
   {
-    id: 'jpy',
-    from: 'JPY', to1: 'CAD', to2: 'USD',
-    title: 'Yen \u2192 CAD & USD',
-    sub: 'For spending in Japan',
-    quick: [1000, 5000, 10000, 50000],
-    sym: '\u00A5'
+    index: 1, label: "Day 1", cls: "d1",
+    title: "Shibuya · Harajuku · Shinjuku",
+    sub: "Street fashion · Golden Gai night",
+    tip: "<strong>Day tip:</strong> Hit Takeshita Street before 11am to beat crowds. Wear comfortable shoes — lots of walking.",
+    food: [
+      { name: "Ichiran (Shibuya)", tip: "Solo ramen in private booths. Open 24hrs. Go before noon to avoid lines.", book: false },
+      { name: "Machidashoten Shibuyaten", tip: "Moody café in Scramble Square. Good matcha lattes and toast.", book: false },
+      { name: "Moheji Shibuya Scramble Square", tip: "Local izakaya-style on upper floors of Scramble Square. Lively lunch.", book: false },
+      { name: "Omurice Ikura Shibuya", tip: "Fluffy omurice is iconic. Tiny spot — queue by 11:30am. Get there early.", book: false },
+      { name: "Gyukatsu Kyoto Katsugyu", tip: "Rare wagyu beef cutlet on tabletop grill. Worth the queue (20–40 min).", book: false },
+      { name: "Izakaya / Golden Gai (night)", tip: "No reservations needed. Bring cash only. Pick a bar that's half-full and say 'sumimasen'.", book: false },
+      { name: "McDonald's Japan", tip: "Yes, seriously. Teriyaki Burger and Shaka Shaka Chicken are legitimately good late-night stops.", book: false },
+    ],
+    shopping: [
+      { name: "Takeshita Street (Harajuku)", tip: "Hit before 11am. Crepe stalls are best in the morning.", book: false },
+      { name: "Laforet Harajuku", tip: "6 floors of subculture fashion. Floors 2–4 are the most interesting.", book: false },
+      { name: "Blue Elephant Harajuku Flagship", tip: "Streetwear with strong Tokyo POV. Check Instagram for limited drops.", book: false },
+      { name: "Brandy Melville (Harajuku)", tip: "Often has Japan-exclusive pieces. Compact but worth 10 min.", book: false },
+      { name: "Uniqlo & GU (Shinjuku)", tip: "GU is Uniqlo's cheaper sibling. The Shinjuku Uniqlo has the widest selection.", book: false },
+      { name: "Don Quijote (Shinjuku)", tip: "Open until 5am. Essential chaos. Best for snacks, cheap electronics, weird gifts.", book: false },
+      { name: "Kapital (Harajuku area)", tip: "Japanese cult workwear brand. Expensive but one-of-a-kind.", book: false },
+      { name: "Togo-jinja Shrine flea market", tip: "Weekends only. Surrounded by vintage boutiques.", book: false },
+    ],
+    sights: [
+      { name: "Meiji Jingu", tip: "Arrive by 9am. The forested walk to the shrine takes ~20 min. Free entry.", book: false },
+      { name: "Shibuya Sky", tip: "Rooftop observation deck — best at sunset (~5:30pm). Book tickets online 2–3 days ahead.", book: true },
+      { name: "Photo booth near Shibuya Crossing", tip: "Purikura studios up the stairs inside arcades on Center-gai. ¥400–600.", book: false },
+      { name: "7-Eleven Yoyogi Sendagaya", tip: "Famously photogenic convenience store under the Olympic bridge. Morning light is perfect.", book: false },
+    ]
   },
   {
-    id: 'usd',
-    from: 'USD', to1: 'CAD', to2: null,
-    title: 'USD \u2192 CAD',
-    sub: 'For your US layover',
-    quick: [20, 50, 100, 200],
-    sym: '$'
+    index: 2, label: "Day 2", cls: "d2",
+    title: "DisneySea (all day) · Ginza evening",
+    sub: "Rope drop 8am · Full park · Late dinner",
+    tip: "<strong>Day tip:</strong> Book tickets months in advance online. Ride Journey to the Center of the Earth and Soaring first at rope drop.",
+    food: [
+      { name: "Wagyu Sando at DisneySea", tip: "The park food is surprisingly great. Book the Magellan restaurant inside the park for lunch.", book: true },
+      { name: "Ginza Sushi Ichidai Yugo", tip: "High-quality kaiten sushi with premium nigiri. Opens 5pm for dinner. Book ahead.", book: true },
+      { name: "Royce Chocolate (Ginza)", tip: "Stop for their fresh nama chocolate after dinner. Bring a cooler bag — they're delicate.", book: false },
+    ],
+    shopping: [
+      { name: "Ginza Loft", tip: "Design-forward dept store. Great for unique Japanese goods and stationery. Open until 9pm.", book: false },
+      { name: "MoMA Design Store (Ginza)", tip: "Japanese-exclusive design objects often available. Worth a 20-min browse.", book: false },
+      { name: "Daiso (Ginza)", tip: "Japan's ¥100 store. Load up on storage, kitchen goods, and gifts.", book: false },
+    ],
+    sights: [
+      { name: "DisneySea Tokyo", tip: "ALL DAY. Park closes 9–10pm. Get the app, use standby pass system for top rides.", book: true },
+    ]
+  },
+  {
+    index: 3, label: "Day 3", cls: "d3",
+    title: "Asakusa · Akihabara · Ueno",
+    sub: "8am market start · Temples · Thrifting",
+    tip: "<strong>Day tip:</strong> Start at Tsukiji by 8am sharp. The full loop is Tsukiji → Asakusa → Akihabara → Ueno. Wear comfortable shoes.",
+    food: [
+      { name: "Tsukiji Fish Market (8am)", tip: "Arrive at 8am. Tamagoyaki, fresh tuna on rice, grilled scallops from outdoor stalls. Gets crowded by 9:30am.", book: false },
+      { name: "Asakusa Street Food", tip: "Ningyo-yaki, melonpan, Kaminariokoshi rice crackers along Nakamise-dori. Before 10am for no queues.", book: false },
+      { name: "Wagyu Ichinoya Asakusa", tip: "Famous sukiyaki-style wagyu. Lunch sets are the value play. Book 1–2 days ahead.", book: true },
+      { name: "Hinatomaru Asakusa", tip: "Classic ramen in a cozy setting. Opens 11am — go right as they open.", book: false },
+      { name: "Tsukemen Yasubee", tip: "Outstanding dipping ramen with rich tonkotsu dip broth. Near Akihabara.", book: false },
+      { name: "Yanaka Ginza (evening)", tip: "Slightly off-route detour from Ueno. Old-school Tokyo vibes. Street food stalls open until 6pm.", book: false },
+    ],
+    shopping: [
+      { name: "Kappabashi Street Knives", tip: "Buy a proper Japanese knife here. Staff sharpen on the spot. Budget ¥5,000–30,000+.", book: false },
+      { name: "Second Street (Ueno area)", tip: "Japan's largest secondhand chain. Great vintage finds at low prices.", book: false },
+      { name: "Akihabara electronics", tip: "Yodobashi Camera and Bic Camera. Check tax-free rules — bring your passport.", book: false },
+    ],
+    sights: [
+      { name: "Senso-ji Temple (Asakusa)", tip: "Tokyo's oldest temple. Arrive before 9am to beat tour groups. Free entry.", book: false },
+      { name: "Hourin-ji (Akihabara area)", tip: "Small atmospheric temple — often called the 'needle memorial'. Quiet and photogenic.", book: false },
+      { name: "Yamamoto-Tei (Ueno)", tip: "Beautiful Meiji-era villa with a Japanese garden. ¥400 entry. Great mid-afternoon break.", book: false },
+      { name: "Akihabara district", tip: "Walk the main strip for electronics, anime, retro game shops, and maid cafes. Open 11am–8pm.", book: false },
+    ]
+  },
+  {
+    index: 4, label: "Day 4", cls: "d4",
+    title: "Nakameguro · Daikanyama · Shimokitazawa",
+    sub: "Tokyo's coolest neighborhoods",
+    tip: "<strong>Day tip:</strong> The most relaxed day — café-hopping and vintage shopping. Nakameguro canal is stunning in morning light.",
+    food: [
+      { name: "Isshin Daikanyama", tip: "Upscale teishoku in a beautifully designed space. Book 2 days ahead for lunch.", book: true },
+      { name: "Sushi Masashi", tip: "Hidden counter sushi in Nakameguro. Excellent omakase. Book 1–2 weeks ahead.", book: true },
+      { name: "Matcha Tokyo (Omotesando)", tip: "Best pure matcha experience in Tokyo. Small shop, short queue. Go before 11am.", book: false },
+      { name: "Idekaya Tea Store", tip: "Old-school tea merchant near Daikanyama. Buy loose leaf as gifts — beautifully packaged.", book: false },
+      { name: "Warabi Mochi", tip: "Find a local wagashi shop for bracken starch jelly — the Nakameguro strip has several.", book: false },
+      { name: "Yoshitomo Nara Bar", tip: "Art-themed bar. Book ahead — fills up entirely for evening slots.", book: true },
+      { name: "Solatsuki", tip: "Natural wine and Japanese small plates. Perfect late evening stop. Reservation recommended.", book: true },
+    ],
+    shopping: [
+      { name: "Daikanyama T-Site", tip: "Three buildings of curated books, design, music. The architecture alone is worth it. Open until 2am.", book: false },
+      { name: "Nakameguro canal boutiques", tip: "Walk south from the station — boutiques line both sides of the canal.", book: false },
+      { name: "Shimokitazawa vintage shops", tip: "20+ vintage shops in a few blocks. Second Street, Flamingo, Bear Pond area are the core.", book: false },
+      { name: "Paradise Vintage (Shimokitazawa)", tip: "Curated vintage with good 70s–90s pieces. One of the better edited shops in the area.", book: false },
+      { name: "Atlantis Vintage Tokyo", tip: "High-end curated vintage — Nike, Levi's, varsity jackets.", book: false },
+      { name: "Levi's custom jeans", tip: "Harajuku or Shibuya Levi's has a tailor bar for custom hems and patches. Budget 1hr.", book: false },
+      { name: "Onitsuka Tiger", tip: "Harajuku flagship has Japan-exclusive colorways. Budget ¥15,000–25,000.", book: false },
+      { name: "Salomon (Omotesando)", tip: "Japanese collab-exclusive trail sneakers often available that never hit Western markets.", book: false },
+      { name: "Gentle Monster (Shibuya)", tip: "Korean eyewear brand with incredible store design. Concept changes seasonally.", book: false },
+    ],
+    sights: [
+      { name: "Nakameguro canal walk", tip: "The 1km canal walk is one of the best in Tokyo. Cherry blossoms in spring, fairy lights in winter.", book: false },
+      { name: "Daikanyama neighborhood stroll", tip: "Back streets east of T-Site have hidden cafés and galleries around every corner.", book: false },
+    ]
+  },
+  {
+    index: 5, label: "Day 5", cls: "d5",
+    title: "Flex day — Fuji · Overflow · Sushi class",
+    sub: "Choose your own adventure",
+    tip: "<strong>Day tip:</strong> Three paths: (A) Mt. Fuji day trip — leave by 7am. (B) Sushi-making class (2–3hrs morning). (C) Overflow food. Check the weather forecast for Fuji the night before.",
+    food: [
+      { name: "Tsujihan", tip: "Famous kaisendon (seafood rice bowl with dashi poured tableside). Line forms at 10:30am.", book: false },
+      { name: "Menchirashi", tip: "Highly rated scattered sushi. Book ahead for lunch.", book: true },
+      { name: "Uogashi Nihon-Ichi Omakase", tip: "Standing sushi bar — excellent quality at lower prices. No book needed, come early.", book: false },
+      { name: "Kyubey (Ginza)", tip: "One of Tokyo's most respected sushi counters since 1936. Book weeks in advance for omakase lunch.", book: true },
+      { name: "Sushi Dokoro Shun", tip: "Intimate neighborhood counter, serious nigiri. Book 1 week ahead.", book: true },
+      { name: "Kura Sushi", tip: "The fun affordable chain with touch-screen ordering and gacha capsule rewards. Great low-key final dinner.", book: false },
+      { name: "Soushi Menya Musashi", tip: "Theatrical presentation ramen — black garlic broth. Shinjuku location is easiest to find.", book: false },
+      { name: "Nihonbashi Tonkatsu Hajime", tip: "Top-ranked tonkatsu — premium iberico pork option. Weekday lunches are calmer.", book: false },
+      { name: "Ishin", tip: "Refined kaiseki-style lunch. Book well ahead. A great send-off meal.", book: true },
+      { name: "Ginza Music Bar", tip: "Spend the final evening here — bring requests, the bartenders honor them via vinyl collection. Book ahead.", book: true },
+    ],
+    shopping: [
+      { name: "Tokyo City Flea Market", tip: "Weekend only — check schedule. Yoyogi Park or Showa Memorial Park. Arrive early.", book: false },
+      { name: "Coachtopia (Ginza)", tip: "Coach's sustainability sub-brand with Tokyo-exclusive pieces.", book: false },
+      { name: "Books Kinokuniya (Shinjuku)", tip: "Massive flagship. 6th floor has English books. Art books make great souvenirs.", book: false },
+    ],
+    sights: [
+      { name: "Mount Fuji (Kogamasao Memorial Park)", tip: "2hr bus from Shinjuku Expressway Bus Terminal. Kawaguchiko has the best views. Book return bus.", book: true },
+      { name: "Sushi Making Class", tip: "Book through Airbnb Experiences or Viator. 9–11am slot is the classic. You eat what you make.", book: true },
+    ]
   }
 ];
 
-const FALLBACK = { EUR_CAD: 1.6064, EUR_USD: 1.1706, JPY_CAD: 0.008760, JPY_USD: 0.006263, USD_CAD: 1.3915 };
-let rates = { ...FALLBACK };
-let lastFetchTime = null;
+const STORAGE_KEY = 'tokyo-trip-checked-v1';
+const CUSTOM_KEY = 'tokyo-trip-custom-v1';
+let checked = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+let customItems = JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]');
+let currentFilter = 'all';
 
-function fmtNum(val, ccy) {
-  if (ccy === 'JPY') return Math.round(val).toLocaleString();
-  return val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+function saveChecked() { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); }
+function saveCustom() { localStorage.setItem(CUSTOM_KEY, JSON.stringify(customItems)); }
+function getItemId(dayIdx, type, itemIdx) { return `d${dayIdx}-${type}-${itemIdx}`; }
+function getCustomId(uid) { return 'custom-' + uid; }
+
+function updateProgress() {
+  let total = 0, done = 0;
+  DAYS.forEach(day => {
+    ['food','shopping','sights'].forEach(type => {
+      const arr = type === 'shopping' ? day.shopping : type === 'sights' ? day.sights : day.food;
+      if (!arr) return;
+      arr.forEach((item, i) => { total++; if (checked[getItemId(day.index, type, i)]) done++; });
+    });
+  });
+  customItems.forEach(ci => { total++; if (checked[getCustomId(ci.uid)]) done++; });
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `${done} of ${total} items checked off`;
 }
 
-function buildCards() {
-  const container = document.getElementById('cards-container');
-  container.innerHTML = '';
-  CONVERTERS.forEach(c => {
-    const rk1 = c.from + '_' + c.to1;
-    const rk2 = c.to2 ? c.from + '_' + c.to2 : null;
-
+function renderAll() {
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  DAYS.forEach(day => {
+    if (currentFilter !== 'all' && currentFilter !== 'book' && currentFilter !== 'mine' && parseInt(currentFilter) !== day.index) return;
+    if (currentFilter === 'mine') return;
+    if (currentFilter === 'book') {
+      const hasBook = [...(day.food||[]),...(day.shopping||[]),...(day.sights||[])].some(i => i.book);
+      if (!hasBook) return;
+    }
     const card = document.createElement('div');
-    card.className = 'card';
+    card.className = 'day-card';
+    const customForDay = customItems.filter(ci => ci.day === day.index);
+    const hasCustom = customForDay.length > 0;
     card.innerHTML = `
-      <div class="card-header">
-        <div class="card-title">${c.title}</div>
-        <div class="card-sub">${c.sub}</div>
-      </div>
-      <div class="rate-strip" id="rstrip-${c.id}">
-        <div class="rate-pill">1 ${c.from} = <b id="r1d-${c.id}">—</b> ${c.to1}</div>
-        ${c.to2 ? `<div class="rate-pill">1 ${c.from} = <b id="r2d-${c.id}">—</b> ${c.to2}</div>` : ''}
-      </div>
-      <div class="card-body">
-        <div class="input-row">
-          <span class="ccy-badge">${c.from}</span>
-          <input class="amount-input" id="amt-${c.id}" type="number" value="100" min="0" inputmode="decimal" />
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-num ${day.cls}">${day.label.replace('Day ','')}</div>
+        <div class="day-header-text">
+          <div class="day-title">${day.title}</div>
+          <div class="day-sub">${day.sub}</div>
         </div>
-        <div class="results">
-          <div class="result-row">
-            <span class="result-ccy">${c.to1}</span>
-            <span class="result-val dim" id="out1-${c.id}">—</span>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="day-body" style="display:none;">
+        ${renderSection(day, 'food', 'Food & drinks', 'var(--food)')}
+        ${renderSection(day, 'shopping', 'Shopping', 'var(--shop)')}
+        ${renderSection(day, 'sights', 'Sightseeing', 'var(--sight)')}
+        ${hasCustom ? renderCustomSection(customForDay) : ''}
+        <div class="section"><div class="day-tip" style="margin: 12px 0;">${day.tip}</div></div>
+      </div>
+    `;
+    content.appendChild(card);
+  });
+
+  if (currentFilter === 'mine' || currentFilter === 'all') {
+    if (customItems.length > 0) {
+      if (currentFilter === 'mine') {
+        const card = document.createElement('div');
+        card.className = 'day-card';
+        card.innerHTML = `
+          <div class="day-header" onclick="toggleDay(this)">
+            <div class="day-num" style="background:#1e2a1e;color:var(--accent);font-size:16px;">★</div>
+            <div class="day-header-text">
+              <div class="day-title">My added items</div>
+              <div class="day-sub">All custom items across all days</div>
+            </div>
+            <div class="chevron">▾</div>
           </div>
-          ${c.to2 ? `<div class="result-row"><span class="result-ccy">${c.to2}</span><span class="result-val dim" id="out2-${c.id}">—</span></div>` : ''}
-        </div>
-        <div class="quick-row">
-          ${c.quick.map(q => `<button class="qbtn" data-id="${c.id}" data-val="${q}">${c.sym}${q.toLocaleString()}</button>`).join('')}
+          <div class="day-body" style="display:none;">
+            ${renderCustomSection(customItems, true)}
+          </div>
+        `;
+        content.appendChild(card);
+        content.querySelector('.day-header').click();
+      }
+    } else if (currentFilter === 'mine') {
+      content.innerHTML = '<div style="text-align:center;padding:40px 18px;color:var(--muted);font-size:14px;">No custom items yet.<br>Tap <strong style="color:var(--accent)">＋ Add item</strong> to get started.</div>';
+    }
+  }
+  updateProgress();
+}
+
+function mapsUrl(name) {
+  return 'https://maps.apple.com/?q=' + encodeURIComponent(name + ' Tokyo Japan');
+}
+
+function mapBtn(name) {
+  return `<a class="map-btn" href="${mapsUrl(name)}" onclick="event.stopPropagation()">&#9906; Maps</a>`;
+}
+
+function renderSection(day, type, label, color) {
+  const arr = type === 'shopping' ? day.shopping : type === 'sights' ? day.sights : day.food;
+  if (!arr || arr.length === 0) return '';
+  if (currentFilter === 'book') {
+    const filtered = arr.filter(i => i.book);
+    if (filtered.length === 0) return '';
+    let html = `<div class="section"><div class="section-head"><div class="sdot" style="background:${color}"></div>${label}</div>`;
+    filtered.forEach((item) => {
+      const origIdx = arr.indexOf(item);
+      const id = getItemId(day.index, type, origIdx);
+      const done = checked[id] ? 'done' : '';
+      html += `<div class="item ${done}" onclick="toggleItem('${id}', this)">
+        <div class="check-wrap"><div class="checkbox"><span class="checkmark">&#10003;</span></div></div>
+        <div class="item-text">
+          <div class="item-name">${item.name}<span class="book-tag">book ahead</span></div>
+          <div class="item-tip">${item.tip}</div>
+          ${mapBtn(item.name)}
         </div>
       </div>`;
-
-    container.appendChild(card);
-
-    card.querySelector('#amt-' + c.id).addEventListener('input', () => recalc(c));
-    card.querySelectorAll('.qbtn').forEach(b => b.addEventListener('click', () => {
-      document.getElementById('amt-' + c.id).value = b.dataset.val;
-      recalc(c);
-    }));
-
-    recalc(c);
-  });
-}
-
-function recalc(c) {
-  const amt = parseFloat(document.getElementById('amt-' + c.id).value) || 0;
-  const rk1 = c.from + '_' + c.to1;
-  const rk2 = c.to2 ? c.from + '_' + c.to2 : null;
-  const r1 = rates[rk1];
-  const r2 = rk2 ? rates[rk2] : null;
-
-  const o1 = document.getElementById('out1-' + c.id);
-  o1.textContent = r1 ? fmtNum(amt * r1, c.to1) : '—';
-  o1.className = 'result-val' + (r1 ? '' : ' dim');
-
-  if (c.to2) {
-    const o2 = document.getElementById('out2-' + c.id);
-    o2.textContent = r2 ? fmtNum(amt * r2, c.to2) : '—';
-    o2.className = 'result-val' + (r2 ? '' : ' dim');
-  }
-
-  const r1el = document.getElementById('r1d-' + c.id);
-  if (r1el) r1el.textContent = r1 ? r1.toFixed(4) : '—';
-  const r2el = document.getElementById('r2d-' + c.id);
-  if (r2el && r2) r2el.textContent = r2.toFixed(4);
-}
-
-function recalcAll() { CONVERTERS.forEach(c => recalc(c)); }
-
-function setStatus(type, msg) {
-  const dot = document.getElementById('status-dot');
-  dot.className = 'dot ' + type;
-  document.getElementById('status-text').textContent = msg;
-}
-
-async function fetchRates() {
-  const btn = document.getElementById('refresh-btn');
-  const spin = document.getElementById('spin');
-  const err = document.getElementById('err-card');
-
-  btn.disabled = true;
-  spin.classList.add('active');
-  err.style.display = 'none';
-  setStatus('loading', 'Fetching live rates\u2026');
-
-  const prompt = `Search the web for today's live mid-market exchange rates and return ONLY a raw JSON object with no explanation, no markdown, no backticks — just the JSON itself:
-{"EUR_CAD": <number>, "EUR_USD": <number>, "JPY_CAD": <number>, "JPY_USD": <number>, "USD_CAD": <number>}
-Use the most current rates available today.`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: prompt }]
-      })
     });
-
-    if (!res.ok) throw new Error('API error ' + res.status);
-
-    const data = await res.json();
-    const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-    const match = textBlocks.match(/\{[^{}]*\}/);
-    if (!match) throw new Error('No JSON in response');
-
-    const parsed = JSON.parse(match[0]);
-    const keys = ['EUR_CAD', 'EUR_USD', 'JPY_CAD', 'JPY_USD', 'USD_CAD'];
-    for (const k of keys) {
-      if (typeof parsed[k] !== 'number' || parsed[k] <= 0) throw new Error('Bad value for ' + k);
-      rates[k] = parsed[k];
-    }
-
-    lastFetchTime = new Date();
-    const timeStr = lastFetchTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setStatus('live', 'Live rates \u00b7 updated ' + timeStr);
-    document.getElementById('sub-title').textContent = 'Live \u00b7 ' + timeStr;
-    document.getElementById('last-known').textContent = '';
-    recalcAll();
-
-  } catch (e) {
-    rates = { ...FALLBACK };
-    err.textContent = 'Could not fetch live rates. Showing fallback rates from Apr 6, 2026. Check your connection and try again.';
-    err.style.display = 'block';
-    setStatus('error', 'Using fallback rates');
-    document.getElementById('sub-title').textContent = 'Fallback rates \u00b7 Apr 6, 2026';
-    document.getElementById('last-known').textContent = 'Tip: connect to Wi-Fi and tap Refresh for live rates';
-    recalcAll();
-  } finally {
-    btn.disabled = false;
-    spin.classList.remove('active');
+    html += '</div>';
+    return html;
   }
+  let html = `<div class="section"><div class="section-head"><div class="sdot" style="background:${color}"></div>${label}</div>`;
+  arr.forEach((item, i) => {
+    const id = getItemId(day.index, type, i);
+    const done = checked[id] ? 'done' : '';
+    html += `<div class="item ${done}" onclick="toggleItem('${id}', this)">
+      <div class="check-wrap"><div class="checkbox"><span class="checkmark">&#10003;</span></div></div>
+      <div class="item-text">
+        <div class="item-name">${item.name}${item.book ? '<span class="book-tag">book ahead</span>' : ''}</div>
+        <div class="item-tip">${item.tip}</div>
+        ${mapBtn(item.name)}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
 }
 
-buildCards();
-fetchRates();
+function renderCustomSection(items, showDay) {
+  if (!items.length) return '';
+  const catColors = { food: 'var(--food)', shopping: 'var(--shop)', sights: 'var(--sight)' };
+  let html = `<div class="section"><div class="section-head"><div class="sdot" style="background:var(--accent)"></div>My additions</div>`;
+  items.forEach(ci => {
+    const id = getCustomId(ci.uid);
+    const done = checked[id] ? 'done' : '';
+    const dayLabels = ['D0','D1','D2','D3','D4','D5'];
+    const catDot = catColors[ci.cat] || 'var(--muted)';
+    html += `<div class="item ${done}" id="ci-${ci.uid}">
+      <div class="check-wrap" onclick="toggleCustom('${ci.uid}')"><div class="checkbox"><span class="checkmark">&#10003;</span></div></div>
+      <div class="item-text" onclick="toggleCustom('${ci.uid}')">
+        <div class="item-name">
+          <span class="sdot" style="background:${catDot};width:7px;height:7px;display:inline-block;border-radius:50%;"></span>
+          ${ci.name}
+          <span class="custom-tag">mine</span>
+          ${showDay ? `<span style="font-size:10px;color:var(--muted);font-weight:400">${dayLabels[ci.day]}</span>` : ''}
+        </div>
+        ${ci.tip ? `<div class="item-tip">${ci.tip}</div>` : ''}
+        <a class="map-btn" href="https://maps.apple.com/?q=${encodeURIComponent(ci.name + ' Tokyo Japan')}" onclick="event.stopPropagation()">&#9906; Maps</a>
+      </div>
+      <button class="del-btn" onclick="deleteCustom('${ci.uid}')">&#215;</button>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function toggleDay(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  chevron.classList.toggle('open', !isOpen);
+}
+
+function toggleItem(id, el) {
+  checked[id] = !checked[id];
+  saveChecked();
+  el.classList.toggle('done', checked[id]);
+  updateProgress();
+}
+
+function toggleCustom(uid) {
+  const id = getCustomId(uid);
+  checked[id] = !checked[id];
+  saveChecked();
+  const el = document.getElementById('ci-' + uid);
+  if (el) el.classList.toggle('done', checked[id]);
+  updateProgress();
+}
+
+function deleteCustom(uid) {
+  customItems = customItems.filter(ci => ci.uid !== uid);
+  saveCustom();
+  delete checked[getCustomId(uid)];
+  saveChecked();
+  renderAll();
+}
+
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.filter;
+  renderAll();
+});
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+  if (confirm('Reset all checkmarks?')) { checked = {}; saveChecked(); renderAll(); }
+});
+
+const overlay = document.getElementById('sheet-overlay');
+const sheet = document.getElementById('sheet');
+let selCat = null, selDay = null;
+
+document.getElementById('add-btn').addEventListener('click', () => {
+  document.getElementById('custom-name').value = '';
+  document.getElementById('custom-tip').value = '';
+  selCat = null; selDay = null;
+  document.querySelectorAll('.seg-btn').forEach(b => b.className = 'seg-btn');
+  document.querySelectorAll('.day-seg-btn').forEach(b => b.classList.remove('sel'));
+  document.getElementById('sheet-save').disabled = true;
+  overlay.classList.add('open');
+  setTimeout(() => document.getElementById('custom-name').focus(), 350);
+});
+
+overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+document.getElementById('cat-row').addEventListener('click', e => {
+  const btn = e.target.closest('.seg-btn');
+  if (!btn) return;
+  selCat = btn.dataset.cat;
+  document.querySelectorAll('.seg-btn').forEach(b => { b.className = 'seg-btn'; });
+  btn.classList.add('sel-' + selCat);
+  checkSave();
+});
+
+document.getElementById('day-row').addEventListener('click', e => {
+  const btn = e.target.closest('.day-seg-btn');
+  if (!btn) return;
+  selDay = parseInt(btn.dataset.day);
+  document.querySelectorAll('.day-seg-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  checkSave();
+});
+
+document.getElementById('custom-name').addEventListener('input', checkSave);
+
+function checkSave() {
+  const name = document.getElementById('custom-name').value.trim();
+  document.getElementById('sheet-save').disabled = !(name && selCat !== null && selDay !== null);
+}
+
+document.getElementById('sheet-save').addEventListener('click', () => {
+  const name = document.getElementById('custom-name').value.trim();
+  const tip = document.getElementById('custom-tip').value.trim();
+  if (!name || selCat === null || selDay === null) return;
+  const uid = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  customItems.push({ uid, name, tip, cat: selCat, day: selDay });
+  saveCustom();
+  overlay.classList.remove('open');
+  renderAll();
+  const allDayCards = document.querySelectorAll('.day-card');
+  const dayCard = [...allDayCards].find(c => {
+    const badge = c.querySelector('.day-num');
+    return badge && badge.textContent.trim() === String(selDay);
+  });
+  if (dayCard) {
+    const body = dayCard.querySelector('.day-body');
+    if (body && body.style.display === 'none') dayCard.querySelector('.day-header').click();
+    setTimeout(() => dayCard.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+  }
+});
+
+renderAll();
+document.querySelector('.day-header').click();
 </script>
 </body>
 </html>
