@@ -131,7 +131,7 @@ button,input,textarea,select{font:inherit}
   <div class="summary-row">
     <div class="sum-card"><div class="sum-label">CAD</div><div class="sum-val val-cad" id="tot-cad">$0</div></div>
     <div class="sum-card"><div class="sum-label">USD</div><div class="sum-val val-usd" id="tot-usd">$0</div></div>
-    <div class="sum-card"><div class="sum-label">JPY</div><div class="sum-val val-jpy" id="tot-jpy">"&#165;"0</div></div>
+    <div class="sum-card"><div class="sum-label">JPY</div><div class="sum-val val-jpy" id="tot-jpy">&#165;0</div></div>
   </div>
   <div class="form-section">
     <h3>Add Expense</h3>
@@ -384,7 +384,7 @@ function updateHints() {
   var jpy = parseFloat(document.getElementById('f-jpy').value) || 0;
   var cad = parseFloat(document.getElementById('f-cad').value) || 0;
   document.getElementById('jpy-hint').textContent = jpy ? '= CA$' + jpyToCad(jpy).toFixed(2) : '= -- CAD';
-  document.getElementById('cad-hint').textContent = cad ? '= &#165;' + Math.round(cadToJpy(cad)).toLocaleString() : '= -- JPY';
+  document.getElementById('cad-hint').textContent = cad ? '= \u00A5' + Math.round(cadToJpy(cad)).toLocaleString() : '= -- JPY';
 }
 
 document.getElementById('f-jpy').addEventListener('input', updateHints);
@@ -437,7 +437,7 @@ function renderExpenses() {
   var totJpy = filtered.reduce(function(s,e){return s+e.amtJpy;},0);
   document.getElementById('tot-cad').textContent = '$' + totCad.toFixed(2);
   document.getElementById('tot-usd').textContent = '$' + totUsd.toFixed(2);
-  document.getElementById('tot-jpy').textContent = '&#165;' + Math.round(totJpy).toLocaleString();
+  document.getElementById('tot-jpy').textContent = '\u00A5' + Math.round(totJpy).toLocaleString();
   var list = document.getElementById('expense-list');
   if(!list) return;
   if(!filtered.length) {
@@ -458,7 +458,7 @@ function renderExpenses() {
       '<div class="exp-right">' +
         '<div class="exp-cad">CA$' + e.amtCad.toFixed(2) + '</div>' +
         '<div class="exp-usd">US$' + e.amtUsd.toFixed(2) + '</div>' +
-        '<div class="exp-jpy">&#165;' + e.amtJpy.toLocaleString() + '</div>' +
+        '<div class="exp-jpy">\u00A5' + e.amtJpy.toLocaleString() + '</div>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -483,7 +483,7 @@ function renderBreakdown() {
     html += '<div class="city-section">' +
       '<div class="city-name">' + city + ' <span style="color:var(--muted);font-weight:400;font-size:12px">(' + items.length + ' expense' + (items.length>1?'s':'') + ')</span></div>' +
       '<div class="city-bar"><div class="city-bar-fill" style="width:' + pct.toFixed(1) + '%"></div></div>' +
-      '<div class="city-totals"><b>CA$' + cad.toFixed(2) + '</b> &middot; US$' + usd.toFixed(2) + ' &middot; &#165;' + Math.round(jpy).toLocaleString() + ' &middot; ' + pct.toFixed(0) + '% of total</div>' +
+      '<div class="city-totals"><b>CA$' + cad.toFixed(2) + '</b> &middot; US$' + usd.toFixed(2) + ' &middot; \u00A5' + Math.round(jpy).toLocaleString() + ' &middot; ' + pct.toFixed(0) + '% of total</div>' +
     '</div>';
   });
   if(!hasSomething) html = '<div class="empty">&#128506;<br>Add expenses to see breakdown by city.</div>';
