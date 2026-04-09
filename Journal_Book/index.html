@@ -13,26 +13,33 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:-apple-system,'SF Pro Text',BlinkMacSystemFont,sans-serif;min-height:100vh;overscroll-behavior:none}
 button,input,textarea,select{font:inherit}
-.topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--safe-top) + 14px) 18px 0;border-bottom:0.5px solid var(--border)}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(15,15,15,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:calc(var(--safe-top)+54px) 18px 0;border-bottom:0.5px solid var(--border)}
 .topbar h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;padding-bottom:12px}
 .tabs{display:flex}
-.tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s}
+.tab-btn{flex:1;padding:10px 0;background:transparent;border:none;cursor:pointer;font-size:11px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.2s}
 .tab-btn.active{color:var(--text);border-bottom-color:var(--accent)}
-.tab-content{display:none;padding:14px 14px calc(var(--safe-bottom) + 80px)}
+.tab-content{display:none;padding:14px 14px calc(var(--safe-bottom)+80px)}
 .tab-content.active{display:block}
 .field{margin-bottom:10px}
 .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500}
 .field input,.field textarea,.field select{width:100%;padding:10px 12px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);-webkit-appearance:none;resize:none}
 .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent)}
 .field input::placeholder,.field textarea::placeholder{color:var(--subtle)}
+.field select option{background:#222;color:var(--text)}
 .btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:12px;font-size:15px;font-weight:600;color:#1a1600;cursor:pointer;margin-top:4px}
 .btn-secondary{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer}
 .btn-danger{width:100%;padding:12px;background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.2);border-radius:12px;font-size:14px;font-weight:500;color:var(--red);cursor:pointer;margin-top:8px}
 .btn-primary:active,.btn-secondary:active,.btn-danger:active{opacity:0.85}
+.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .loc-row{display:flex;align-items:center;gap:8px}
 .loc-row input{flex:1}
 .loc-btn{padding:10px 14px;background:var(--surface2);border:0.5px solid var(--border);border-radius:10px;color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0}
 .loc-btn.got{color:var(--green);border-color:rgba(106,191,142,0.3)}
+.preview-box{display:none;width:100%;aspect-ratio:4/3;border-radius:16px;overflow:hidden;margin-bottom:8px;background:var(--surface2);position:relative}
+.preview-box img{width:100%;height:100%;object-fit:cover;display:block}
+.save-photos-bar{background:rgba(232,201,106,0.12);border:0.5px solid rgba(232,201,106,0.3);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:none;align-items:center;justify-content:space-between;gap:10px}
+.save-photos-bar span{font-size:13px;color:var(--accent)}
+.save-photos-btn{padding:8px 14px;background:var(--accent);border:none;border-radius:8px;font-size:13px;font-weight:600;color:#1a1600;cursor:pointer;white-space:nowrap;flex-shrink:0}
 .entry-card{background:var(--surface);border-radius:16px;border:0.5px solid var(--border);overflow:hidden;margin-bottom:14px}
 .entry-photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--surface2)}
 .entry-photo-placeholder{width:100%;aspect-ratio:4/3;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:32px}
@@ -46,29 +53,36 @@ button,input,textarea,select{font:inherit}
 .entry-actions{display:flex;gap:8px;margin-top:10px}
 .small-btn{font-size:11px;padding:6px 10px;background:var(--surface2);color:var(--text);border:0.5px solid var(--border);border-radius:7px;cursor:pointer}
 .small-btn.delete{background:rgba(232,106,106,0.1);color:var(--red);border-color:rgba(232,106,106,0.2)}
+.album-tag{font-size:10px;padding:2px 8px;background:rgba(232,201,106,0.12);color:var(--accent);border-radius:10px;border:0.5px solid rgba(232,201,106,0.2)}
 .stats-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
 .stat-card{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:10px 12px}
 .stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
 .stat-val{font-size:18px;font-weight:600;color:var(--accent)}
 .empty{text-align:center;padding:40px 20px;color:var(--muted)}
 .empty-icon{font-size:36px;margin-bottom:10px}
-.toast{position:fixed;bottom:calc(var(--safe-bottom) + 90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999}
+.toast{position:fixed;bottom:calc(var(--safe-bottom)+90px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:0.5px solid var(--border);opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .modal-bg{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.7);overflow-y:auto;-webkit-overflow-scrolling:touch}
-.modal-box{background:var(--surface);margin:40px 14px calc(var(--safe-bottom)+20px);border-radius:20px;padding:20px;border:0.5px solid var(--border)}
+.modal-box{background:var(--surface);margin:60px 14px calc(var(--safe-bottom)+20px);border-radius:20px;padding:20px;border:0.5px solid var(--border)}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .modal-title{font-size:16px;font-weight:600}
 .modal-close{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
-.preview-box{display:none;width:100%;aspect-ratio:4/3;border-radius:16px;overflow:hidden;margin-bottom:8px;background:var(--surface2)}
-.preview-box img{width:100%;height:100%;object-fit:cover;display:block}
-.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .card{background:var(--surface);border-radius:14px;border:0.5px solid var(--border);padding:14px;margin-bottom:12px}
 .helper{font-size:12px;color:var(--muted);line-height:1.6}
-.status{font-size:13px;color:var(--muted);text-align:center;margin-top:10px;display:none}
-.error{background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.25);border-radius:12px;padding:12px;font-size:13px;color:var(--red);margin-top:10px;display:none}
+.status-msg{font-size:13px;color:var(--muted);text-align:center;margin-top:10px;display:none}
+.error-msg{background:rgba(232,106,106,0.1);border:0.5px solid rgba(232,106,106,0.25);border-radius:12px;padding:12px;font-size:13px;color:var(--red);margin-top:10px;display:none}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.sync-btn{width:100%;padding:12px;background:transparent;border:0.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
-.sync-btn:active{background:var(--surface2)}
+.album-card{background:var(--surface);border-radius:12px;border:0.5px solid var(--border);padding:12px 14px;margin-bottom:8px}
+.album-name{font-size:14px;font-weight:600}
+.album-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.album-actions{display:flex;gap:8px;margin-top:10px}
+.album-btn{font-size:11px;padding:5px 10px;background:var(--surface2);color:var(--muted);border:0.5px solid var(--border);border-radius:7px;cursor:pointer}
+.album-btn.danger{color:var(--red);border-color:rgba(232,106,106,0.2)}
+.cb-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--border);cursor:pointer}
+.cb-row:last-child{border-bottom:none}
+.cb-box{width:20px;height:20px;border-radius:5px;border:0.5px solid var(--border);background:var(--surface2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#1a1600}
+.cb-box.checked{background:var(--accent);border-color:var(--accent)}
+.cb-label{font-size:14px}
 </style>
 </head>
 <body>
@@ -78,6 +92,7 @@ button,input,textarea,select{font:inherit}
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('add',this)">New Entry</button>
     <button class="tab-btn" onclick="switchTab('feed',this)">Feed</button>
+    <button class="tab-btn" onclick="switchTab('albums',this)">Albums</button>
     <button class="tab-btn" onclick="switchTab('sync',this)">Sync</button>
     <button class="tab-btn" onclick="switchTab('summary',this)">Summary</button>
   </div>
@@ -86,14 +101,19 @@ button,input,textarea,select{font:inherit}
 <!-- NEW ENTRY TAB -->
 <div class="tab-content active" id="tab-add">
   <div id="photo-preview" class="preview-box">
-    <img id="photo-preview-img" alt="Photo preview">
+    <img id="photo-preview-img" alt="Preview">
+  </div>
+  <!-- Save to Photos bar - appears after picking a photo -->
+  <div class="save-photos-bar" id="save-photos-bar">
+    <span>Save original to Camera Roll?</span>
+    <button class="save-photos-btn" onclick="saveToPhotos()">Save to Photos</button>
   </div>
   <div id="photo-btn-row" class="toolbar">
-    <label for="photo-camera" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;margin-top:0" id="photo-camera-label">
+    <label for="photo-camera" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;margin-top:0;border-radius:12px;cursor:pointer" id="photo-camera-label">
       &#128247; Take Photo
       <input type="file" id="photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
     </label>
-    <label for="photo-library" class="btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center">
+    <label for="photo-library" class="btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;cursor:pointer">
       &#128444; Choose Photo
       <input type="file" id="photo-library" accept="image/*" style="display:none" onchange="handlePhoto(event)">
     </label>
@@ -101,6 +121,12 @@ button,input,textarea,select{font:inherit}
   <div class="field">
     <label>Caption</label>
     <textarea id="f-caption" rows="2" placeholder="What's happening here..."></textarea>
+  </div>
+  <div class="field">
+    <label>Album</label>
+    <select id="f-album">
+      <option value="">No album</option>
+    </select>
   </div>
   <div class="field">
     <label>Location</label>
@@ -112,7 +138,7 @@ button,input,textarea,select{font:inherit}
   <div class="field">
     <label>Date &amp; Time</label>
     <div class="toolbar" style="margin-bottom:8px">
-      <button id="dt-live-btn" onclick="useLiveTime()" class="btn-primary" style="background:var(--green);color:#0a1a0f;margin-top:0">Now (live)</button>
+      <button id="dt-live-btn" onclick="useLiveTime()" class="btn-primary" style="background:var(--green);color:#0a1a0f;margin-top:0;border-radius:10px">Now (live)</button>
       <button id="dt-manual-btn" onclick="useManualTime()" class="btn-secondary" style="color:var(--muted)">Set manually</button>
     </div>
     <div id="dt-live-display" class="card" style="padding:10px 12px;color:var(--green);border-color:rgba(106,191,142,0.3);margin-bottom:0;font-size:14px"></div>
@@ -134,15 +160,33 @@ button,input,textarea,select{font:inherit}
       <input type="text" id="feed-search" placeholder="Search captions or places" oninput="renderFeed()">
     </div>
     <div class="field" style="margin-bottom:0">
+      <label>Album</label>
+      <select id="feed-album" onchange="renderFeed()">
+        <option value="all">All albums</option>
+      </select>
+    </div>
+  </div>
+  <div class="filters">
+    <div class="field" style="margin-bottom:0">
       <label>Show</label>
       <select id="feed-filter" onchange="renderFeed()">
         <option value="all">All entries</option>
         <option value="starred">Starred only</option>
-        <option value="photos">With photos only</option>
+        <option value="photos">With photos</option>
       </select>
+    </div>
+    <div class="field" style="margin-bottom:0">
+      <label>Date from</label>
+      <input type="date" id="feed-date-from" onchange="renderFeed()">
     </div>
   </div>
   <div id="feed"></div>
+</div>
+
+<!-- ALBUMS TAB -->
+<div class="tab-content" id="tab-albums">
+  <div id="album-list"></div>
+  <button class="btn-primary" style="margin-top:8px" onclick="openAlbumModal()">+ New Album</button>
 </div>
 
 <!-- SYNC TAB -->
@@ -152,22 +196,31 @@ button,input,textarea,select{font:inherit}
     <div class="stat-card"><div class="stat-label">Photos</div><div class="stat-val" id="st-photos2">0</div></div>
     <div class="stat-card"><div class="stat-label">Starred</div><div class="stat-val" id="st-starred2">0</div></div>
   </div>
-  <button class="sync-btn" onclick="syncToWidget()">&#9729; Save journal.json to iCloud</button>
-  <div class="card" style="margin-top:12px">
-    <div class="helper">
-      <strong style="color:var(--text)">How to sync to widget:</strong><br>
-      1. Tap "Save journal.json to iCloud"<br>
-      2. In the share sheet, tap <strong style="color:var(--text)">Save to Files</strong><br>
-      3. Navigate to <strong style="color:var(--text)">iCloud Drive &rarr; Scriptable</strong><br>
-      4. Tap Save &mdash; widget updates on next refresh<br><br>
-      Sends up to <strong style="color:var(--text)">20 photos</strong> (starred first, then newest).
+  <div class="card">
+    <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Widget album</div>
+    <div class="field" style="margin-bottom:0">
+      <label>Select album to sync</label>
+      <select id="sync-album-select">
+        <option value="">All entries (starred first)</option>
+      </select>
     </div>
   </div>
-  <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn-secondary" style="flex:1;min-width:140px" onclick="exportJournal()">Export backup</button>
-    <label class="btn-secondary" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+  <button class="btn-primary" style="margin-top:4px" onclick="syncToWidget()">&#9729; Save journal.json to iCloud</button>
+  <div class="card" style="margin-top:12px">
+    <div class="helper">
+      <b style="color:var(--text)">How to sync:</b><br>
+      1. Choose an album above<br>
+      2. Tap Save journal.json to iCloud<br>
+      3. Share sheet &rarr; Save to Files &rarr; iCloud Drive &rarr; Scriptable<br>
+      4. Widget updates on next refresh<br><br>
+      Thumbnails are sent to the widget. Your full originals are in your Camera Roll.
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+    <button class="btn-secondary" style="flex:1" onclick="exportBackup()">Export backup</button>
+    <label class="btn-secondary" style="flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer">
       Import backup
-      <input type="file" accept="application/json" style="display:none" onchange="importJournal(event)">
+      <input type="file" accept="application/json" style="display:none" onchange="importBackup(event)">
     </label>
   </div>
   <button class="btn-danger" onclick="confirmClear()">Delete all entries</button>
@@ -186,23 +239,45 @@ button,input,textarea,select{font:inherit}
       <input type="text" id="sum-title" placeholder="e.g. Japan Spring 2026">
     </div>
     <div class="field" style="margin-bottom:8px">
-      <label>Extra context for the AI (optional)</label>
-      <textarea id="sum-context" rows="2" placeholder="e.g. first time in Japan, travelled with girlfriend, baseball game at Jingu..."></textarea>
+      <label>Extra context (optional)</label>
+      <textarea id="sum-context" rows="2" placeholder="e.g. first time in Japan, travelled with girlfriend, baseball game..."></textarea>
     </div>
-    <div class="filters">
+    <div class="filters" style="margin-bottom:10px">
       <div class="field" style="margin-bottom:0">
-        <label>Start date (optional)</label>
+        <label>Start date</label>
         <input type="date" id="sum-start">
       </div>
       <div class="field" style="margin-bottom:0">
-        <label>End date (optional)</label>
+        <label>End date</label>
         <input type="date" id="sum-end">
       </div>
     </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500">Albums to include</div>
+    <div id="sum-album-checkboxes"></div>
   </div>
   <button class="btn-primary" id="gen-btn" onclick="generateSummary()">Generate Trip Summary</button>
-  <div id="gen-status" class="status"></div>
-  <div id="gen-error" class="error"></div>
+  <div id="gen-status" class="status-msg"></div>
+  <div id="gen-error" class="error-msg"></div>
+</div>
+
+<!-- ALBUM MODAL -->
+<div class="modal-bg" id="album-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="album-modal-title">New Album</span>
+      <button class="modal-close" onclick="closeAlbumModal()">&#215;</button>
+    </div>
+    <div class="field">
+      <label>Album name</label>
+      <input type="text" id="album-name-input" placeholder="e.g. Kansai, Tokyo, Day trips">
+    </div>
+    <div class="field">
+      <label>Description (optional)</label>
+      <input type="text" id="album-desc-input" placeholder="e.g. Apr 28 - May 3">
+    </div>
+    <button class="btn-primary" onclick="saveAlbum()">Save Album</button>
+    <button class="btn-secondary" onclick="closeAlbumModal()" style="margin-top:8px">Cancel</button>
+  </div>
 </div>
 
 <!-- EDIT MODAL -->
@@ -216,16 +291,20 @@ button,input,textarea,select{font:inherit}
       <img id="edit-preview-img" alt="Edit preview">
     </div>
     <div class="toolbar">
-      <label for="edit-photo-camera" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;margin-top:0">
+      <label for="edit-photo-camera" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;margin-top:0;border-radius:12px;cursor:pointer">
         &#128247; Retake
         <input type="file" id="edit-photo-camera" accept="image/*" capture="environment" style="display:none" onchange="handleEditPhoto(event)">
       </label>
-      <label for="edit-photo-library" class="btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center">
+      <label for="edit-photo-library" class="btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;cursor:pointer">
         &#128444; Change
         <input type="file" id="edit-photo-library" accept="image/*" style="display:none" onchange="handleEditPhoto(event)">
       </label>
     </div>
     <div class="field"><label>Caption</label><textarea id="edit-caption" rows="2"></textarea></div>
+    <div class="field">
+      <label>Album</label>
+      <select id="edit-album"><option value="">No album</option></select>
+    </div>
     <div class="field">
       <label>Location</label>
       <div class="loc-row">
@@ -243,461 +322,728 @@ button,input,textarea,select{font:inherit}
 
 <script>
 var STORAGE_KEY = 'jpJournal_v3';
+var ALBUMS_KEY  = 'jpJournal_albums';
+
+// ---- Storage: entries use localStorage, thumbnails only (~100KB each) ----
+// Full-res originals go to Camera Roll via Save to Photos button
 var entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-var pendingPhoto = null;
-var editingId = null;
+var albums  = JSON.parse(localStorage.getItem(ALBUMS_KEY) || 'null');
+
+var DEFAULT_ALBUMS = [
+  {id:'album-kansai', name:'Kansai', desc:'Apr 28 - May 3'},
+  {id:'album-tokyo',  name:'Tokyo',  desc:'May 3 - May 8'}
+];
+
+if (!albums) {
+  albums = DEFAULT_ALBUMS.slice();
+  localStorage.setItem(ALBUMS_KEY, JSON.stringify(albums));
+}
+
+function saveEntries() { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+function saveAlbums()  { localStorage.setItem(ALBUMS_KEY,  JSON.stringify(albums)); }
+
+// ---- State ----
+var pendingPhotoThumb = null;  // small thumbnail for storage
+var pendingPhotoFull  = null;  // full-res data URL for "Save to Photos"
+var editingId    = null;
 var editingPhoto = null;
+var editingAlbumId = null;
 var dtIsLive = true;
-var dtTimer = null;
+var dtTimer  = null;
 
-function pad(n){ return n < 10 ? '0' + n : '' + n; }
-
+// ---- Date/Time ----
+function pad(n){ return n<10?'0'+n:''+n; }
 function nowISO(){
-  var d = new Date();
-  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) +
-         'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  var d=new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
 }
-
 function fmtClock(d){
-  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate() +
-         ' - ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[d.getDay()]+' '+months[d.getMonth()]+' '+d.getDate()+' - '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
 }
-
 function tickClock(){
-  var el = document.getElementById('dt-live-display');
-  var inp = document.getElementById('f-datetime');
-  if(!el || !dtIsLive) return;
-  var now = new Date();
-  el.textContent = fmtClock(now);
-  if(inp) inp.value = nowISO();
+  var el=document.getElementById('dt-live-display');
+  var inp=document.getElementById('f-datetime');
+  if(!el||!dtIsLive) return;
+  el.textContent=fmtClock(new Date());
+  if(inp) inp.value=nowISO();
 }
-
 function useLiveTime(){
-  dtIsLive = true;
-  var lb = document.getElementById('dt-live-btn');
-  var mb = document.getElementById('dt-manual-btn');
-  var ld = document.getElementById('dt-live-display');
-  var inp = document.getElementById('f-datetime');
-  if(lb){ lb.style.background = 'var(--green)'; lb.style.color = '#0a1a0f'; }
-  if(mb){ mb.style.background = 'transparent'; mb.style.color = 'var(--muted)'; mb.style.border = '0.5px solid var(--border)'; }
-  if(ld) ld.style.display = 'block';
-  if(inp) inp.style.display = 'none';
+  dtIsLive=true;
+  var lb=document.getElementById('dt-live-btn');
+  var mb=document.getElementById('dt-manual-btn');
+  var ld=document.getElementById('dt-live-display');
+  var inp=document.getElementById('f-datetime');
+  if(lb){lb.style.background='var(--green)';lb.style.color='#0a1a0f';}
+  if(mb){mb.style.background='transparent';mb.style.color='var(--muted)';}
+  if(ld) ld.style.display='block';
+  if(inp) inp.style.display='none';
   tickClock();
 }
-
 function useManualTime(){
-  dtIsLive = false;
-  var lb = document.getElementById('dt-live-btn');
-  var mb = document.getElementById('dt-manual-btn');
-  var ld = document.getElementById('dt-live-display');
-  var inp = document.getElementById('f-datetime');
-  if(lb){ lb.style.background = 'transparent'; lb.style.color = 'var(--muted)'; lb.style.border = '0.5px solid var(--border)'; }
-  if(mb){ mb.style.background = 'var(--accent)'; mb.style.color = '#1a1600'; mb.style.border = 'none'; }
-  if(ld) ld.style.display = 'none';
-  if(inp){
-    inp.style.display = 'block';
-    if(!inp.value) inp.value = nowISO();
-  }
+  dtIsLive=false;
+  var lb=document.getElementById('dt-live-btn');
+  var mb=document.getElementById('dt-manual-btn');
+  var ld=document.getElementById('dt-live-display');
+  var inp=document.getElementById('f-datetime');
+  if(lb){lb.style.background='transparent';lb.style.color='var(--muted)';}
+  if(mb){mb.style.background='var(--accent)';mb.style.color='#1a1600';}
+  if(ld) ld.style.display='none';
+  if(inp){inp.style.display='block';if(!inp.value)inp.value=nowISO();}
 }
 
-function compressImage(img, maxDim, quality){
+// ---- Image processing ----
+function makeThumb(img, callback) {
+  // Small thumbnail ~800px for local storage display
   var canvas = document.createElement('canvas');
-  var ratio = Math.min(maxDim / Math.max(img.width, img.height), 1);
-  canvas.width = Math.round(img.width * ratio);
-  canvas.height = Math.round(img.height * ratio);
-  var ctx = canvas.getContext('2d');
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL('image/jpeg', quality);
+  var ratio  = Math.min(800/Math.max(img.width,img.height), 1);
+  canvas.width  = Math.round(img.width*ratio);
+  canvas.height = Math.round(img.height*ratio);
+  canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+  callback(canvas.toDataURL('image/jpeg',0.82));
 }
 
-function loadPickedImage(file, callback){
-  if(!file) return;
+function makeWidgetThumb(img, callback) {
+  // Tiny widget thumbnail ~400px
+  var canvas = document.createElement('canvas');
+  var ratio  = Math.min(400/Math.max(img.width,img.height), 1);
+  canvas.width  = Math.round(img.width*ratio);
+  canvas.height = Math.round(img.height*ratio);
+  canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+  callback(canvas.toDataURL('image/jpeg',0.6));
+}
+
+function handlePhoto(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
   var reader = new FileReader();
-  reader.onload = function(e){
+  reader.onload = function(e) {
     var img = new Image();
-    img.onload = function(){ callback(compressImage(img, 1600, 0.9)); };
+    img.onload = function() {
+      // Keep full res data URL for "Save to Photos"
+      pendingPhotoFull = e.target.result;
+      // Make small thumbnail for storage
+      makeThumb(img, function(thumb) {
+        pendingPhotoThumb = thumb;
+        var prev   = document.getElementById('photo-preview');
+        var prevImg = document.getElementById('photo-preview-img');
+        var bar    = document.getElementById('save-photos-bar');
+        if(prev)    prev.style.display = 'block';
+        if(prevImg) prevImg.src = thumb;
+        if(bar)     bar.style.display = 'flex';
+      });
+    };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
+  ev.target.value='';
 }
 
-function handlePhoto(ev){
-  loadPickedImage(ev.target.files[0], function(dataUrl){
-    pendingPhoto = dataUrl;
-    var prev = document.getElementById('photo-preview');
-    var prevImg = document.getElementById('photo-preview-img');
-    if(prev) prev.style.display = 'block';
-    if(prevImg) prevImg.src = dataUrl;
-  });
-  ev.target.value = '';
+function saveToPhotos() {
+  if (!pendingPhotoFull) return;
+  // Trigger native share sheet with the full-res image
+  // On iOS Safari, sharing an image file gives "Save Image" as an option
+  var arr = pendingPhotoFull.split(',');
+  var mime = arr[0].match(/:(.*?);/)[1];
+  var bstr = atob(arr[1]);
+  var n = bstr.length;
+  var u8 = new Uint8Array(n);
+  while(n--) u8[n] = bstr.charCodeAt(n);
+  var blob = new Blob([u8], {type:mime});
+  var file = new File([blob], 'journal-photo.jpg', {type:'image/jpeg'});
+  if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+    navigator.share({files:[file], title:'Save photo'})
+      .then(function(){ showToast('Saved to Photos'); })
+      .catch(function(){});
+  } else {
+    // Fallback: open full-res in new tab so user can long-press to save
+    var url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    showToast('Long-press the photo to save it');
+  }
 }
 
-function handleEditPhoto(ev){
-  loadPickedImage(ev.target.files[0], function(dataUrl){
-    editingPhoto = dataUrl;
-    var prev = document.getElementById('edit-preview');
-    var prevImg = document.getElementById('edit-preview-img');
-    if(prev) prev.style.display = 'block';
-    if(prevImg) prevImg.src = dataUrl;
-  });
-  ev.target.value = '';
+function handleEditPhoto(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      makeThumb(img, function(thumb) {
+        editingPhoto = thumb;
+        var prev   = document.getElementById('edit-preview');
+        var prevImg = document.getElementById('edit-preview-img');
+        if(prev)    prev.style.display='block';
+        if(prevImg) prevImg.src=thumb;
+      });
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  ev.target.value='';
 }
 
-function reverseGeocode(lat, lng, callback){
-  fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json')
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      var a = (data && data.address) || {};
-      var place = a.tourism || a.amenity || a.suburb || a.neighbourhood || a.city_district || '';
-      var city = a.city || a.town || a.village || '';
-      var loc = (place && city && place !== city) ? place + ', ' + city : place || city || 'Japan';
-      callback(loc);
-    })
-    .catch(function(){ callback(lat.toFixed(4) + ', ' + lng.toFixed(4)); });
+// ---- Location ----
+function reverseGeocode(lat,lng,callback){
+  fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var a=(d&&d.address)||{};
+      var place=a.tourism||a.amenity||a.suburb||a.neighbourhood||a.city_district||'';
+      var city=a.city||a.town||a.village||'';
+      callback((place&&city&&place!==city)?place+', '+city:place||city||'Japan');
+    }).catch(function(){callback(lat.toFixed(4)+', '+lng.toFixed(4));});
 }
-
 function getLocation(){
-  var btn = document.getElementById('loc-btn');
-  if(btn) btn.textContent = 'Getting...';
+  var btn=document.getElementById('loc-btn');
+  if(btn) btn.textContent='Getting...';
   navigator.geolocation.getCurrentPosition(function(pos){
-    reverseGeocode(pos.coords.latitude, pos.coords.longitude, function(loc){
-      var el = document.getElementById('f-location');
-      if(el) el.value = loc;
-      if(btn){ btn.textContent = 'Got it'; btn.className = 'loc-btn got'; }
+    reverseGeocode(pos.coords.latitude,pos.coords.longitude,function(loc){
+      var el=document.getElementById('f-location');
+      if(el) el.value=loc;
+      if(btn){btn.textContent='Got it';btn.className='loc-btn got';}
       showToast('Location found');
     });
-  }, function(){
-    if(btn){ btn.textContent = '&#128205; GPS'; btn.className = 'loc-btn'; }
+  },function(){
+    if(btn){btn.textContent='GPS';btn.className='loc-btn';}
     showToast('Could not get location');
-  }, {enableHighAccuracy:true, timeout:10000});
+  },{enableHighAccuracy:true,timeout:10000});
 }
-
 function getLocationForEdit(){
   navigator.geolocation.getCurrentPosition(function(pos){
-    reverseGeocode(pos.coords.latitude, pos.coords.longitude, function(loc){
-      var el = document.getElementById('edit-location');
-      if(el) el.value = loc;
+    reverseGeocode(pos.coords.latitude,pos.coords.longitude,function(loc){
+      var el=document.getElementById('edit-location');
+      if(el) el.value=loc;
       showToast('Location updated');
     });
-  }, function(){ showToast('Could not get location'); }, {enableHighAccuracy:true, timeout:10000});
+  },function(){showToast('Could not get location');},{enableHighAccuracy:true,timeout:10000});
 }
 
+// ---- Add entry ----
 function addEntry(){
-  var caption = document.getElementById('f-caption').value.trim();
+  var caption  = document.getElementById('f-caption').value.trim();
+  var albumId  = document.getElementById('f-album').value||null;
   var location = document.getElementById('f-location').value.trim();
   var datetime = document.getElementById('f-datetime').value;
-  if(!caption){ showToast('Please add a caption'); return; }
-  if(!datetime){ showToast('Please set a date and time'); return; }
-  entries.unshift({ id:Date.now(), caption:caption, location:location, datetime:datetime, photo:pendingPhoto, starred:false });
-  save();
-  document.getElementById('f-caption').value = '';
-  document.getElementById('f-location').value = '';
-  var pp = document.getElementById('photo-preview');
-  var ppi = document.getElementById('photo-preview-img');
-  if(pp) pp.style.display = 'none';
-  if(ppi) ppi.src = '';
-  pendingPhoto = null;
-  var lb = document.getElementById('loc-btn');
-  if(lb){ lb.textContent = '&#128205; GPS'; lb.className = 'loc-btn'; }
+  if(!caption){showToast('Please add a caption');return;}
+  if(!datetime){showToast('Please set a date and time');return;}
+  entries.unshift({
+    id:Date.now(), caption:caption, albumId:albumId,
+    location:location, datetime:datetime,
+    photo:pendingPhotoThumb, starred:false
+  });
+  saveEntries();
+  document.getElementById('f-caption').value='';
+  document.getElementById('f-location').value='';
+  document.getElementById('f-album').value='';
+  var pp=document.getElementById('photo-preview');
+  var ppi=document.getElementById('photo-preview-img');
+  var bar=document.getElementById('save-photos-bar');
+  if(pp)  pp.style.display='none';
+  if(ppi) ppi.src='';
+  if(bar) bar.style.display='none';
+  pendingPhotoThumb=null; pendingPhotoFull=null;
+  var lb=document.getElementById('loc-btn');
+  if(lb){lb.textContent='GPS';lb.className='loc-btn';}
   useLiveTime();
-  renderFeed();
+  renderAll();
   showToast('Entry added');
 }
 
+// ---- Edit ----
 function openEdit(id){
-  var e = entries.find(function(x){ return x.id === id; });
+  var e=entries.find(function(x){return x.id===id;});
   if(!e) return;
-  editingId = id; editingPhoto = null;
-  document.getElementById('edit-caption').value = e.caption || '';
-  document.getElementById('edit-location').value = e.location || '';
-  document.getElementById('edit-datetime').value = e.datetime || '';
-  var prev = document.getElementById('edit-preview');
-  var prevImg = document.getElementById('edit-preview-img');
-  if(e.photo){ if(prev) prev.style.display='block'; if(prevImg) prevImg.src=e.photo; }
-  else { if(prev) prev.style.display='none'; }
-  document.getElementById('edit-modal').style.display = 'block';
-  document.body.style.overflow = 'hidden';
+  editingId=id; editingPhoto=null;
+  document.getElementById('edit-caption').value=e.caption||'';
+  document.getElementById('edit-location').value=e.location||'';
+  document.getElementById('edit-datetime').value=e.datetime||'';
+  populateAlbumSelect('edit-album', e.albumId);
+  var prev=document.getElementById('edit-preview');
+  var prevImg=document.getElementById('edit-preview-img');
+  if(e.photo){if(prev)prev.style.display='block';if(prevImg)prevImg.src=e.photo;}
+  else{if(prev)prev.style.display='none';}
+  document.getElementById('edit-modal').style.display='block';
+  document.body.style.overflow='hidden';
 }
-
 function closeEdit(){
-  document.getElementById('edit-modal').style.display = 'none';
-  document.body.style.overflow = '';
-  editingId = null; editingPhoto = null;
+  document.getElementById('edit-modal').style.display='none';
+  document.body.style.overflow='';
+  editingId=null; editingPhoto=null;
 }
-
 function saveEdit(){
-  var e = entries.find(function(x){ return x.id === editingId; });
+  var e=entries.find(function(x){return x.id===editingId;});
   if(!e) return;
-  e.caption = document.getElementById('edit-caption').value.trim();
+  e.caption  = document.getElementById('edit-caption').value.trim();
   e.location = document.getElementById('edit-location').value.trim();
   e.datetime = document.getElementById('edit-datetime').value;
-  if(editingPhoto) e.photo = editingPhoto;
-  save(); renderFeed(); closeEdit(); showToast('Entry updated');
+  e.albumId  = document.getElementById('edit-album').value||null;
+  if(editingPhoto) e.photo=editingPhoto;
+  saveEntries(); renderAll(); closeEdit(); showToast('Entry updated');
 }
-
 function deleteEntry(id){
-  entries = entries.filter(function(e){ return e.id !== id; });
-  save(); renderFeed(); showToast('Deleted');
+  if(!confirm('Delete this entry?')) return;
+  entries=entries.filter(function(e){return e.id!==id;});
+  saveEntries(); renderAll(); showToast('Deleted');
 }
-
 function toggleStar(id){
-  var e = entries.find(function(x){ return x.id === id; });
-  if(e){ e.starred = !e.starred; save(); renderFeed(); }
+  var e=entries.find(function(x){return x.id===id;});
+  if(e){e.starred=!e.starred;saveEntries();renderAll();}
 }
 
-function save(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  updateStats();
+// ---- Albums ----
+function openAlbumModal(id){
+  editingAlbumId=id||null;
+  var titleEl=document.getElementById('album-modal-title');
+  var nameInp=document.getElementById('album-name-input');
+  var descInp=document.getElementById('album-desc-input');
+  if(id){
+    var al=albums.find(function(a){return a.id===id;});
+    if(!al) return;
+    titleEl.textContent='Edit Album';
+    nameInp.value=al.name; descInp.value=al.desc||'';
+  } else {
+    titleEl.textContent='New Album';
+    nameInp.value=''; descInp.value='';
+  }
+  document.getElementById('album-modal').style.display='block';
+  document.body.style.overflow='hidden';
+}
+function closeAlbumModal(){
+  document.getElementById('album-modal').style.display='none';
+  document.body.style.overflow='';
+  editingAlbumId=null;
+}
+function saveAlbum(){
+  var name=document.getElementById('album-name-input').value.trim();
+  var desc=document.getElementById('album-desc-input').value.trim();
+  if(!name){showToast('Please enter a name');return;}
+  if(editingAlbumId){
+    var al=albums.find(function(a){return a.id===editingAlbumId;});
+    if(al){al.name=name;al.desc=desc;}
+  } else {
+    albums.push({id:'album-'+Date.now(),name:name,desc:desc});
+  }
+  saveAlbums(); closeAlbumModal(); renderAll();
+  showToast(editingAlbumId?'Album updated':'Album created');
+}
+function deleteAlbum(id){
+  if(!confirm('Delete album? Entries will not be deleted, just unassigned.')) return;
+  albums=albums.filter(function(a){return a.id!==id;});
+  entries.forEach(function(e){if(e.albumId===id)e.albumId=null;});
+  saveAlbums(); saveEntries(); renderAll(); showToast('Album deleted');
 }
 
+// ---- Populate selects ----
+function populateAlbumSelect(selectId, selectedValue){
+  var sel=document.getElementById(selectId);
+  if(!sel) return;
+  sel.innerHTML='<option value="">No album</option>';
+  albums.forEach(function(al){
+    var opt=document.createElement('option');
+    opt.value=al.id;
+    opt.textContent=al.name+(al.desc?' ('+al.desc+')':'');
+    if(al.id===selectedValue) opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
+function populateAlbumFilter(selectId){
+  var sel=document.getElementById(selectId);
+  if(!sel) return;
+  var cur=sel.value;
+  sel.innerHTML='<option value="all">All albums</option>';
+  albums.forEach(function(al){
+    var opt=document.createElement('option');
+    opt.value=al.id; opt.textContent=al.name;
+    sel.appendChild(opt);
+  });
+  if(cur) sel.value=cur;
+}
+function populateSyncSelect(){
+  var sel=document.getElementById('sync-album-select');
+  if(!sel) return;
+  var cur=sel.value;
+  sel.innerHTML='<option value="">All entries (starred first)</option>';
+  albums.forEach(function(al){
+    var opt=document.createElement('option');
+    opt.value=al.id;
+    opt.textContent=al.name+(al.desc?' ('+al.desc+')':'');
+    sel.appendChild(opt);
+  });
+  if(cur) sel.value=cur;
+}
+
+// ---- Summary album checkboxes ----
+function renderSumAlbumCheckboxes(){
+  var container=document.getElementById('sum-album-checkboxes');
+  if(!container) return;
+  var rows=albums.map(function(al){
+    return '<div class="cb-row" onclick="toggleSumCb(\''+al.id+'\')">'+
+      '<div class="cb-box checked" id="sum-cb-'+al.id+'">&#10003;</div>'+
+      '<span class="cb-label">'+escapeHtml(al.name)+(al.desc?' <span style="color:var(--muted);font-size:11px">('+escapeHtml(al.desc)+')</span>':'')+'</span>'+
+    '</div>';
+  });
+  rows.push(
+    '<div class="cb-row" onclick="toggleSumCb(\'__none__\')">'+
+      '<div class="cb-box checked" id="sum-cb-__none__">&#10003;</div>'+
+      '<span class="cb-label">Unassigned entries</span>'+
+    '</div>'
+  );
+  container.innerHTML=rows.join('');
+}
+function toggleSumCb(id){
+  var box=document.getElementById('sum-cb-'+id);
+  if(!box) return;
+  if(box.classList.contains('checked')){box.classList.remove('checked');box.innerHTML='';}
+  else{box.classList.add('checked');box.innerHTML='&#10003;';}
+}
+function getSelectedSumAlbums(){
+  var sel=[];
+  albums.forEach(function(al){
+    var b=document.getElementById('sum-cb-'+al.id);
+    if(b&&b.classList.contains('checked')) sel.push(al.id);
+  });
+  var nb=document.getElementById('sum-cb-__none__');
+  if(nb&&nb.classList.contains('checked')) sel.push(null);
+  return sel;
+}
+
+// ---- Filtering ----
 function getFilteredEntries(){
-  var search = ((document.getElementById('feed-search') || {}).value || '').trim().toLowerCase();
-  var filter = (document.getElementById('feed-filter') || {}).value || 'all';
+  var search=((document.getElementById('feed-search')||{}).value||'').trim().toLowerCase();
+  var filter=(document.getElementById('feed-filter')||{}).value||'all';
+  var albumF=(document.getElementById('feed-album')||{}).value||'all';
+  var dateFrom=(document.getElementById('feed-date-from')||{}).value||'';
   return entries.filter(function(e){
-    var matchesFilter = filter === 'all' || (filter === 'starred' && e.starred) || (filter === 'photos' && !!e.photo);
-    var haystack = (e.caption + ' ' + (e.location || '')).toLowerCase();
-    return matchesFilter && (!search || haystack.indexOf(search) !== -1);
+    if(filter==='starred'&&!e.starred) return false;
+    if(filter==='photos'&&!e.photo) return false;
+    if(albumF!=='all'&&e.albumId!==albumF) return false;
+    if(dateFrom&&e.datetime&&e.datetime.slice(0,10)<dateFrom) return false;
+    if(search){
+      if((e.caption+' '+(e.location||'')).toLowerCase().indexOf(search)===-1) return false;
+    }
+    return true;
   });
 }
 
+// ---- Stats ----
 function updateStats(){
-  var total = entries.length;
-  var withPhoto = entries.filter(function(e){ return !!e.photo; }).length;
-  var starred = entries.filter(function(e){ return !!e.starred; }).length;
-  var days = new Set(entries.map(function(e){ return e.datetime ? e.datetime.slice(0,10) : ''; }).filter(Boolean)).size;
-  function setText(id, val){ var el=document.getElementById(id); if(el) el.textContent=val; }
-  setText('st-total', total); setText('st-total2', total); setText('st-total3', total);
-  setText('st-photos', withPhoto); setText('st-photos2', withPhoto); setText('st-photos3', withPhoto);
-  setText('st-starred', starred); setText('st-starred2', starred);
-  setText('st-days3', days);
+  var total=entries.length;
+  var withPhoto=entries.filter(function(e){return !!e.photo;}).length;
+  var starred=entries.filter(function(e){return !!e.starred;}).length;
+  var days=new Set(entries.map(function(e){return e.datetime?e.datetime.slice(0,10):'';}).filter(Boolean)).size;
+  function s(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+  s('st-total',total);s('st-total2',total);s('st-total3',total);
+  s('st-photos',withPhoto);s('st-photos2',withPhoto);s('st-photos3',withPhoto);
+  s('st-starred',starred);s('st-starred2',starred);
+  s('st-days3',days);
 }
 
+// ---- Render ----
 function renderFeed(){
   updateStats();
-  var feed = document.getElementById('feed');
+  var feed=document.getElementById('feed');
   if(!feed) return;
-  var shown = getFilteredEntries();
+  var shown=getFilteredEntries();
   if(!shown.length){
-    feed.innerHTML = '<div class="empty"><div class="empty-icon">&#128211;</div><div>No matching entries yet.</div></div>';
+    feed.innerHTML='<div class="empty"><div class="empty-icon">&#128211;</div><div>No matching entries yet.</div></div>';
     return;
   }
-  feed.innerHTML = shown.map(function(e){
-    var dt = new Date(e.datetime);
-    var ds = dt.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
-    var ts = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    var photoHtml = e.photo
-      ? '<img class="entry-photo" src="' + e.photo + '" loading="lazy" alt="Journal photo">'
-      : '<div class="entry-photo-placeholder">&#127757;</div>';
-    var locHtml = e.location
-      ? '<span class="entry-loc"><span class="entry-loc-dot"></span>' + escapeHtml(e.location) + '</span>' : '';
-    return '<div class="entry-card">' + photoHtml +
-      '<div class="entry-body">' +
-        '<div class="entry-caption">' + escapeHtml(e.caption) + '</div>' +
-        '<div class="entry-meta">' +
-          '<span class="entry-date">' + ds + ' &middot; ' + ts + '</span>' +
-          locHtml +
-          '<span class="entry-starred" onclick="toggleStar(' + e.id + ')">' + (e.starred ? '&#11088;' : '&#9734;') + '</span>' +
-        '</div>' +
-        '<div class="entry-actions">' +
-          '<button class="small-btn" onclick="openEdit(' + e.id + ')">Edit</button>' +
-          '<button class="small-btn delete" onclick="deleteEntry(' + e.id + ')">Delete</button>' +
-        '</div>' +
+  feed.innerHTML=shown.map(function(e){
+    var dt=new Date(e.datetime);
+    var ds=dt.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'});
+    var ts=dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    var photoHtml=e.photo
+      ?'<img class="entry-photo" src="'+e.photo+'" loading="lazy" alt="Journal photo">'
+      :'<div class="entry-photo-placeholder">&#127757;</div>';
+    var locHtml=e.location?'<span class="entry-loc"><span class="entry-loc-dot"></span>'+escapeHtml(e.location)+'</span>':'';
+    var al=e.albumId?albums.find(function(a){return a.id===e.albumId;}):null;
+    var albumHtml=al?'<span class="album-tag">'+escapeHtml(al.name)+'</span>':'';
+    return '<div class="entry-card">'+photoHtml+
+      '<div class="entry-body">'+
+        '<div class="entry-caption">'+escapeHtml(e.caption)+'</div>'+
+        '<div class="entry-meta">'+
+          '<span class="entry-date">'+ds+' &middot; '+ts+'</span>'+
+          locHtml+albumHtml+
+          '<span class="entry-starred" onclick="toggleStar('+e.id+')">'+(e.starred?'&#11088;':'&#9734;')+'</span>'+
+        '</div>'+
+        '<div class="entry-actions">'+
+          '<button class="small-btn" onclick="openEdit('+e.id+')">Edit</button>'+
+          '<button class="small-btn delete" onclick="deleteEntry('+e.id+')">Delete</button>'+
+        '</div>'+
       '</div></div>';
   }).join('');
 }
 
-function syncToWidget(){
-  if(!entries.length){ showToast('No entries to sync'); return; }
-  var withPhotos = entries.filter(function(e){ return e.photo; });
-  var pool = withPhotos.filter(function(e){ return e.starred; })
-    .concat(withPhotos.filter(function(e){ return !e.starred; })).slice(0, 20);
-  var snapshot = {
-    lastUpdated: new Date().toISOString(),
-    count: entries.length,
-    photos: pool.map(function(e){
-      return { id:e.id, caption:e.caption, location:e.location||'', datetime:e.datetime, photo:e.photo, starred:e.starred };
-    })
-  };
-  var json = JSON.stringify(snapshot);
-  var blob = new Blob([json], {type:'application/json'});
-  var file = new File([blob], 'journal.json', {type:'application/json'});
-  if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-    navigator.share({files:[file], title:'journal.json'})
-      .then(function(){ showToast('Saved! Choose iCloud Drive / Scriptable'); })
-      .catch(function(err){ if(err.name !== 'AbortError') dlFile(json, 'journal.json'); });
-  } else {
-    dlFile(json, 'journal.json');
+function renderAlbums(){
+  var list=document.getElementById('album-list');
+  if(!list) return;
+  if(!albums.length){
+    list.innerHTML='<div class="empty">No albums yet.</div>';
+    return;
   }
-}
-
-function exportJournal(){
-  var payload = { version:3, exportedAt:new Date().toISOString(), entries:entries };
-  dlFile(JSON.stringify(payload), 'japan-journal-backup.json');
-  showToast('Backup exported');
-}
-
-function dlFile(content, filename){
-  var a = document.createElement('a');
-  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(content);
-  a.download = filename;
-  a.click();
-}
-
-function importJournal(ev){
-  var file = ev.target.files[0];
-  if(!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e){
-    try {
-      var data = JSON.parse(e.target.result);
-      var incoming = Array.isArray(data) ? data : data.entries;
-      if(!Array.isArray(incoming)) throw new Error('Invalid backup');
-      entries = incoming;
-      save(); renderFeed(); showToast('Backup imported');
-    } catch(err){ showToast('Import failed'); }
-  };
-  reader.readAsText(file);
-  ev.target.value = '';
-}
-
-function confirmClear(){
-  if(confirm('Delete all journal entries? This cannot be undone.')){
-    entries = []; save(); renderFeed(); showToast('Cleared');
-  }
-}
-
-function getEntriesForSummary(){
-  var start = document.getElementById('sum-start').value;
-  var end = document.getElementById('sum-end').value;
-  return entries.filter(function(e){
-    var day = (e.datetime || '').slice(0, 10);
-    if(start && day < start) return false;
-    if(end && day > end) return false;
-    return true;
-  }).sort(function(a,b){ return new Date(a.datetime) - new Date(b.datetime); });
-}
-
-function generateSummary(){
-  var picked = getEntriesForSummary();
-  if(!picked.length){ showToast('No entries in that range'); return; }
-  var btn = document.getElementById('gen-btn');
-  var status = document.getElementById('gen-status');
-  var errDiv = document.getElementById('gen-error');
-  if(btn) btn.disabled = true;
-  if(errDiv) errDiv.style.display = 'none';
-  if(status){ status.style.display = 'block'; status.textContent = 'Writing your trip summary...'; }
-  var title = (document.getElementById('sum-title').value.trim()) || 'Japan Trip 2026';
-  var context = document.getElementById('sum-context').value.trim();
-  var entryText = picked.map(function(e, i){
-    var dt = new Date(e.datetime);
-    var ds = dt.toLocaleDateString([], {weekday:'long', month:'long', day:'numeric'});
-    var ts = dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    return (i+1) + '. ' + ds + ' at ' + ts + (e.location ? ' - ' + e.location : '') + '\n   "' + e.caption + '"';
-  }).join('\n\n');
-  var prompt = 'You are writing a warm, personal travel diary for someone reflecting on their trip to Japan. Based on the journal entries below, write a beautiful narrative summary in first person. Use a warm, reflective tone like a diary entry written the day after returning home. Weave together the moments, places, and feelings into flowing paragraphs. Include specific details from the entries. Do not use bullet points. Length: around 400-600 words.' +
-    (context ? ' Extra context: ' + context : '') +
-    ' Trip title: ' + title +
-    '\n\nJournal entries:\n\n' + entryText;
-  fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user', content:prompt}] })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    var text = (data.content || []).filter(function(b){ return b.type==='text'; }).map(function(b){ return b.text; }).join('');
-    if(!text) throw new Error('No text in response');
-    openSummaryPage(title, text, picked);
-    if(btn) btn.disabled = false;
-    if(status) status.style.display = 'none';
-  })
-  .catch(function(e){
-    if(btn) btn.disabled = false;
-    if(status) status.style.display = 'none';
-    if(errDiv){ errDiv.textContent = 'Could not generate: ' + e.message; errDiv.style.display = 'block'; }
-  });
-}
-
-function openSummaryPage(title, narrative, sorted){
-  var photos = sorted.filter(function(e){ return !!e.photo; }).slice(0, 12);
-  var firstDate = sorted.length ? new Date(sorted[0].datetime).toLocaleDateString([], {month:'long', day:'numeric'}) : '';
-  var lastDate = sorted.length > 1 ? new Date(sorted[sorted.length-1].datetime).toLocaleDateString([], {month:'long', day:'numeric', year:'numeric'}) : firstDate;
-  var dateRange = sorted.length > 1 ? firstDate + ' - ' + lastDate : firstDate;
-  var locs = [];
-  sorted.forEach(function(e){ if(e.location && locs.indexOf(e.location) === -1) locs.push(e.location); });
-  var heroStyle = photos[0] ? 'background-image:url(' + photos[0].photo + ');background-size:cover;background-position:center' : '';
-  var photoGrid = photos.map(function(e){
-    var ds = new Date(e.datetime).toLocaleDateString([], {month:'short', day:'numeric'});
-    return '<div style="break-inside:avoid;margin-bottom:20px"><img src="' + e.photo + '" style="width:100%;border-radius:12px;display:block;margin-bottom:8px" alt="Trip photo"><div style="font-size:13px;color:#555;font-style:italic">' + escapeHtml(e.caption) + '</div>' + (e.location ? '<div style="font-size:12px;color:#888;margin-top:3px">' + escapeHtml(e.location) + ' - ' + ds + '</div>' : '') + '</div>';
+  list.innerHTML=albums.map(function(al){
+    var count=entries.filter(function(e){return e.albumId===al.id;}).length;
+    return '<div class="album-card">'+
+      '<div class="album-name">'+escapeHtml(al.name)+'</div>'+
+      '<div class="album-meta">'+(al.desc?escapeHtml(al.desc)+' &middot; ':'')+count+' '+(count===1?'entry':'entries')+'</div>'+
+      '<div class="album-actions">'+
+        '<button class="album-btn" onclick="viewAlbum(\''+al.id+'\')">View entries</button>'+
+        '<button class="album-btn" onclick="openAlbumModal(\''+al.id+'\')">Edit</button>'+
+        '<button class="album-btn danger" onclick="deleteAlbum(\''+al.id+'\')">Delete</button>'+
+      '</div>'+
+    '</div>';
   }).join('');
-  var paras = narrative.split('\n\n').map(function(p){ return p.trim() ? '<p>' + escapeHtml(p.trim()) + '</p>' : ''; }).join('');
-  var html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escapeHtml(title) + '</title>' +
-    '<style>@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap");' +
-    'body{margin:0;background:#faf9f6;color:#2c2c2c;font-family:"Inter",sans-serif;font-size:16px;line-height:1.7}' +
-    '.hero{padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden;' + heroStyle + '}' +
-    '.overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55)}' +
-    '.hc{position:relative;z-index:1;color:#f0ede8}' +
-    '.hc h1{font-family:"Playfair Display",serif;font-size:clamp(32px,6vw,56px);font-weight:700;margin:0 0 12px}' +
-    '.hc .dates{font-size:14px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;margin-bottom:8px}' +
-    '.hc .places{font-size:15px;opacity:0.7;font-style:italic}' +
-    '.content{max-width:680px;margin:0 auto;padding:60px 24px}' +
-    '.narrative{font-family:"Playfair Display",serif;font-size:19px;line-height:1.85;color:#2c2c2c;margin-bottom:60px}' +
-    '.narrative p{margin:0 0 1.4em}' +
-    '.sec{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#999;margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid #e8e4dc}' +
-    '.grid{columns:2;column-gap:16px}@media(max-width:500px){.grid{columns:1}}' +
-    '.stats{display:flex;gap:24px;margin-bottom:50px;flex-wrap:wrap}' +
-    '.stat{text-align:center;flex:1;min-width:80px}' +
-    '.stat-n{font-size:32px;font-weight:700;font-family:"Playfair Display",serif}' +
-    '.stat-l{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px}' +
-    '.footer{text-align:center;padding:40px 24px;font-size:12px;color:#bbb;border-top:1px solid #e8e4dc}' +
-    '</style></head><body>' +
-    '<div class="hero"><div class="overlay"></div><div class="hc"><div class="dates">' + escapeHtml(dateRange) + '</div><h1>' + escapeHtml(title) + '</h1>' + (locs.length ? '<div class="places">' + escapeHtml(locs.slice(0,5).join(' - ')) + '</div>' : '') + '</div></div>' +
-    '<div class="content"><div class="stats">' +
-    '<div class="stat"><div class="stat-n">' + sorted.length + '</div><div class="stat-l">Moments</div></div>' +
-    '<div class="stat"><div class="stat-n">' + photos.length + '</div><div class="stat-l">Photos</div></div>' +
-    '<div class="stat"><div class="stat-n">' + locs.length + '</div><div class="stat-l">Places</div></div>' +
-    '</div><div class="sec">The story</div><div class="narrative">' + paras + '</div>' +
-    (photos.length ? '<div class="sec">Memories</div><div class="grid">' + photoGrid + '</div>' : '') +
-    '</div><div class="footer">Japan Journal</div></body></html>';
-  window.open(URL.createObjectURL(new Blob([html], {type:'text/html'})), '_blank');
 }
 
-function switchTab(id, btn){
-  document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
-  document.querySelectorAll('.tab-btn').forEach(function(el){ el.classList.remove('active'); });
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
+function viewAlbum(id){
+  switchTabById('feed');
+  var sel=document.getElementById('feed-album');
+  if(sel) sel.value=id;
   renderFeed();
 }
 
-var toastTimer;
-function showToast(msg){
-  var t = document.getElementById('toast');
-  if(!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2500);
+function renderAll(){
+  updateStats();
+  populateAlbumSelect('f-album','');
+  populateAlbumFilter('feed-album');
+  populateSyncSelect();
+  renderSumAlbumCheckboxes();
+  renderFeed();
+  renderAlbums();
 }
 
+// ---- Sync / Export ----
+function syncToWidget(){
+  var albumId=(document.getElementById('sync-album-select')||{}).value||'';
+  var pool;
+  if(albumId){
+    pool=entries.filter(function(e){return e.albumId===albumId&&e.photo;});
+  } else {
+    var wp=entries.filter(function(e){return e.photo;});
+    pool=wp.filter(function(e){return e.starred;}).concat(wp.filter(function(e){return !e.starred;}));
+  }
+  pool=pool.slice(0,20);
+  if(!pool.length){showToast('No photos to sync');return;}
+
+  // Photos are already thumbnails -- just re-compress to widget size
+  var result=[];
+  var i=0;
+  function next(){
+    if(i>=pool.length){finish(result);return;}
+    var e=pool[i];
+    if(e.photo){
+      var img=new Image();
+      img.onload=function(){
+        makeWidgetThumb(img,function(t){
+          result.push({id:e.id,caption:e.caption,location:e.location||'',datetime:e.datetime,photo:t,starred:e.starred,albumId:e.albumId});
+          i++;next();
+        });
+      };
+      img.onerror=function(){
+        result.push({id:e.id,caption:e.caption,location:e.location||'',datetime:e.datetime,photo:null,starred:e.starred,albumId:e.albumId});
+        i++;next();
+      };
+      img.src=e.photo;
+    } else {
+      result.push({id:e.id,caption:e.caption,location:e.location||'',datetime:e.datetime,photo:null,starred:e.starred,albumId:e.albumId});
+      i++;next();
+    }
+  }
+  next();
+}
+
+function finish(photos){
+  var albumId=(document.getElementById('sync-album-select')||{}).value||'';
+  var al=albumId?albums.find(function(a){return a.id===albumId;}):null;
+  var snapshot={lastUpdated:new Date().toISOString(),album:al?{id:al.id,name:al.name}:null,count:entries.length,photos:photos};
+  var json=JSON.stringify(snapshot);
+  var blob=new Blob([json],{type:'application/json'});
+  var file=new File([blob],'journal.json',{type:'application/json'});
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+    navigator.share({files:[file],title:'journal.json'})
+      .then(function(){showToast('Saved! Choose iCloud Drive / Scriptable');})
+      .catch(function(err){if(err.name!=='AbortError')dlJson(json);});
+  } else { dlJson(json); }
+}
+
+function dlJson(json){
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(json);
+  a.download='journal.json';a.click();
+  showToast('Move journal.json to iCloud Drive / Scriptable /');
+}
+
+function exportBackup(){
+  var payload={version:4,exportedAt:new Date().toISOString(),albums:albums,entries:entries};
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(payload));
+  a.download='japan-journal-backup.json';a.click();
+  showToast('Backup exported');
+}
+function importBackup(ev){
+  var file=ev.target.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      var ie=Array.isArray(data)?data:(data.entries||[]);
+      var ia=data.albums||[];
+      if(!Array.isArray(ie)) throw new Error('Invalid');
+      if(ia.length) albums=ia;
+      entries=ie;
+      saveEntries();saveAlbums();renderAll();showToast('Backup imported');
+    }catch(err){showToast('Import failed');}
+  };
+  reader.readAsText(file);ev.target.value='';
+}
+function confirmClear(){
+  if(!confirm('Delete all entries? This cannot be undone.')) return;
+  entries=[];saveEntries();renderAll();showToast('Cleared');
+}
+
+// ---- Summary ----
+function getSummaryEntries(){
+  var start=document.getElementById('sum-start').value;
+  var end=document.getElementById('sum-end').value;
+  var selAlbums=getSelectedSumAlbums();
+  return entries.filter(function(e){
+    var day=(e.datetime||'').slice(0,10);
+    if(start&&day<start) return false;
+    if(end&&day>end) return false;
+    if(selAlbums.length>0){
+      var match=selAlbums.indexOf(e.albumId)!==-1||(e.albumId===null&&selAlbums.indexOf(null)!==-1);
+      if(!match) return false;
+    }
+    return true;
+  }).sort(function(a,b){return new Date(a.datetime)-new Date(b.datetime);});
+}
+
+function generateSummary(){
+  var picked=getSummaryEntries();
+  if(!picked.length){showToast('No entries match');return;}
+  var btn=document.getElementById('gen-btn');
+  var status=document.getElementById('gen-status');
+  var errDiv=document.getElementById('gen-error');
+  if(btn) btn.disabled=true;
+  if(errDiv) errDiv.style.display='none';
+  if(status){status.style.display='block';status.textContent='Writing your trip summary...';}
+  var title=(document.getElementById('sum-title').value.trim())||'Japan Trip 2026';
+  var context=document.getElementById('sum-context').value.trim();
+  var entryText=picked.map(function(e,i){
+    var dt=new Date(e.datetime);
+    var ds=dt.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+    var ts=dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    return (i+1)+'. '+ds+' at '+ts+(e.location?' - '+e.location:'')+'\n   "'+e.caption+'"';
+  }).join('\n\n');
+  var prompt='You are writing a warm, personal travel diary for someone reflecting on their trip to Japan. Based on the journal entries below, write a beautiful narrative summary in first person. Use a warm, reflective tone like a diary entry written the day after returning home. Weave together the moments, places, and feelings into flowing paragraphs. Include specific details from the entries. Do not use bullet points. Length: around 400-600 words.'+
+    (context?' Extra context: '+context:'')+' Trip title: '+title+'\n\nJournal entries:\n\n'+entryText;
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    var text=(data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    if(!text) throw new Error('No text in response');
+    openSummaryPage(title,text,picked);
+    if(btn) btn.disabled=false;
+    if(status) status.style.display='none';
+  })
+  .catch(function(e){
+    if(btn) btn.disabled=false;
+    if(status) status.style.display='none';
+    if(errDiv){errDiv.textContent='Could not generate: '+e.message;errDiv.style.display='block';}
+  });
+}
+
+function openSummaryPage(title,narrative,sorted){
+  var photos=sorted.filter(function(e){return !!e.photo;}).slice(0,12);
+  var firstDate=sorted.length?new Date(sorted[0].datetime).toLocaleDateString([],{month:'long',day:'numeric'}):'';
+  var lastDate=sorted.length>1?new Date(sorted[sorted.length-1].datetime).toLocaleDateString([],{month:'long',day:'numeric',year:'numeric'}):firstDate;
+  var dateRange=sorted.length>1?firstDate+' - '+lastDate:firstDate;
+  var locs=[];
+  sorted.forEach(function(e){if(e.location&&locs.indexOf(e.location)===-1)locs.push(e.location);});
+  var heroStyle=photos[0]?'background-image:url('+photos[0].photo+');background-size:cover;background-position:center':'';
+  var photoGrid=photos.map(function(e){
+    var ds=new Date(e.datetime).toLocaleDateString([],{month:'short',day:'numeric'});
+    return '<div style="break-inside:avoid;margin-bottom:20px"><img src="'+e.photo+'" style="width:100%;border-radius:12px;display:block;margin-bottom:8px" alt="Trip photo"><div style="font-size:13px;color:#555;font-style:italic">'+escapeHtml(e.caption)+'</div>'+(e.location?'<div style="font-size:12px;color:#888;margin-top:3px">'+escapeHtml(e.location)+' - '+ds+'</div>':'')+'</div>';
+  }).join('');
+  var paras=narrative.split('\n\n').map(function(p){return p.trim()?'<p>'+escapeHtml(p.trim())+'</p>':'';}).join('');
+  var html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+escapeHtml(title)+'</title>'+
+    '<style>@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap");'+
+    'body{margin:0;background:#faf9f6;color:#2c2c2c;font-family:"Inter",sans-serif;font-size:16px;line-height:1.7}'+
+    '.hero{padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden;'+heroStyle+'}'+
+    '.overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55)}'+
+    '.hc{position:relative;z-index:1;color:#f0ede8}'+
+    '.hc h1{font-family:"Playfair Display",serif;font-size:clamp(32px,6vw,56px);font-weight:700;margin:0 0 12px}'+
+    '.hc .dates{font-size:14px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;margin-bottom:8px}'+
+    '.hc .places{font-size:15px;opacity:0.7;font-style:italic}'+
+    '.content{max-width:680px;margin:0 auto;padding:60px 24px}'+
+    '.narrative{font-family:"Playfair Display",serif;font-size:19px;line-height:1.85;color:#2c2c2c;margin-bottom:60px}'+
+    '.narrative p{margin:0 0 1.4em}'+
+    '.sec{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#999;margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid #e8e4dc}'+
+    '.grid{columns:2;column-gap:16px}@media(max-width:500px){.grid{columns:1}}'+
+    '.stats{display:flex;gap:24px;margin-bottom:50px;flex-wrap:wrap}'+
+    '.stat{text-align:center;flex:1;min-width:80px}'+
+    '.stat-n{font-size:32px;font-weight:700;font-family:"Playfair Display",serif}'+
+    '.stat-l{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px}'+
+    '.footer{text-align:center;padding:40px 24px;font-size:12px;color:#bbb;border-top:1px solid #e8e4dc}'+
+    '</style></head><body>'+
+    '<div class="hero"><div class="overlay"></div><div class="hc"><div class="dates">'+escapeHtml(dateRange)+'</div><h1>'+escapeHtml(title)+'</h1>'+(locs.length?'<div class="places">'+escapeHtml(locs.slice(0,5).join(' - '))+'</div>':'')+'</div></div>'+
+    '<div class="content"><div class="stats">'+
+    '<div class="stat"><div class="stat-n">'+sorted.length+'</div><div class="stat-l">Moments</div></div>'+
+    '<div class="stat"><div class="stat-n">'+photos.length+'</div><div class="stat-l">Photos</div></div>'+
+    '<div class="stat"><div class="stat-n">'+locs.length+'</div><div class="stat-l">Places</div></div>'+
+    '</div><div class="sec">The story</div><div class="narrative">'+paras+'</div>'+
+    (photos.length?'<div class="sec">Memories</div><div class="grid">'+photoGrid+'</div>':'')+'</div>'+
+    '<div class="footer">Japan Journal</div></body></html>';
+  window.open(URL.createObjectURL(new Blob([html],{type:'text/html'})),'_blank');
+}
+
+// ---- UI helpers ----
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  renderAll();
+}
+function switchTabById(id){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(el){
+    el.classList.remove('active');
+    if(el.getAttribute('onclick')&&el.getAttribute('onclick').indexOf("'"+id+"'")!==-1) el.classList.add('active');
+  });
+  document.getElementById('tab-'+id).classList.add('active');
+}
+var toastTimer;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  if(!t) return;
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},2500);
+}
 function escapeHtml(str){
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-document.addEventListener('DOMContentLoaded', function(){
-  if(!('ontouchstart' in window) && !/Mobi|Android/i.test(navigator.userAgent)){
-    var cl = document.getElementById('photo-camera-label');
-    var br = document.getElementById('photo-btn-row');
-    if(cl) cl.style.display = 'none';
-    if(br) br.style.gridTemplateColumns = '1fr';
+// ---- Init ----
+document.addEventListener('DOMContentLoaded',function(){
+  if(!('ontouchstart' in window)&&!/Mobi|Android/i.test(navigator.userAgent)){
+    var cl=document.getElementById('photo-camera-label');
+    var br=document.getElementById('photo-btn-row');
+    if(cl) cl.style.display='none';
+    if(br) br.style.gridTemplateColumns='1fr';
   }
-  dtTimer = setInterval(tickClock, 1000);
+  dtTimer=setInterval(tickClock,1000);
   useLiveTime();
-  renderFeed();
+  renderAll();
 });
 </script>
 </body>
