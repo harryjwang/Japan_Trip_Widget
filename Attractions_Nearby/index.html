@@ -82,7 +82,7 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 <body>
 <div class="topbar">
   <h1>Nearby Spots</h1>
-  <div class="sub">Live food, shopping, and attraction stops around you</div>
+  <div class="sub">Find food, shopping, and attractions</div>
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('nearby',this)">Nearby</button>
     <button class="tab-btn" onclick="switchTab('saved',this)">Saved</button>
@@ -106,7 +106,7 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
     <div class="filters">
       <div>
         <label class="helper" style="display:block;margin-bottom:6px">Search term</label>
-        <input id="search-text" type="text" placeholder="e.g. ramen, vintage, temple" oninput="renderNearby()">
+        <input id="search-text" type="text" placeholder="e.g. ramen, coffee, mall" oninput="renderNearby()">
       </div>
       <div>
         <label class="helper" style="display:block;margin-bottom:6px">Radius</label>
@@ -148,19 +148,34 @@ input:focus,select:focus{outline:none;border-color:var(--accent)}
 
 <div class="tab-content" id="tab-settings">
   <div class="card">
-    <div class="helper" style="margin-bottom:10px"><b>How it works:</b> This app uses your phone's GPS to find your location, then searches for nearby food, shopping, and attractions using live OpenStreetMap data.</div>
-    <div class="helper" style="margin-bottom:10px">Make sure you've granted location permission in Settings and are connected to WiFi or cellular data.</div>
+    <div class="helper" style="margin-bottom:10px"><b>Setup:</b> This app needs two things to work:</div>
+    <div class="helper" style="margin-bottom:10px">
+      1. <b>Location permission</b> — Go to Settings and allow location access for Safari/your browser<br>
+      2. <b>Internet connection</b> — Use WiFi or cellular data
+    </div>
     <button class="btn-primary" onclick="findNearby()">Refresh My Location</button>
     <button class="btn-secondary" style="margin-top:8px" onclick="clearSaved()">Clear Saved Spots</button>
+  </div>
+  <div class="card">
+    <div class="helper"><b>Troubleshooting:</b><br>
+    • Still getting network error? Try switching to cellular data<br>
+    • Places not showing? Make sure location permission is ON<br>
+    • Empty results? Try a larger radius or different search term
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'nearby_spots_saved_v2';
-const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
-const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/reverse';
+const STORAGE_KEY = 'nearby_spots_saved_v3';
+const SAMPLE_PLACES = [
+  {id:'sample-1',name:'Coffee & Co',type:'food',lat:43.4643,lng:-79.4402,area:'Downtown',note:'Cafe · Coffee',distance:250},
+  {id:'sample-2',name:'Local Market',type:'shopping',lat:43.4650,lng:-79.4410,area:'Downtown',note:'Grocery store',distance:450},
+  {id:'sample-3',name:'City Park',type:'attraction',lat:43.4620,lng:-79.4380,area:'Downtown',note:'Park · Nature reserve',distance:800},
+  {id:'sample-4',name:'Restaurant Hub',type:'food',lat:43.4670,lng:-79.4420,area:'Midtown',note:'Restaurant · Italian',distance:1200},
+  {id:'sample-5',name:'Shopping Plaza',type:'shopping',lat:43.4700,lng:-79.4450,area:'Uptown',note:'Shopping center',distance:1500},
+];
 
 let savedSpots = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 let currentPosition = null;
@@ -200,7 +215,7 @@ function findNearby(){
   if(!navigator.geolocation){
     dot.className = 'status-dot error';
     text.textContent = 'Location not supported';
-    showToast('Geolocation not supported');
+    showToast('Geolocation not available');
     return;
   }
 
@@ -212,14 +227,12 @@ function findNearby(){
   }, function(err){
     dot.className = 'status-dot error';
     text.textContent = 'Location permission denied';
-    fetchedPlaces = [];
-    renderNearby();
-    showToast('Allow location access in Settings');
+    showToast('Allow location in Settings > Safari > Location');
   }, { enableHighAccuracy:true, timeout:10000 });
 }
 
 function buildOverpassQuery(lat, lng, radius){
-  return `[out:json][timeout:10];(nwr(around:${radius},${lat},${lng})[amenity~"restaurant|cafe|fast_food|bar|pub|food_court|ice_cream|biergarten"];nwr(around:${radius},${lat},${lng})[shop];nwr(around:${radius},${lat},${lng})[tourism~"attraction|museum|gallery|viewpoint|theme_park|zoo|aquarium|artwork"];nwr(around:${radius},${lat},${lng})[leisure~"park|garden|nature_reserve|marina"];);out center tags;`;
+  return `[out:json][timeout:15];(nwr(around:${radius},${lat},${lng})[amenity~"restaurant|cafe|fast_food|bar|pub|food_court|ice_cream|biergarten"];nwr(around:${radius},${lat},${lng})[shop];nwr(around:${radius},${lat},${lng})[tourism~"attraction|museum|gallery|viewpoint|theme_park|zoo|aquarium|artwork"];nwr(around:${radius},${lat},${lng})[leisure~"park|garden"];);out center tags;`;
 }
 
 async function fetchPlaces(){
@@ -233,14 +246,14 @@ async function fetchPlaces(){
   const radius = Number(document.getElementById('radius-select').value);
 
   dot.className = 'status-dot warn';
-  text.textContent = 'Loading nearby places...';
+  text.textContent = 'Searching nearby...';
 
   try {
     const query = buildOverpassQuery(currentPosition.lat, currentPosition.lng, radius);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
     
-    const res = await fetch(OVERPASS_URL, {
+    const res = await fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
       body: query,
@@ -249,7 +262,7 @@ async function fetchPlaces(){
     clearTimeout(timeoutId);
 
     if(!res.ok){
-      throw new Error(`HTTP ${res.status}`);
+      throw new Error(`API error: ${res.status}`);
     }
 
     const data = await res.json();
@@ -259,17 +272,10 @@ async function fetchPlaces(){
     renderNearby();
     showToast(`Found ${fetchedPlaces.length} places`);
   } catch (err) {
-    console.error('Fetch error:', err.message);
+    console.error('Network error:', err.message);
     dot.className = 'status-dot error';
-    
-    if(err.name === 'AbortError'){
-      text.textContent = 'Request timeout (API slow)';
-      showToast('Overpass server timeout — try again');
-    } else {
-      text.textContent = 'Could not load places';
-      showToast('Network error — check WiFi');
-    }
-    
+    text.textContent = 'Network error — try cellular data';
+    showToast('Network blocked — switch to cellular or try again');
     fetchedPlaces = [];
     renderNearby();
   }
@@ -299,7 +305,7 @@ function normalizePlaces(elements){
       type,
       lat,
       lng,
-      area: tags['addr:city'] || tags['addr:suburb'] || tags['addr:street'] || tags.neighbourhood || tags.district || '',
+      area: tags['addr:city'] || tags['addr:suburb'] || tags['addr:street'] || tags.neighbourhood || '',
       note: buildNote(tags),
       distance: currentPosition ? distanceMeters(currentPosition.lat, currentPosition.lng, lat, lng) : null
     });
@@ -326,10 +332,8 @@ function buildNote(tags){
   if(tags.shop) parts.push(tags.shop.replace(/_/g, ' '));
   if(tags.tourism) parts.push(tags.tourism.replace(/_/g, ' '));
   if(tags.leisure) parts.push(tags.leisure.replace(/_/g, ' '));
-  if(tags.historic) parts.push(tags.historic.replace(/_/g, ' '));
   if(tags.opening_hours) parts.push('Hours listed');
-  if(tags.website) parts.push('Website');
-  return parts.length ? parts.join(' · ') : 'OpenStreetMap nearby place';
+  return parts.length ? parts.join(' · ') : 'Nearby place';
 }
 
 function deg2rad(d){ return d * (Math.PI / 180); }
@@ -427,7 +431,7 @@ function renderNearby(){
   const wrap = document.getElementById('nearby-list');
 
   if(!currentPosition){
-    wrap.innerHTML = '<div class="empty">Tap <b>Use My Location</b> to load nearby places.</div>';
+    wrap.innerHTML = '<div class="empty">Tap <b>Use My Location</b> to start searching.</div>';
     return;
   }
 
@@ -457,10 +461,12 @@ function renderSaved(){
 }
 
 function clearSaved(){
-  savedSpots = [];
-  saveSaved();
-  renderAll();
-  showToast('Saved spots cleared');
+  if(confirm('Clear all saved spots?')){
+    savedSpots = [];
+    saveSaved();
+    renderAll();
+    showToast('Saved spots cleared');
+  }
 }
 
 function renderAll(){
